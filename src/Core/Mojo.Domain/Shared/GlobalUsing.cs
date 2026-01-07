@@ -1,0 +1,1 @@
+﻿global using Mojo.Domain.Common;
