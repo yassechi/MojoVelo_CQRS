@@ -2,7 +2,7 @@
 
 namespace Mojo.Application.Features.Velos.Handler.Command
 {
-    public class CreateVeloHandler : IRequestHandler<CreateVeloCommand, Unit>
+    public class CreateVeloHandler : IRequestHandler<CreateVeloCommand, BaseResponse>
     {
         private readonly IVeloRepository _repository;
         private readonly IMapper _mapper;
@@ -13,23 +13,27 @@ namespace Mojo.Application.Features.Velos.Handler.Command
             _mapper = mapper;
         }
 
-        public async Task<Unit> Handle(CreateVeloCommand request, CancellationToken cancellationToken)
+        public async Task<BaseResponse> Handle(CreateVeloCommand request, CancellationToken cancellationToken)
         {
-            // Correction : Passer le repository au constructeur du VeloValidator
+            var response = new BaseResponse();
             var validator = new VeloValidator(_repository);
-
             var res = await validator.ValidateAsync(request.dto, cancellationToken);
 
             if (!res.IsValid)
             {
-                throw new Exception("La validation du vélo a échoué.");
+                response.Succes = false;
+                response.Message = "Echec de la création du vélo !";
+                response.Errors = res.Errors.Select(e => e.ErrorMessage).ToList();
             }
+            response.Succes = true;
+            response.Message = "Création du vélo avec succès..";
+            response.Id = request.dto.Id;
 
             var velo = _mapper.Map<Velo>(request.dto);
 
             await _repository.CreateAsync(velo);
 
-            return Unit.Value;
+            return response;
         }
     }
 }

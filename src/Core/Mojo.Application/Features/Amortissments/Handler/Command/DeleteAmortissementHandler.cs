@@ -15,12 +15,9 @@ namespace Mojo.Application.Features.Amortissments.Handler.Command
         public async Task<Unit> Handle(DeleteAmortissementCommand request, CancellationToken cancellationToken)
         {
             var amortissement = await repository.GetByIdAsync(request.Id);
+            if (amortissement is null) throw new NotFoundException(nameof(Amortissement), request.Id);
 
-            if (amortissement != null)
-            {
-                await repository.DeleteAsync(request.Id);
-            }
-
+            await repository.DeleteAsync(request.Id);
             return Unit.Value;
         }
     }

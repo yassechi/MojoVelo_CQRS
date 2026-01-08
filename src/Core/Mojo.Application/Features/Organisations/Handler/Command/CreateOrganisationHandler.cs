@@ -2,7 +2,7 @@
 
 namespace Mojo.Application.Features.Organisations.Handler.Command
 {
-    public class CreateOrganisationHandler : IRequestHandler<CreateOrganisationCommand, Unit>
+    public class CreateOrganisationHandler : IRequestHandler<CreateOrganisationCommand, BaseResponse>
     {
         private readonly IOrganisationRepository repository;
         private readonly IMapper mapper;
@@ -13,15 +13,25 @@ namespace Mojo.Application.Features.Organisations.Handler.Command
             this.mapper = mapper;
         }
 
-        public async Task<Unit> Handle(CreateOrganisationCommand request, CancellationToken cancellationToken)
+        public async Task<BaseResponse> Handle(CreateOrganisationCommand request, CancellationToken cancellationToken)
         {
+            var response = new BaseResponse();
             var validator = new OrganisationValidator();
             var res = await validator.ValidateAsync(request.dto);
-            if (!res.IsValid) throw new Exception();
+            if (!res.IsValid)
+            {
+                response.Succes = false;
+                response.Message = "Echec de la création de l'organisation !";
+                response.Errors = res.Errors.Select(e => e.ErrorMessage).ToList();
+            }
 
+            response.Succes = true;
+            response.Message = "Création de l'organisation avec succès..";
+            response.Id = request.dto.Id;
+        
             var organisation = mapper.Map<Organisation>(request.dto);
             await repository.CreateAsync(organisation);
-            return Unit.Value;
+            return response;
         }
     }
 }

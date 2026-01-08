@@ -19,18 +19,16 @@ namespace Mojo.Application.Features.Contrats.Handler.Command
 
         public async Task<Unit> Handle(UpdateContratCommand request, CancellationToken cancellationToken)
         {
-            // Correction : On passe les repositories requis au constructeur du validateur
             var validator = new ContratValidator(_veloRepository, _userRepository);
 
             var res = await validator.ValidateAsync(request.dto, cancellationToken);
-            if (res.IsValid == false) throw new Exception("Validation du contrat échouée.");
+            if (res.IsValid == false) throw new Exceptions.ValidationException(res);
 
             var oldContrat = await _repository.GetByIdAsync(request.dto.Id);
             if (oldContrat == null) throw new Exception("Contrat introuvable.");
 
             _mapper.Map(request.dto, oldContrat);
 
-            // Note : vérifiez l'orthographe de UpdateAsync dans votre repository
             await _repository.UpadteAsync(oldContrat);
 
             return Unit.Value;

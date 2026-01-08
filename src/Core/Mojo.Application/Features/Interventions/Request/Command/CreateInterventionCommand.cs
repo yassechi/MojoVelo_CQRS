@@ -2,7 +2,7 @@
 
 namespace Mojo.Application.Features.Interventions.Request.Command
 {
-    public class CreateInterventionCommand : IRequest<Unit>
+    public class CreateInterventionCommand : IRequest<BaseResponse>
     {
         public InterventionDto dto { get; set; }
     }

@@ -1,4 +1,6 @@
-﻿namespace Mojo.Application.Features.Users.Handler.Command
+﻿using Mojo.Domain.Entities;
+
+namespace Mojo.Application.Features.Users.Handler.Command
 {
     public class DeleteUserHandler : IRequestHandler<DeleteUserCommand, Unit>
     {
@@ -14,11 +16,8 @@
         public async Task<Unit> Handle(DeleteUserCommand request, CancellationToken cancellationToken)
         {
             var user = await repository.GetByIdAsync(request.Id);
-
-            if (user != null)
-            {
-                await repository.DeleteAsync(request.Id);
-            }
+            if (user is null) throw new NotFoundException(nameof(User), request.Id);
+            await repository.DeleteAsync(request.Id);
 
             return Unit.Value;
         }

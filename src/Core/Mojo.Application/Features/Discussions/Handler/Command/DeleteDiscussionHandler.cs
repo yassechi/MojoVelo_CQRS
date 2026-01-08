@@ -1,4 +1,6 @@
-﻿namespace Mojo.Application.Features.Discussions.Handler.Command
+﻿using Mojo.Domain.Entities;
+
+namespace Mojo.Application.Features.Discussions.Handler.Command
 {
     public class DeleteDiscussionHandler : IRequestHandler<DeleteDiscussionCommand, Unit>
     {
@@ -13,13 +15,10 @@
 
         public async Task<Unit> Handle(DeleteDiscussionCommand request, CancellationToken cancellationToken)
         {
-            Domain.Entities.Discussion discussion = await repository.GetByIdAsync(request.Id);
+            var discussion = await repository.GetByIdAsync(request.Id);
+            if (discussion is null) throw new NotFoundException(nameof(Mojo.Domain.Entities.Discussion), request.Id);
 
-            if (discussion != null)
-            {
-                await repository.DeleteAsync(request.Id);
-            }
-
+            await repository.DeleteAsync(request.Id);
             return Unit.Value;
         }
     }

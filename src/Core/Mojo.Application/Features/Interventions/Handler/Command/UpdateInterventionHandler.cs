@@ -17,11 +17,10 @@ namespace Mojo.Application.Features.Interventions.Handler.Command
 
         public async Task<Unit> Handle(UpdateInterventionCommand request, CancellationToken cancellationToken)
         {
-            // On passe le repository au constructeur pour valider le VeloId
             var validator = new InterventionValidator(_veloRepository);
 
             var res = await validator.ValidateAsync(request.dto, cancellationToken);
-            if (!res.IsValid) throw new Exception("Validation échouée pour la mise à jour de l'intervention.");
+            if (res.IsValid == false) throw new Exceptions.ValidationException(res);
 
             var oldIntervention = await _repository.GetByIdAsync(request.dto.Id);
             if (oldIntervention == null) throw new Exception("Intervention introuvable.");

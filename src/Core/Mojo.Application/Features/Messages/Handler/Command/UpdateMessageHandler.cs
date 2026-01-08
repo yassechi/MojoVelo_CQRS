@@ -23,18 +23,16 @@ namespace Mojo.Application.Features.Messages.Handler.Command
 
         public async Task<Unit> Handle(UpdateMessageCommand request, CancellationToken cancellationToken)
         {
-            // Correction : On passe les repositories requis au constructeur du validateur
             var validator = new MessageValidator(_userRepository, _discussionRepository);
 
             var res = await validator.ValidateAsync(request.dto, cancellationToken);
-            if (!res.IsValid) throw new Exception("Validation du message échouée.");
+            if (res.IsValid == false) throw new Exceptions.ValidationException(res);
 
             var oldMessage = await _repository.GetByIdAsync(request.dto.Id);
             if (oldMessage == null) throw new Exception("Message introuvable.");
 
             _mapper.Map(request.dto, oldMessage);
 
-            // Correction de la faute de frappe potentielle 'UpadteAsync'
             await _repository.UpadteAsync(oldMessage);
 
             return Unit.Value;

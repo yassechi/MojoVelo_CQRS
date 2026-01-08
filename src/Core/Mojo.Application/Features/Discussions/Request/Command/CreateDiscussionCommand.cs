@@ -2,7 +2,7 @@
 
 namespace Mojo.Application.Features.Discussions.Request.Command
 {
-    public class CreateDiscussionCommand : IRequest<Unit>
+    public class CreateDiscussionCommand : IRequest<BaseResponse>
     {
         public DiscussionDto dto { get; set; }
     }

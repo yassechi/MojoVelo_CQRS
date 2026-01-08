@@ -1,4 +1,6 @@
-﻿namespace Mojo.Application.Features.Velos.Handler.Command
+﻿using Mojo.Domain.Entities;
+
+namespace Mojo.Application.Features.Velos.Handler.Command
 {
     public class DeleteVeloHandler : IRequestHandler<DeleteVeloCommand, Unit>
     {
@@ -14,11 +16,9 @@
         public async Task<Unit> Handle(DeleteVeloCommand request, CancellationToken cancellationToken)
         {
             var velo = await repository.GetByIdAsync(request.Id);
+            if (velo is null) throw new NotFoundException(nameof(Velo), request.Id);
 
-            if (velo != null)
-            {
-                await repository.DeleteAsync(request.Id);
-            }
+            await repository.DeleteAsync(request.Id);
 
             return Unit.Value;
         }

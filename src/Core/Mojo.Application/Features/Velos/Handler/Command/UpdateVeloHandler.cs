@@ -16,13 +16,8 @@ namespace Mojo.Application.Features.Velos.Handler.Command
         public async Task<Unit> Handle(UpdateVeloCommand request, CancellationToken cancellationToken)
         {
             var validator = new VeloValidator(_repository);
-
             var res = await validator.ValidateAsync(request.dto, cancellationToken);
-
-            if (!res.IsValid)
-            {
-                throw new Exception("La validation du vélo a échoué lors de la mise à jour.");
-            }
+            if (res.IsValid == false) throw new Exceptions.ValidationException(res);
 
             var oldVelo = await _repository.GetByIdAsync(request.dto.Id);
 
@@ -32,9 +27,7 @@ namespace Mojo.Application.Features.Velos.Handler.Command
             }
 
             _mapper.Map(request.dto, oldVelo);
-
             await _repository.UpadteAsync(oldVelo);
-
             return Unit.Value;
         }
     }

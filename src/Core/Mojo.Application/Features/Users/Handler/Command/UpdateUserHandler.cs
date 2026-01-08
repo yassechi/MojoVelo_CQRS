@@ -20,7 +20,7 @@ namespace Mojo.Application.Features.Users.Handler.Command
             var validator = new UserValidator(_organisationRepository);
 
             var res = await validator.ValidateAsync(request.dto, cancellationToken);
-            if (!res.IsValid) throw new Exception("La validation de l'utilisateur a échoué.");
+            if (res.IsValid == false) throw new Exceptions.ValidationException(res);
 
             var oldUser = await _repository.GetUserByStringId(request.dto.Id);
             if (oldUser == null) throw new Exception("Utilisateur introuvable.");

@@ -1,4 +1,4 @@
-﻿using Mojo.Application.DTOs.EntitiesDto.Amortissement.Validators;
+﻿ using Mojo.Application.DTOs.EntitiesDto.Amortissement.Validators;
 
 namespace Mojo.Application.Features.Amortissments.Handler.Command
 {
@@ -20,7 +20,7 @@ namespace Mojo.Application.Features.Amortissments.Handler.Command
             var validator = new AmortissementValidator(_veloRepository);
 
             var res = await validator.ValidateAsync(request.dto, cancellationToken);
-            if (res.IsValid == false) throw new Exception("Erreur de validation pour l'amortissement.");
+            if (res.IsValid == false) throw new Exceptions.ValidationException(res);
 
             var oldAmortissement = await _repository.GetByIdAsync(request.dto.Id);
             if (oldAmortissement == null) throw new Exception("Amortissement introuvable.");

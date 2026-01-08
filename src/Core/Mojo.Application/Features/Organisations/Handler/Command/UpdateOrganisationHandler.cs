@@ -17,7 +17,8 @@ namespace Mojo.Application.Features.Organisations.Handler.Command
         {
             var validator = new OrganisationValidator();
             var res = await validator.ValidateAsync(request.dto);
-            if (!res.IsValid) throw new Exception();
+            if (res.IsValid == false) throw new Exceptions.ValidationException(res);
+
 
             var oldOrganisation = await repository.GetByIdAsync(request.dto.Id);
             var updatedOrganisation = mapper.Map(request.dto, oldOrganisation);

@@ -2,7 +2,7 @@
 
 namespace Mojo.Application.Features.Contrats.Handler.Command
 {
-    public class CreateContratHandler : IRequestHandler<CreateContratCommand, Unit>
+    public class CreateContratHandler : IRequestHandler<CreateContratCommand, BaseResponse>
     {
         private readonly IContratRepository _repository;
         private readonly IMapper _mapper;
@@ -17,22 +17,28 @@ namespace Mojo.Application.Features.Contrats.Handler.Command
             _userRepository = userRepository;
         }
 
-        public async Task<Unit> Handle(CreateContratCommand request, CancellationToken cancellationToken)
+        public async Task<BaseResponse> Handle(CreateContratCommand request, CancellationToken cancellationToken)
         {
+            var response = new BaseResponse();
             var validator = new ContratValidator(_veloRepository, _userRepository);
-
             var res = await validator.ValidateAsync(request.dto, cancellationToken);
 
             if (res.IsValid == false)
             {
-                throw new Exception("Validation échouée");
+                response.Succes = false;
+                response.Message = "Echec de creation du contrat !";
+                response.Errors = res.Errors.Select(e => e.ErrorMessage).ToList();
             }
+
+            response.Succes = true;
+            response.Message = "Creation avec succès..";
+            response.Id = request.dto.Id;
 
             var contrat = _mapper.Map<Mojo.Domain.Entities.Contrat>(request.dto);
 
             await _repository.CreateAsync(contrat);
 
-            return Unit.Value;
+            return response;
         }
     }
 }

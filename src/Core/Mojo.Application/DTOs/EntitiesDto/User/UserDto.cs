@@ -36,13 +36,4 @@ namespace Mojo.Application.DTOs.EntitiesDto.User
     //    public bool IsActif { get; set; }
     //    public int OrganisationId { get; set; }
     //}
-
-    public class LoginDto
-    {
-        [Required]
-        public string UserName { get; set; } = null!;
-        [Required]
-        public string Password { get; set; } = null!;
-    }
-
 }

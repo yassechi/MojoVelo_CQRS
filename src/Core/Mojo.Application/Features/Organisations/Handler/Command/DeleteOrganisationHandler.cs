@@ -1,4 +1,6 @@
-﻿namespace Mojo.Application.Features.Organisations.Handler.Command
+﻿using Mojo.Domain.Entities;
+
+namespace Mojo.Application.Features.Organisations.Handler.Command
 {
     public class DeleteOrganisationHandler : IRequestHandler<DeleteOrganisationCommand, Unit>
     {
@@ -14,11 +16,8 @@
         public async Task<Unit> Handle(DeleteOrganisationCommand request, CancellationToken cancellationToken)
         {
             var organisation = await repository.GetByIdAsync(request.Id);
-
-            if (organisation != null)
-            {
-                await repository.DeleteAsync(request.Id);
-            }
+            if (organisation is null) throw new NotFoundException(nameof(Organisation), request.Id);
+            await repository.DeleteAsync(request.Id);
 
             return Unit.Value;
         }

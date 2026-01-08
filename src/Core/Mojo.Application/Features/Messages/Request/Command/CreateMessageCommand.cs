@@ -2,7 +2,7 @@
 
 namespace Mojo.Application.Features.Messages.Request.Command
 {
-    public class CreateMessageCommand :  IRequest<Unit>
+    public class CreateMessageCommand :  IRequest<BaseResponse>
     {
         public MessageDto dto { get; set; }
     }

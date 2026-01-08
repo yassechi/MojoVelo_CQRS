@@ -1,4 +1,6 @@
-﻿namespace Mojo.Application.Features.Interventions.Handler.Command
+﻿using Mojo.Domain.Entities;
+
+namespace Mojo.Application.Features.Interventions.Handler.Command
 {
     public class DeleteInterventionHandler : IRequestHandler<DeleteInterventionCommand, Unit>
     {
@@ -14,11 +16,8 @@
         public async Task<Unit> Handle(DeleteInterventionCommand request, CancellationToken cancellationToken)
         {
             var intervention = await repository.GetByIdAsync(request.Id);
-
-            if (intervention != null)
-            {
-                await repository.DeleteAsync(request.Id);
-            }
+            if (intervention is null) throw new NotFoundException(nameof(Intervention), request.Id);
+            await repository.DeleteAsync(request.Id);
 
             return Unit.Value;
         }

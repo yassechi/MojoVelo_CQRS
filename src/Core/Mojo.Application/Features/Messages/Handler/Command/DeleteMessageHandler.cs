@@ -1,4 +1,6 @@
-﻿namespace Mojo.Application.Features.Messages.Handler.Command
+﻿using Mojo.Domain.Entities;
+
+namespace Mojo.Application.Features.Messages.Handler.Command
 {
     public class DeleteMessageHandler : IRequestHandler<DeleteMessageCommand, Unit>
     {
@@ -14,11 +16,8 @@
         public async Task<Unit> Handle(DeleteMessageCommand request, CancellationToken cancellationToken)
         {
             var message = await repository.GetByIdAsync(request.Id);
-
-            if (message != null)
-            {
-                await repository.DeleteAsync(request.Id);
-            }
+            if (message is null) throw new NotFoundException(nameof(Message), request.Id);
+            await repository.DeleteAsync(request.Id);
 
             return Unit.Value;
         }

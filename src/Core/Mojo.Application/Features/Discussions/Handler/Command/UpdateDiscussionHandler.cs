@@ -20,7 +20,7 @@ namespace Mojo.Application.Features.Discussion.Handler.Command
             var validator = new DiscussionValidator(_userRepository);
 
             var res = await validator.ValidateAsync(request.dto, cancellationToken);
-            if (!res.IsValid) throw new Exception("La validation de la discussion a échoué.");
+            if (res.IsValid == false) throw new Exceptions.ValidationException(res);
 
             var oldDiscussion = await _repository.GetByIdAsync(request.dto.Id);
             if (oldDiscussion == null) throw new Exception("Discussion introuvable.");
