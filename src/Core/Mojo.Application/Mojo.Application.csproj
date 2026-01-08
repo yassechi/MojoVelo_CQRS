@@ -3,11 +3,22 @@
   <PropertyGroup>
     <TargetFramework>net9.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>desiablei</Nullable>
+    <Nullable>disable</Nullable>
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Features\Message\**" />
+    <EmbeddedResource Remove="Features\Message\**" />
+    <None Remove="Features\Message\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\Mojo.Domain\Mojo.Domain.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="8.1.1" />
+    <PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="8.1.0" />
   </ItemGroup>
 
 </Project>

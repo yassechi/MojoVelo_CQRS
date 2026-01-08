@@ -1,0 +1,33 @@
+﻿using Mojo.Application.Features.Contrats.Request.Command;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Mojo.Application.Features.Contrats.Handler.Command
+{
+    internal class DeleteContratHandler: IRequestHandler<DeleteContratCommand, Unit>
+    {
+        private readonly IContratRepository repository;
+        private readonly IMapper mapper;
+
+        public DeleteContratHandler(IContratRepository repository, IMapper mapper)
+        {
+            this.repository = repository;
+            this.mapper = mapper;
+        }
+
+        public async Task<Unit> Handle(DeleteContratCommand request, CancellationToken cancellationToken)
+        {
+            var contrat = await repository.GetByIdAsync(request.Id);
+
+            if (contrat != null)
+            {
+                await repository.DeleteAsync(request.Id);
+            }
+
+            return Unit.Value;
+        }
+    }
+}
