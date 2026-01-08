@@ -1,6 +1,8 @@
-﻿namespace Mojo.Application.Features.Organisations.Request.Command
+﻿using Mojo.Application.DTOs.EntitiesDto.Organisation;
+
+namespace Mojo.Application.Features.Organisations.Request.Command
 {
-    internal class CreateOrganisationCommand : IRequest<Unit>
+    public class CreateOrganisationCommand : IRequest<Unit>
     {
         public OrganisationDto dto { get; set; }
     }

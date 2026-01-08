@@ -1,7 +1,6 @@
-﻿
-namespace Mojo.Application.Features.Discussions.Handler.Query
+﻿namespace Mojo.Application.Features.Discussions.Handler.Query
 {
-    internal class GetAllDiscussionHandler : IRequestHandler<GetAllDiscussionRequest, List<Mojo.Domain.Entities.Discussion>>
+    public class GetAllDiscussionHandler : IRequestHandler<GetAllDiscussionRequest, List<Mojo.Domain.Entities.Discussion>>
     {
         private readonly IDiscussionRepository repository;
         private readonly IMapper mapper;

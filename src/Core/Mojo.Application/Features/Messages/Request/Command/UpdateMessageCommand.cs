@@ -1,6 +1,8 @@
-﻿namespace Mojo.Application.Features.Messages.Request.Command
+﻿using Mojo.Application.DTOs.EntitiesDto.Message;
+
+namespace Mojo.Application.Features.Messages.Request.Command
 {
-    internal class UpdateMessageCommand : IRequest<Unit>
+    public class UpdateMessageCommand : IRequest<Unit>
     {
         public MessageDto dto { get; set; }
     }

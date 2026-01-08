@@ -1,6 +1,8 @@
-﻿namespace Mojo.Application.Features.Interventions.Handler.Query
+﻿using Mojo.Application.DTOs.EntitiesDto.Intervention;
+
+namespace Mojo.Application.Features.Interventions.Handler.Query
 {
-    internal class GetInterventionDetailsHandler : IRequestHandler<GetInterventionDetailsRequest, InterventionDto>
+    public class GetInterventionDetailsHandler : IRequestHandler<GetInterventionDetailsRequest, InterventionDto>
     {
         private readonly IInterventionRepository repository;
         private readonly IMapper mapper;

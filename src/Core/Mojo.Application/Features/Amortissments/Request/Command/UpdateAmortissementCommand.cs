@@ -1,6 +1,8 @@
-﻿namespace Mojo.Application.Features.Amortissments.Request.Command
+﻿using Mojo.Application.DTOs.EntitiesDto.Amortissement;
+
+namespace Mojo.Application.Features.Amortissments.Request.Command
 {
-    internal class UpdateAmortissementCommand : IRequest<Unit>
+    public class UpdateAmortissementCommand : IRequest<Unit>
     {
         public AmortissmentDto dto { get; set; }
     }

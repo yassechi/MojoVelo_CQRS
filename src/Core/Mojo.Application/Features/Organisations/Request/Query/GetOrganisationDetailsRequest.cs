@@ -1,6 +1,8 @@
-﻿namespace Mojo.Application.Features.Organisations.Request.Query
+﻿using Mojo.Application.DTOs.EntitiesDto.Organisation;
+
+namespace Mojo.Application.Features.Organisations.Request.Query
 {
-    internal class GetOrganisationDetailsRequest : IRequest<OrganisationDto>
+    public class GetOrganisationDetailsRequest : IRequest<OrganisationDto>
     {
         public int Id { get; set; }
     }

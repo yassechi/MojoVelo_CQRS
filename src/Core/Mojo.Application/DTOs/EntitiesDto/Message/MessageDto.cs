@@ -1,5 +1,4 @@
-
-namespace Mojo.Application.DTOs.EntitiesDto
+namespace Mojo.Application.DTOs.EntitiesDto.Message
 {
     //public class MessageAddDto : BaseEntity<int>
     public class MessageDto : BaseEntity<int>

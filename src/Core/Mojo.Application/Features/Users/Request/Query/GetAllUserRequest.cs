@@ -1,6 +1,8 @@
-﻿namespace Mojo.Application.Features.Users.Request.Query
+﻿using Mojo.Application.DTOs.EntitiesDto.User;
+
+namespace Mojo.Application.Features.Users.Request.Query
 {
-    internal class GetAllUserRequest : IRequest<List<UserDto>>
+    public class GetAllUserRequest : IRequest<List<UserDto>>
     {
     }
 }

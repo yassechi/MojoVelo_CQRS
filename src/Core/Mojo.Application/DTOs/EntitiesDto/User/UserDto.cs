@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace Mojo.Application.DTOs.EntitiesDto
+namespace Mojo.Application.DTOs.EntitiesDto.User
 {
     //public class UserAddDto : BaseEntity<string>
     public class UserDto : BaseEntity<string>

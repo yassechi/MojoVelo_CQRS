@@ -1,6 +1,8 @@
-﻿namespace Mojo.Application.Features.Discussions.Request.Command
+﻿using Mojo.Application.DTOs.EntitiesDto.Discussion;
+
+namespace Mojo.Application.Features.Discussions.Request.Command
 {
-    internal class UpdateDiscussionCommand : IRequest<Unit>
+    public class UpdateDiscussionCommand : IRequest<Unit>
     {
         public DiscussionDto dto { get; set; }
     }

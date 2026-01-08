@@ -1,6 +1,8 @@
-﻿namespace Mojo.Application.Features.Interventions.Request.Command
+﻿using Mojo.Application.DTOs.EntitiesDto.Intervention;
+
+namespace Mojo.Application.Features.Interventions.Request.Command
 {
-    internal class UpdateInterventionCommand : IRequest<Unit>
+    public class UpdateInterventionCommand : IRequest<Unit>
     {
         public InterventionDto dto { get; set; }
     }

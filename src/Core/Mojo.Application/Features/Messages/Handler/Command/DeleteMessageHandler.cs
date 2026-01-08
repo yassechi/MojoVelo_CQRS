@@ -1,7 +1,6 @@
-﻿
-namespace Mojo.Application.Features.Messages.Handler.Command
+﻿namespace Mojo.Application.Features.Messages.Handler.Command
 {
-    internal class DeleteMessageHandler : IRequestHandler<DeleteMessageCommand, Unit>
+    public class DeleteMessageHandler : IRequestHandler<DeleteMessageCommand, Unit>
     {
         private readonly IMessageRepository repository;
         private readonly IMapper mapper;

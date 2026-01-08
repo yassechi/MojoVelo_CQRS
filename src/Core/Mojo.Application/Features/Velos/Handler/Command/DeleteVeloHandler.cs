@@ -1,7 +1,6 @@
-﻿
-namespace Mojo.Application.Features.Velos.Handler.Command
+﻿namespace Mojo.Application.Features.Velos.Handler.Command
 {
-    internal class DeleteVeloHandler : IRequestHandler<DeleteVeloCommand, Unit>
+    public class DeleteVeloHandler : IRequestHandler<DeleteVeloCommand, Unit>
     {
         private readonly IVeloRepository repository;
         private readonly IMapper mapper;

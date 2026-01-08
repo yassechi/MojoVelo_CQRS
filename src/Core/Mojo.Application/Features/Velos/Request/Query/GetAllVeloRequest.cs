@@ -1,6 +1,8 @@
-﻿namespace Mojo.Application.Features.Velos.Request.Query
+﻿using Mojo.Application.DTOs.EntitiesDto.Velo;
+
+namespace Mojo.Application.Features.Velos.Request.Query
 {
-    internal class GetAllVeloRequest : IRequest<List<VeloDto>>
+    public class GetAllVeloRequest : IRequest<List<VeloDto>>
     {
     }
 }

@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Mojo.Application.DTOs.EntitiesDto
+namespace Mojo.Application.DTOs.EntitiesDto.Contrat
 {
     //public class ContratAddDto : BaseEntity<int>
     public class ContratDto : BaseEntity<int>

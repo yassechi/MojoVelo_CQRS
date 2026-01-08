@@ -1,30 +1,36 @@
-﻿using AutoMapper;
-using MediatR;
-using Mojo.Application.Features.Contrats.Request.Command;
-using Mojo.Application.Persistance.Contracts;
-using Mojo.Domain.Entities;
-using System.Threading;
-using System.Threading.Tasks;
+﻿using Mojo.Application.DTOs.EntitiesDto.Contrat.Validators;
 
 namespace Mojo.Application.Features.Contrats.Handler.Command
 {
     public class CreateContratHandler : IRequestHandler<CreateContratCommand, Unit>
     {
-        private readonly IContratRepository repository;
-        private readonly IMapper mapper;
+        private readonly IContratRepository _repository;
+        private readonly IMapper _mapper;
+        private readonly IVeloRepository _veloRepository;
+        private readonly IUserRepository _userRepository;
 
-        public CreateContratHandler(IContratRepository repository, IMapper mapper)
+        public CreateContratHandler(IContratRepository repository, IMapper mapper, IVeloRepository veloRepository, IUserRepository userRepository)
         {
-            this.repository = repository;
-            this.mapper = mapper;
+            _repository = repository;
+            _mapper = mapper;
+            _veloRepository = veloRepository;
+            _userRepository = userRepository;
         }
 
         public async Task<Unit> Handle(CreateContratCommand request, CancellationToken cancellationToken)
         {
+            var validator = new ContratValidator(_veloRepository, _userRepository);
 
-            var contrat = mapper.Map<Mojo.Domain.Entities.Contrat>(request.dto);
+            var res = await validator.ValidateAsync(request.dto, cancellationToken);
 
-            await repository.CreateAsync(contrat);
+            if (res.IsValid == false)
+            {
+                throw new Exception("Validation échouée");
+            }
+
+            var contrat = _mapper.Map<Mojo.Domain.Entities.Contrat>(request.dto);
+
+            await _repository.CreateAsync(contrat);
 
             return Unit.Value;
         }

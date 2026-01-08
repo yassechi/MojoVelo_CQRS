@@ -1,6 +1,8 @@
-﻿namespace Mojo.Application.Features.Discussions.Request.Query
+﻿using Mojo.Application.DTOs.EntitiesDto.Discussion;
+
+namespace Mojo.Application.Features.Discussions.Request.Query
 {
-    internal class GetDiscussionDetailsRequest : IRequest<DiscussionDto>
+    public class GetDiscussionDetailsRequest : IRequest<DiscussionDto>
     {
         public int Id { get; set; }
     }

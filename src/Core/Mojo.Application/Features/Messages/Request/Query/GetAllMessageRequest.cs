@@ -1,6 +1,8 @@
-﻿namespace Mojo.Application.Features.Messages.Request.Query
+﻿using Mojo.Application.DTOs.EntitiesDto.Message;
+
+namespace Mojo.Application.Features.Messages.Request.Query
 {
-    internal class GetAllMessageRequest : IRequest<List<MessageDto>>
+    public class GetAllMessageRequest : IRequest<List<MessageDto>>
     {
     }
 }

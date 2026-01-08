@@ -1,6 +1,6 @@
 ﻿namespace Mojo.Application.Features.Interventions.Handler.Query
 {
-    internal class GetAllInterventionHandler : IRequestHandler<GetAllInterventionRequest, List<Intervention>>
+    public class GetAllInterventionHandler : IRequestHandler<GetAllInterventionRequest, List<Intervention>>
     {
         private readonly IInterventionRepository repository;
         private readonly IMapper mapper;

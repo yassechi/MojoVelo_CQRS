@@ -1,5 +1,4 @@
-
-namespace Mojo.Application.DTOs.EntitiesDto
+namespace Mojo.Application.DTOs.EntitiesDto.Discussion
 {
     //public class DiscussionAddDto : BaseEntity<int>
     public class DiscussionDto : BaseEntity<int>

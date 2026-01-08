@@ -1,4 +1,6 @@
-﻿namespace Mojo.Application.MappingProfiles
+﻿using Mojo.Application.DTOs.EntitiesDto.Message;
+
+namespace Mojo.Application.MappingProfiles
 {
     public class MessageMappingProfile : Profile
     {

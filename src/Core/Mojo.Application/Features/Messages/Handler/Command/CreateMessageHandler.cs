@@ -1,21 +1,40 @@
-﻿namespace Mojo.Application.Features.Messages.Handler.Command
-{
-    internal class CreateMessageHandle : IRequestHandler<CreateMessageCommand, Unit>
-    {
-        private readonly IMessageRepository repository;
-        private readonly IMapper mapper;
+﻿using Mojo.Application.DTOs.EntitiesDto.Message.Validators;
 
-        public CreateMessageHandle(IMessageRepository repository, IMapper mapper)
+namespace Mojo.Application.Features.Messages.Handler.Command
+{
+    public class CreateMessageHandle : IRequestHandler<CreateMessageCommand, Unit>
+    {
+        private readonly IMessageRepository _repository;
+        private readonly IMapper _mapper;
+        private readonly IUserRepository _userRepository;
+        private readonly IDiscussionRepository _discussionRepository;
+
+        public CreateMessageHandle(
+            IMessageRepository repository,
+            IMapper mapper,
+            IUserRepository userRepository,
+            IDiscussionRepository discussionRepository)
         {
-            this.repository = repository;
-            this.mapper = mapper;
+            _repository = repository;
+            _mapper = mapper;
+            _userRepository = userRepository;
+            _discussionRepository = discussionRepository;
         }
 
         public async Task<Unit> Handle(CreateMessageCommand request, CancellationToken cancellationToken)
         {
-            var message = mapper.Map<Message>(request.dto);
+            var validator = new MessageValidator(_userRepository, _discussionRepository);
 
-            await repository.CreateAsync(message);
+            var res = await validator.ValidateAsync(request.dto, cancellationToken);
+
+            if (!res.IsValid)
+            {
+                throw new Exception("La validation du message a échoué.");
+            }
+
+            var message = _mapper.Map<Message>(request.dto);
+
+            await _repository.CreateAsync(message);
 
             return Unit.Value;
         }

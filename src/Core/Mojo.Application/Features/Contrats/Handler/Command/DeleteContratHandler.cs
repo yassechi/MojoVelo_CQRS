@@ -1,13 +1,6 @@
-﻿using Mojo.Application.Features.Contrats.Request.Command;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Mojo.Application.Features.Contrats.Handler.Command
+﻿namespace Mojo.Application.Features.Contrats.Handler.Command
 {
-    internal class DeleteContratHandler: IRequestHandler<DeleteContratCommand, Unit>
+    public class DeleteContratHandler: IRequestHandler<DeleteContratCommand, Unit>
     {
         private readonly IContratRepository repository;
         private readonly IMapper mapper;

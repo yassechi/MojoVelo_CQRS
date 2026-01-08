@@ -1,7 +1,8 @@
-﻿
+﻿using Mojo.Application.DTOs.EntitiesDto.Velo;
+
 namespace Mojo.Application.Features.Velos.Handler.Query
 {
-    internal class GetAllVeloHandler : IRequestHandler<GetAllVeloRequest, List<VeloDto>>
+    public class GetAllVeloHandler : IRequestHandler<GetAllVeloRequest, List<VeloDto>>
     {
         private readonly IVeloRepository repository;
         private readonly IMapper mapper;

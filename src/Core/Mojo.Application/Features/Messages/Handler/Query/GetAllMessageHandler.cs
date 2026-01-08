@@ -1,6 +1,8 @@
-﻿namespace Mojo.Application.Features.Messages.Handler.Query
+﻿using Mojo.Application.DTOs.EntitiesDto.Message;
+
+namespace Mojo.Application.Features.Messages.Handler.Query
 {
-    internal class GetAllMessageHandler : IRequestHandler<GetAllMessageRequest, List<MessageDto>>
+    public class GetAllMessageHandler : IRequestHandler<GetAllMessageRequest, List<MessageDto>>
     {
         private readonly IMessageRepository repository;
         private readonly IMapper mapper;

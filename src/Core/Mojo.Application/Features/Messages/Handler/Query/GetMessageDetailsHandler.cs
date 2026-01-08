@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Mojo.Application.DTOs.EntitiesDto.Message;
 
 namespace Mojo.Application.Features.Messages.Handler.Query
 {
-    internal class GetMessageDetailsHandler : IRequestHandler<GetMessageDetailsRequest, MessageDto>
+    public class GetMessageDetailsHandler : IRequestHandler<GetMessageDetailsRequest, MessageDto>
     {
         private readonly IMessageRepository repository;
         private readonly IMapper mapper;

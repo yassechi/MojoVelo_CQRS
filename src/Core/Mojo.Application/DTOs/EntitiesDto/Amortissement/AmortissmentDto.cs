@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Mojo.Application.DTOs.EntitiesDto
+namespace Mojo.Application.DTOs.EntitiesDto.Amortissement
 {
     //public class AmortissmentAddDto : BaseEntity<int>
     public class AmortissmentDto : BaseEntity<int>

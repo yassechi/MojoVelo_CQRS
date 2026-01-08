@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Mojo.Application.DTOs.EntitiesDto.Amortissement;
 
 namespace Mojo.Application.Features.Amortissments.Request.Query
 {

@@ -1,23 +1,38 @@
-﻿using Mojo.Application.Features.Contrats.Request.Command;
+﻿using Mojo.Application.DTOs.EntitiesDto.Contrat.Validators;
 
 namespace Mojo.Application.Features.Contrats.Handler.Command
 {
-    internal class UpdateContratHandler : IRequestHandler<UpdateContratCommand, Unit>
+    public class UpdateContratHandler : IRequestHandler<UpdateContratCommand, Unit>
     {
-        private readonly IContratRepository repository;
-        private readonly IMapper mapper;
+        private readonly IContratRepository _repository;
+        private readonly IMapper _mapper;
+        private readonly IVeloRepository _veloRepository;
+        private readonly IUserRepository _userRepository;
 
-        public UpdateContratHandler(IContratRepository repository, IMapper mapper)
+        public UpdateContratHandler(IContratRepository repository, IMapper mapper, IVeloRepository veloRepository, IUserRepository userRepository)
         {
-            this.repository = repository;
-            this.mapper = mapper;
+            _repository = repository;
+            _mapper = mapper;
+            _veloRepository = veloRepository;
+            _userRepository = userRepository;
         }
 
         public async Task<Unit> Handle(UpdateContratCommand request, CancellationToken cancellationToken)
         {
-            var oldContrat = await repository.GetByIdAsync(request.dto.Id);
-            var updatedContrat = mapper.Map(request.dto, oldContrat);
-            await repository.UpadteAsync(updatedContrat);
+            // Correction : On passe les repositories requis au constructeur du validateur
+            var validator = new ContratValidator(_veloRepository, _userRepository);
+
+            var res = await validator.ValidateAsync(request.dto, cancellationToken);
+            if (res.IsValid == false) throw new Exception("Validation du contrat échouée.");
+
+            var oldContrat = await _repository.GetByIdAsync(request.dto.Id);
+            if (oldContrat == null) throw new Exception("Contrat introuvable.");
+
+            _mapper.Map(request.dto, oldContrat);
+
+            // Note : vérifiez l'orthographe de UpdateAsync dans votre repository
+            await _repository.UpadteAsync(oldContrat);
+
             return Unit.Value;
         }
     }

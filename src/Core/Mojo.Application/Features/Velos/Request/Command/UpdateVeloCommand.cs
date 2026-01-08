@@ -1,6 +1,8 @@
-﻿namespace Mojo.Application.Features.Velos.Request.Command
+﻿using Mojo.Application.DTOs.EntitiesDto.Velo;
+
+namespace Mojo.Application.Features.Velos.Request.Command
 {
-    internal class UpdateVeloCommand : IRequest<Unit>
+    public class UpdateVeloCommand : IRequest<Unit>
     {
         public VeloDto dto { get; set; }
     }

@@ -1,7 +1,8 @@
-﻿
+﻿using Mojo.Application.DTOs.EntitiesDto.Organisation;
+
 namespace Mojo.Application.Features.Organisations.Handler.Query
 {
-    internal class GetOrganisationDetailsHandler : IRequestHandler<GetOrganisationDetailsRequest, OrganisationDto>
+    public class GetOrganisationDetailsHandler : IRequestHandler<GetOrganisationDetailsRequest, OrganisationDto>
     {
         private readonly IOrganisationRepository repository;
         private readonly IMapper mapper;

@@ -2,7 +2,7 @@
 
 namespace Mojo.Application.Features.Amortissments.Handler.Command
 {
-    internal class DeleteAmortissementHandler : IRequestHandler<DeleteAmortissementCommand, Unit>
+    public class DeleteAmortissementHandler : IRequestHandler<DeleteAmortissementCommand, Unit>
     {
         private readonly IAmortissementRepository repository;
         private readonly IMapper mapper;

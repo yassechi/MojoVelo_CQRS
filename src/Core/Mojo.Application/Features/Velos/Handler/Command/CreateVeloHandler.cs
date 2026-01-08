@@ -1,22 +1,33 @@
-﻿
+﻿using Mojo.Application.DTOs.EntitiesDto.Velo.Validators;
+
 namespace Mojo.Application.Features.Velos.Handler.Command
 {
-    internal class CreateVeloHandler : IRequestHandler<CreateVeloCommand, Unit>
+    public class CreateVeloHandler : IRequestHandler<CreateVeloCommand, Unit>
     {
-        private readonly IVeloRepository repository;
-        private readonly IMapper mapper;
+        private readonly IVeloRepository _repository;
+        private readonly IMapper _mapper;
 
         public CreateVeloHandler(IVeloRepository repository, IMapper mapper)
         {
-            this.repository = repository;
-            this.mapper = mapper;
+            _repository = repository;
+            _mapper = mapper;
         }
 
         public async Task<Unit> Handle(CreateVeloCommand request, CancellationToken cancellationToken)
         {
-            var velo = mapper.Map<Velo>(request.dto);
+            // Correction : Passer le repository au constructeur du VeloValidator
+            var validator = new VeloValidator(_repository);
 
-            await repository.CreateAsync(velo);
+            var res = await validator.ValidateAsync(request.dto, cancellationToken);
+
+            if (!res.IsValid)
+            {
+                throw new Exception("La validation du vélo a échoué.");
+            }
+
+            var velo = _mapper.Map<Velo>(request.dto);
+
+            await _repository.CreateAsync(velo);
 
             return Unit.Value;
         }

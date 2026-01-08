@@ -1,7 +1,8 @@
-﻿
+﻿using Mojo.Application.DTOs.EntitiesDto.User;
+
 namespace Mojo.Application.Features.Users.Handler.Query
 {
-    internal class GetUserDetailsHandler : IRequestHandler<GetUserDetailsRequest, UserDto>
+    public class GetUserDetailsHandler : IRequestHandler<GetUserDetailsRequest, UserDto>
     {
         private readonly IUserRepository repository;
         private readonly IMapper mapper;

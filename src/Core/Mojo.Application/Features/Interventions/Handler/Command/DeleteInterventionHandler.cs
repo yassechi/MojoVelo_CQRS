@@ -1,6 +1,6 @@
 ﻿namespace Mojo.Application.Features.Interventions.Handler.Command
 {
-    internal class DeleteInterventionHandler : IRequestHandler<DeleteInterventionCommand, Unit>
+    public class DeleteInterventionHandler : IRequestHandler<DeleteInterventionCommand, Unit>
     {
         private readonly IInterventionRepository repository;
         private readonly IMapper mapper;

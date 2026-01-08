@@ -1,4 +1,4 @@
-﻿using Mojo.Application.Features.Amortissments.Request.Query;
+﻿using Mojo.Application.DTOs.EntitiesDto.Amortissement;
 
 namespace Mojo.Application.Features.Amortissments.Handler.Query
 {

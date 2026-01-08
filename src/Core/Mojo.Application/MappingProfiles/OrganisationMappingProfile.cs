@@ -1,4 +1,6 @@
-﻿namespace Mojo.Application.MappingProfiles
+﻿using Mojo.Application.DTOs.EntitiesDto.Organisation;
+
+namespace Mojo.Application.MappingProfiles
 {
     public class OrganisationMappingProfile : Profile
     {

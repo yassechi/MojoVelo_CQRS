@@ -1,4 +1,5 @@
-﻿
+﻿using Mojo.Application.DTOs.EntitiesDto.Contrat;
+
 namespace Mojo.Application.Features.Contrat.Handler.Query
 {
     public class GetAllContratHandler : IRequestHandler<GetAllContratRequest, List<ContratDto>>

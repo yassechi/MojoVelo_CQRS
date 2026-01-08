@@ -8,5 +8,6 @@
         Task<T?> UpadteAsync(T entity);
         Task<bool> DeleteAsync(int id);
         Task SaveChangesAsync();
+        Task<bool> Exists(int id);
     }
 }

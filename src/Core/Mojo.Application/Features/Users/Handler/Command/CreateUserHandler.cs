@@ -1,22 +1,34 @@
-﻿
+﻿using Mojo.Application.DTOs.EntitiesDto.User.Validators;
+
 namespace Mojo.Application.Features.Users.Handler.Command
 {
-    internal class CreateUserHandler : IRequestHandler<CreateUserCommand, Unit>
+    public class CreateUserHandler : IRequestHandler<CreateUserCommand, Unit>
     {
-        private readonly IUserRepository repository;
-        private readonly IMapper mapper;
+        private readonly IUserRepository _repository;
+        private readonly IMapper _mapper;
+        private readonly IOrganisationRepository _organisationRepository;
 
-        public CreateUserHandler(IUserRepository repository, IMapper mapper)
+        public CreateUserHandler(IUserRepository repository, IMapper mapper, IOrganisationRepository organisationRepository)
         {
-            this.repository = repository;
-            this.mapper = mapper;
+            _repository = repository;
+            _mapper = mapper;
+            _organisationRepository = organisationRepository;
         }
 
         public async Task<Unit> Handle(CreateUserCommand request, CancellationToken cancellationToken)
         {
-            var user = mapper.Map<User>(request.dto);
+            var validator = new UserValidator(_organisationRepository);
 
-            await repository.CreateAsync(user);
+            var res = await validator.ValidateAsync(request.dto, cancellationToken);
+
+            if (!res.IsValid)
+            {
+                throw new Exception("La validation de l'utilisateur a échoué.");
+            }
+
+            var user = _mapper.Map<User>(request.dto);
+
+            await _repository.CreateAsync(user);
 
             return Unit.Value;
         }

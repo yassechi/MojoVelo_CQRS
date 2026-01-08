@@ -1,7 +1,8 @@
-﻿
+﻿using Mojo.Application.DTOs.EntitiesDto.Organisation.Validators;
+
 namespace Mojo.Application.Features.Organisations.Handler.Command
 {
-    internal class UpdateOrganisationHandler : IRequestHandler<UpdateOrganisationCommand, Unit>
+    public class UpdateOrganisationHandler : IRequestHandler<UpdateOrganisationCommand, Unit>
     {
         private readonly IOrganisationRepository repository;
         private readonly IMapper mapper;
@@ -14,6 +15,10 @@ namespace Mojo.Application.Features.Organisations.Handler.Command
 
         public async Task<Unit> Handle(UpdateOrganisationCommand request, CancellationToken cancellationToken)
         {
+            var validator = new OrganisationValidator();
+            var res = await validator.ValidateAsync(request.dto);
+            if (!res.IsValid) throw new Exception();
+
             var oldOrganisation = await repository.GetByIdAsync(request.dto.Id);
             var updatedOrganisation = mapper.Map(request.dto, oldOrganisation);
             await repository.UpadteAsync(updatedOrganisation);

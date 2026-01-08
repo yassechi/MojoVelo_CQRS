@@ -1,7 +1,6 @@
-﻿
-namespace Mojo.Application.Features.Organisations.Handler.Command
+﻿namespace Mojo.Application.Features.Organisations.Handler.Command
 {
-    internal class DeleteOrganisationHandler : IRequestHandler<DeleteOrganisationCommand, Unit>
+    public class DeleteOrganisationHandler : IRequestHandler<DeleteOrganisationCommand, Unit>
     {
         private readonly IOrganisationRepository repository;
         private readonly IMapper mapper;

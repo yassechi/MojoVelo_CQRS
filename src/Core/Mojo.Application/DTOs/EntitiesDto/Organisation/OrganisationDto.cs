@@ -1,5 +1,4 @@
-
-namespace Mojo.Application.DTOs.EntitiesDto
+namespace Mojo.Application.DTOs.EntitiesDto.Organisation
 {
     //public class OrganisationAddDto : BaseEntity<int>
     public class OrganisationDto : BaseEntity<int>

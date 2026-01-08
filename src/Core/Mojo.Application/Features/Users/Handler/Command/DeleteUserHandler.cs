@@ -1,7 +1,6 @@
-﻿
-namespace Mojo.Application.Features.Users.Handler.Command
+﻿namespace Mojo.Application.Features.Users.Handler.Command
 {
-    internal class DeleteUserHandler : IRequestHandler<DeleteUserCommand, Unit>
+    public class DeleteUserHandler : IRequestHandler<DeleteUserCommand, Unit>
     {
         private readonly IUserRepository repository;
         private readonly IMapper mapper;

@@ -1,6 +1,6 @@
 ﻿namespace Mojo.Application.Features.Discussions.Handler.Command
 {
-    internal class DeleteDiscussionHandler : IRequestHandler<DeleteDiscussionCommand, Unit>
+    public class DeleteDiscussionHandler : IRequestHandler<DeleteDiscussionCommand, Unit>
     {
         private readonly IDiscussionRepository repository;
         private readonly IMapper mapper;

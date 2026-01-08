@@ -1,5 +1,4 @@
-
-namespace Mojo.Application.DTOs.EntitiesDto
+namespace Mojo.Application.DTOs.EntitiesDto.Velo
 {
     //public class VeloAddDto : BaseEntity<int>
     public class VeloDto : BaseEntity<int>

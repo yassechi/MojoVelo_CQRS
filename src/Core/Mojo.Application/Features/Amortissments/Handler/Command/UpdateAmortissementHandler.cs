@@ -1,27 +1,33 @@
-﻿using Mojo.Application.Features.Amortissments.Request.Command;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Mojo.Application.DTOs.EntitiesDto.Amortissement.Validators;
 
 namespace Mojo.Application.Features.Amortissments.Handler.Command
 {
-    internal class UpdateAmortissementHandler : IRequestHandler<UpdateAmortissementCommand, Unit>
+    public class UpdateAmortissementHandler : IRequestHandler<UpdateAmortissementCommand, Unit>
     {
-        private readonly IAmortissementRepository repository;
-        private readonly IMapper mapper;
+        private readonly IAmortissementRepository _repository;
+        private readonly IMapper _mapper;
+        private readonly IVeloRepository _veloRepository;
 
-        public UpdateAmortissementHandler(IAmortissementRepository repository, IMapper mapper)
+        public UpdateAmortissementHandler(IAmortissementRepository repository, IMapper mapper, IVeloRepository veloRepository)
         {
-            this.repository = repository;
-            this.mapper = mapper;
+            _repository = repository;
+            _mapper = mapper;
+            _veloRepository = veloRepository;
         }
+
         public async Task<Unit> Handle(UpdateAmortissementCommand request, CancellationToken cancellationToken)
         {
-            var oldAmortissement = await repository.GetByIdAsync(request.dto.Id);
-            var updatedAmortissement = mapper.Map(request.dto, oldAmortissement);
-            await repository.UpadteAsync(updatedAmortissement);
+            var validator = new AmortissementValidator(_veloRepository);
+
+            var res = await validator.ValidateAsync(request.dto, cancellationToken);
+            if (res.IsValid == false) throw new Exception("Erreur de validation pour l'amortissement.");
+
+            var oldAmortissement = await _repository.GetByIdAsync(request.dto.Id);
+            if (oldAmortissement == null) throw new Exception("Amortissement introuvable.");
+
+            _mapper.Map(request.dto, oldAmortissement);
+            await _repository.UpadteAsync(oldAmortissement);
+
             return Unit.Value;
         }
     }

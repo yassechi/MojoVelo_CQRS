@@ -20,8 +20,10 @@ global using Mojo.Application.DTOs.EntitiesDto;
 global using Mojo.Application.MappingProfiles;
 global using Mojo.Domain.Entities;
 global using Mojo.Domain.Common;
+global using FluentValidation;
 global using AutoMapper;
 global using MediatR;
+
 
 
 
