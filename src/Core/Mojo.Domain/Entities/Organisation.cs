@@ -1,5 +1,3 @@
-using System.ComponentModel.DataAnnotations;
-
 namespace Mojo.Domain.Entities
 {
     public class Organisation : BaseEntity<Organisation>
