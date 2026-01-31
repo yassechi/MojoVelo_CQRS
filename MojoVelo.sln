@@ -25,6 +25,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mojo.Infrastructure", "src\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mojo.API", "src\API\Mojo.API\Mojo.API.csproj", "{5C326DC2-D159-4FFC-93AF-3D3AA8F1FCFD}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "DB", "DB", "{38CA0D8B-DE60-4138-BB81-1FF2E32FD60F}"
+	ProjectSection(SolutionItems) = preProject
+		inserts.sql = inserts.sql
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -65,6 +70,7 @@ Global
 		{D39DE41A-EFCA-4EF1-B984-A43C88AA45CE} = {34179C15-38D0-47CF-B306-92FFCA12C58B}
 		{9A042F7B-4BFF-43E7-9D33-56E59605F0B1} = {34179C15-38D0-47CF-B306-92FFCA12C58B}
 		{5C326DC2-D159-4FFC-93AF-3D3AA8F1FCFD} = {159D5F66-DE4F-4350-9D9A-4252DE1CEEC8}
+		{38CA0D8B-DE60-4138-BB81-1FF2E32FD60F} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {DC477549-C017-4677-9F58-E204E392CC3F}
