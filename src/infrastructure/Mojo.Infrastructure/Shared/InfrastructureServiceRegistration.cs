@@ -13,4 +13,4 @@ namespace Mojo.Infrastructure.Shared
             services.AddTransient<IEmailSender, EmailSender>();
         }
     }
-}
+} 

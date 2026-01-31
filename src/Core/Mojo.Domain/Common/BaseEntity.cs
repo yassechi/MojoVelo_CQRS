@@ -10,7 +10,7 @@ namespace Mojo.Domain.Common
     public class BaseEntity<T>
     {
         [Key]
-        public T Id { get; set; }
+        public int Id { get; set; }
         public DateTime CreatedDate { get; set; }
         public DateTime ModifiedDate { get; set; }
         public string ModifiedBy { get; set; } = null!;

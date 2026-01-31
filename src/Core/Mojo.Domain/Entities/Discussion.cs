@@ -2,20 +2,20 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Mojo.Domain.Entities
 {
-    public class Discussion : BaseEntity<Discussion>
+    public class Discussion : BaseEntity<int> // Assure-toi que BaseEntity utilise <int> ou <Guid>
     {
         public string Objet { get; set; } = null!;
         public bool Status { get; set; }
         public DateTime DateCreation { get; set; }
 
-        [ForeignKey(nameof(User))]
         public string ClientId { get; set; } = null!;
-        public User Client { get; set; } = null!;
+        [ForeignKey(nameof(ClientId))]
+        public virtual User Client { get; set; } = null!;
 
-        [ForeignKey(nameof(User))]
         public string MojoId { get; set; } = null!;
-        public User Mojo { get; set; }
+        [ForeignKey(nameof(MojoId))]
+        public virtual User Mojo { get; set; } = null!;
 
-        public List<Message> Messages = [];
+        public virtual List<Message> Messages { get; set; } = new();
     }
 }

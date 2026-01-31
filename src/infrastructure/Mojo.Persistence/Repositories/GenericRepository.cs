@@ -1,6 +1,7 @@
 ﻿global using Mojo.Application.Persistance.Contracts;
 global using Mojo.Persistence.DatabaseContext;
-using System.Data.Entity;
+using Microsoft.EntityFrameworkCore;
+//using System.Data.Entity;
 
 namespace Mojo.Persistence.Repositories
 {

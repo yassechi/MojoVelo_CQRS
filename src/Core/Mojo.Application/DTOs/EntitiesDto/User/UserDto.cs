@@ -6,6 +6,8 @@ namespace Mojo.Application.DTOs.EntitiesDto.User
     public class UserDto : BaseEntity<string>
     {
         [Required]
+        public string Id { get; set; } = null!;
+        [Required]
         public string FirstName { get; set; } = null!;
         [Required]
         public string LasttName { get; set; } = null!;
