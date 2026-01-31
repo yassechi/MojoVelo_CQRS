@@ -4,9 +4,9 @@
     {
         Task<List<T>> GetAllAsync();
         Task<T?> GetByIdAsync(int id);
-        Task<T> CreateAsync(T entity);
-        Task<T?> UpadteAsync(T entity);
-        Task<bool> DeleteAsync(int id);
+        Task CreateAsync(T entity);
+        Task UpadteAsync(T entity);
+        Task DeleteAsync(int id);
         Task SaveChangesAsync();
         Task<bool> Exists(int id);
     }
