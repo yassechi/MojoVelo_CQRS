@@ -1,4 +1,6 @@
 ﻿
+using Mojo.Application.DTOs.EntitiesDto.Contrat.Validators;
+
 namespace Mojo.Application.Shared
 {
     public static class ApplicationServiceRegistration
@@ -12,6 +14,17 @@ namespace Mojo.Application.Shared
             services.AddMediatR(AppDomain.CurrentDomain.GetAssemblies());
             services.AddValidatorsFromAssemblies(AppDomain.CurrentDomain.GetAssemblies());
 
-        }
+        //    foreach (var item in AppDomain.CurrentDomain.GetAssemblies().SelectMany(a => a.GetTypes().Where(t => t.IsSubclassOf(typeof(AbstractValidator<>)))).ToArray())
+        //    {
+        //        services.AddScoped(item.GetType());
+        //    }
+
+
+        //    services.AddScoped<ContratValidator>();
+
+        //}
     }
 }
+
+
+//builder.Services.ConfigurationApplicationService();
