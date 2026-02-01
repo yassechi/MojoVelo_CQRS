@@ -2,7 +2,7 @@
 
 namespace Mojo.Application.Features.Contrats.Handler.Command
 {
-    public class DeleteContratHandler : IRequestHandler<DeleteContratCommand, BaseResponse>
+    public class DeleteContratHandler : IRequestHandler<DeleteContratCommand, Unit>
     {
         private readonly IContratRepository repository;
         private readonly IMapper mapper;
@@ -13,23 +13,13 @@ namespace Mojo.Application.Features.Contrats.Handler.Command
             this.mapper = mapper;
         }
 
-        public async Task<BaseResponse> Handle(DeleteContratCommand request, CancellationToken cancellationToken)
+        public async Task<Unit> Handle(DeleteContratCommand request, CancellationToken cancellationToken)
         {
-            var response = new BaseResponse();
             var contrat = await repository.GetByIdAsync(request.Id);
-
-            if (contrat is null)
-            {
-                response.Succes = false;
-                response.Message = $"le contrat avec Id: {request.Id} n'existe pas !";
-                return response;
-            }
+            if (contrat is null) throw new NotFoundException(nameof(Mojo.Domain.Entities.Contrat), request.Id);
             await repository.DeleteAsync(request.Id);
-            response.Succes = true;
-            response.Message = $"l'amortissement avec Id: {request.Id} est supprimé !";
-
-
-            return response;
+            
+            return Unit.Value;
         }
     }
 }

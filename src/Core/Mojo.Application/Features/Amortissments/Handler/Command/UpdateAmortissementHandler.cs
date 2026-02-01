@@ -2,7 +2,7 @@
 
 namespace Mojo.Application.Features.Amortissments.Handler.Command
 {
-    public class UpdateAmortissementHandler : IRequestHandler<UpdateAmortissementCommand, BaseResponse>
+    public class UpdateAmortissementHandler : IRequestHandler<UpdateAmortissementCommand, Unit>
     {
         private readonly IAmortissementRepository _repository;
         private readonly IMapper _mapper;
@@ -15,30 +15,20 @@ namespace Mojo.Application.Features.Amortissments.Handler.Command
             _veloRepository = veloRepository;
         }
 
-        public async Task<BaseResponse> Handle(UpdateAmortissementCommand request, CancellationToken cancellationToken)
+        public async Task<Unit> Handle(UpdateAmortissementCommand request, CancellationToken cancellationToken)
         {
-            var response = new BaseResponse();
-            var validator = new AmortissementValidator(_veloRepository, _repository);
+            var validator = new AmortissementValidator(_veloRepository);
 
             var res = await validator.ValidateAsync(request.dto, cancellationToken);
-            if (res.IsValid == false)
-            {
-                response.Succes = false;
-                response.Message = "Echec de la modification !";
-                response.Errors = res.Errors.Select(e => e.ErrorMessage).ToList();
-                return response;
-            }
+            if (res.IsValid == false) throw new Exceptions.ValidationException(res);
 
             var oldAmortissement = await _repository.GetByIdAsync(request.dto.Id);
             if (oldAmortissement == null) throw new Exception("Amortissement introuvable.");
 
             _mapper.Map(request.dto, oldAmortissement);
             await _repository.UpadteAsync(oldAmortissement);
-            response.Succes = true;
-            response.Message = "modification ok.. ";
-            response.Id = request.dto.Id;
 
-            return response;
+            return Unit.Value;
         }
     }
 }

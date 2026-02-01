@@ -1,4 +1,5 @@
-﻿
+﻿using Mojo.Application.DTOs.EntitiesDto.Contrat.Validators;
+
 namespace Mojo.Application.Features.Contrats.Handler.Command
 {
     public class CreateContratHandler : IRequestHandler<CreateContratCommand, BaseResponse>
@@ -19,7 +20,7 @@ namespace Mojo.Application.Features.Contrats.Handler.Command
         public async Task<BaseResponse> Handle(CreateContratCommand request, CancellationToken cancellationToken)
         {
             var response = new BaseResponse();
-            var validator = new ContratValidator(_veloRepository, _userRepository, _repository);
+            var validator = new ContratValidator(_veloRepository, _userRepository);
             var res = await validator.ValidateAsync(request.dto, cancellationToken);
 
             if (res.IsValid == false)
@@ -27,8 +28,6 @@ namespace Mojo.Application.Features.Contrats.Handler.Command
                 response.Succes = false;
                 response.Message = "Echec de creation du contrat !";
                 response.Errors = res.Errors.Select(e => e.ErrorMessage).ToList();
-
-                return response;
             }
 
             response.Succes = true;

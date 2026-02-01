@@ -8,13 +8,14 @@ namespace Mojo.Application.Exceptions
 
         public ValidationException(ValidationResult validationResult)
         {
-            // ✅ CORRECTION : Initialiser la liste pour qu'elle ne soit plus null
-            Errors = new List<string>();
-
             foreach (var error in validationResult.Errors)
             {
                 Errors.Add(error.ErrorMessage);
             }
+
         }
+
+
+
     }
 }

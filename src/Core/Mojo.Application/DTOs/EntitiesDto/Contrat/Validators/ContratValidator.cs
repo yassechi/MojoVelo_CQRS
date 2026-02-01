@@ -1,47 +1,42 @@
-﻿using FluentValidation;
-using Mojo.Application.DTOs.EntitiesDto.Contrat;
-
-public class ContratValidator : AbstractValidator<ContratDto>
+﻿namespace Mojo.Application.DTOs.EntitiesDto.Contrat.Validators
 {
-    private readonly IVeloRepository _veloRepository;
-    private readonly IUserRepository _userRepository;
-    private readonly IContratRepository _contratRepository;
-
-    public ContratValidator(
-        IVeloRepository veloRepository,
-        IUserRepository userRepository,
-        IContratRepository contratRepository)
+    public class ContratValidator : AbstractValidator<ContratDto>
     {
-        _veloRepository = veloRepository;
-        _userRepository = userRepository;
-        _contratRepository = contratRepository;
+        private readonly IVeloRepository _veloRepository;
+        private readonly IUserRepository _userRepository;
 
-        // ✅ 1. Vérifier que le contrat existe (pour l'update)
-        RuleFor(c => c.Id)
-            .MustAsync(async (id, token) => id == 0 || await _contratRepository.Exists(id))
-            .WithMessage("Le contrat spécifié n'existe pas.");
+        public ContratValidator(IVeloRepository veloRepository, IUserRepository userRepository)
+        {
+            _veloRepository = veloRepository;
+            _userRepository = userRepository;
 
-        // ✅ 2. Vérifier que le UserRh existe
-        RuleFor(c => c.UserRhId)
-            .NotEmpty().WithMessage("L'identifiant du responsable RH est obligatoire.")
-            .MustAsync(async (id, token) => await _userRepository.UserExists(id))
-            .WithMessage("Le responsable RH spécifié n'existe pas.");
+            RuleFor(c => c.VeloId)
+                .GreaterThan(0).WithMessage("L'identifiant du vélo doit être supérieur à 0.")
+                .MustAsync(async (id, token) => await _veloRepository.Exists(id))
+                .WithMessage("Le vélo spécifié n'existe pas.");
 
-        // ✅ 3. LA RÈGLE CRITIQUE : Bloquer si pas Négociateur
-        RuleFor(c => c.UserRhId)
-            .MustAsync(async (id, token) =>
-            {
-                if (string.IsNullOrEmpty(id)) return false;
-                return await _userRepository.UserHasRole(id, "Negociateur");
-            })
-            .WithMessage("L'utilisateur spécifié n'a pas le rôle Négociateur.");
+            RuleFor(c => c.BeneficiaireId)
+                .GreaterThan(0).WithMessage("L'identifiant du bénéficiaire doit être supérieur à 0.")
+                .MustAsync(async (id, token) => await _userRepository.Exists(id))
+                .WithMessage("Le bénéficiaire spécifié n'existe pas.");
 
-        // ✅ 4. Autres règles communes
-        RuleFor(c => c.VeloId)
-            .MustAsync(async (id, token) => await _veloRepository.Exists(id))
-            .WithMessage("Le vélo spécifié n'existe pas.");
+            RuleFor(c => c.UserRhId)
+                .GreaterThan(0).WithMessage("L'identifiant du responsable RH doit être supérieur à 0.")
+                .MustAsync(async (id, token) => await _userRepository.Exists(id))
+                .WithMessage("Le responsable RH spécifié n'existe pas.");
 
-        RuleFor(c => c.LoyerMensuelHT)
-            .GreaterThan(0).WithMessage("Le loyer doit être supérieur à 0.");
+            RuleFor(c => c.LoyerMensuelHT)
+                .GreaterThan(0).WithMessage("Le loyer mensuel HT doit être strictement supérieur à 0.");
+
+            RuleFor(c => c.DateDebut)
+                .NotEmpty().WithMessage("La date de début est obligatoire.")
+                .GreaterThanOrEqualTo(DateOnly.FromDateTime(DateTime.Today))
+                .WithMessage("La date de début ne peut pas être dans le passé.");
+
+            RuleFor(c => c.DateFin)
+                .NotEmpty().WithMessage("La date de fin est obligatoire.")
+                .GreaterThan(c => c.DateDebut)
+                .WithMessage("La date de fin doit être postérieure à la date de début.");
+        }
     }
 }

@@ -1,7 +1,5 @@
-﻿using System.Reflection;
-using MediatR;
-using FluentValidation;
-using Microsoft.Extensions.DependencyInjection;
+﻿
+using Mojo.Application.DTOs.EntitiesDto.Contrat.Validators;
 
 namespace Mojo.Application.Shared
 {
@@ -9,17 +7,25 @@ namespace Mojo.Application.Shared
     {
         public static void ConfigureApplicationService(this IServiceCollection services)
         {
-            var assembly = typeof(ApplicationServiceRegistration).Assembly;
+            // Configure Automapper && Mediator && Fluent Validation
+            //services.AddAutoMapper(Assembly.GetExecutingAssembly());
+            //services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+            services.AddAutoMapper(typeof(AmortissementMappingProfile));
+            services.AddMediatR(AppDomain.CurrentDomain.GetAssemblies());
+            services.AddValidatorsFromAssemblies(AppDomain.CurrentDomain.GetAssemblies());
 
-            // AutoMapper
-            services.AddAutoMapper(typeof(ApplicationServiceRegistration));
+            //    foreach (var item in AppDomain.CurrentDomain.GetAssemblies().SelectMany(a => a.GetTypes().Where(t => t.IsSubclassOf(typeof(AbstractValidator<>)))).ToArray())
+            //    {
+            //        services.AddScoped(item.GetType());
+            //    }
 
-            // MediatR
-            services.AddMediatR(cfg =>
-                cfg.RegisterServicesFromAssembly(assembly));
 
-            // FluentValidation
-            services.AddValidatorsFromAssembly(assembly);
+            //    services.AddScoped<ContratValidator>();
+
+            //}
         }
     }
 }
+
+
+//builder.Services.ConfigurationApplicationService();

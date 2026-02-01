@@ -2,7 +2,7 @@
 
 namespace Mojo.Application.Features.Amortissments.Request.Command
 {
-    public class UpdateAmortissementCommand : IRequest<BaseResponse>
+    public class UpdateAmortissementCommand : IRequest<Unit>
     {
         public AmortissmentDto dto { get; set; }
     }

@@ -1,4 +1,5 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
+
 	<PropertyGroup>
 		<TargetFramework>net9.0</TargetFramework>
 		<ImplicitUsings>enable</ImplicitUsings>
@@ -15,4 +16,5 @@
 		<ProjectReference Include="..\..\Core\Mojo.Application\Mojo.Application.csproj" />
 		<ProjectReference Include="..\..\Core\Mojo.Domain\Mojo.Domain.csproj" />
 	</ItemGroup>
+
 </Project>

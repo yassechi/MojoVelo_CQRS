@@ -1,4 +1,5 @@
-﻿
+﻿using Mojo.Application.DTOs.EntitiesDto.Message.Validators;
+
 namespace Mojo.Application.Features.Messages.Handler.Command
 {
     public class UpdateMessageHandler : IRequestHandler<UpdateMessageCommand, Unit>

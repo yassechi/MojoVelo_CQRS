@@ -4,6 +4,6 @@ namespace Mojo.Application.Features.Amortissments.Request.Command
 {
     public class CreateAmortissementCommand : IRequest<BaseResponse>
     {
-        public AmortissmentDto AmortissmentDto { get; set; }
+        public AmortissmentDto amortissmentDto { get; set; }
     }
 }

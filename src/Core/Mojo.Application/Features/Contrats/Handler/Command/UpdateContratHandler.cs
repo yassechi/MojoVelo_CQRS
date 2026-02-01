@@ -1,7 +1,8 @@
-﻿
+﻿using Mojo.Application.DTOs.EntitiesDto.Contrat.Validators;
+
 namespace Mojo.Application.Features.Contrats.Handler.Command
 {
-    public class UpdateContratHandler : IRequestHandler<UpdateContratCommand, BaseResponse>
+    public class UpdateContratHandler : IRequestHandler<UpdateContratCommand, Unit>
     {
         private readonly IContratRepository _repository;
         private readonly IMapper _mapper;
@@ -16,36 +17,21 @@ namespace Mojo.Application.Features.Contrats.Handler.Command
             _userRepository = userRepository;
         }
 
-        public async Task<BaseResponse> Handle(UpdateContratCommand request, CancellationToken cancellationToken)
+        public async Task<Unit> Handle(UpdateContratCommand request, CancellationToken cancellationToken)
         {
-            var response = new BaseResponse();
-            var validator = new ContratValidator(_veloRepository, _userRepository, _repository);
+            var validator = new ContratValidator(_veloRepository, _userRepository);
+
             var res = await validator.ValidateAsync(request.dto, cancellationToken);
-   
+            if (res.IsValid == false) throw new Exceptions.ValidationException(res);
 
-            // SI PAS VALIDE : On lance l'exception, ce qui ARRÊTE le code ici.
-            if (!res.IsValid)
-            {
-                response.Succes = false;
-                response.Message = "Echec de creation du contrat !";
-                response.Errors = res.Errors.Select(e => e.ErrorMessage).ToList();
-
-                return response;
-            }
-
-            // Ce code ne s'exécutera JAMAIS si le rôle n'est pas Négociateur
             var oldContrat = await _repository.GetByIdAsync(request.dto.Id);
             if (oldContrat == null) throw new Exception("Contrat introuvable.");
 
             _mapper.Map(request.dto, oldContrat);
+
             await _repository.UpadteAsync(oldContrat);
 
-
-            response.Succes = true;
-            response.Message = "Modification avec succès..";
-            response.Id = request.dto.Id;
-
-            return response;
+            return Unit.Value;
         }
     }
 }

@@ -2,7 +2,7 @@
 
 namespace Mojo.Application.Features.Organisations.Handler.Command
 {
-    public class DeleteOrganisationHandler : IRequestHandler<DeleteOrganisationCommand, BaseResponse>
+    public class DeleteOrganisationHandler : IRequestHandler<DeleteOrganisationCommand, Unit>
     {
         private readonly IOrganisationRepository repository;
         private readonly IMapper mapper;
@@ -13,24 +13,13 @@ namespace Mojo.Application.Features.Organisations.Handler.Command
             this.mapper = mapper;
         }
 
-        public async Task<BaseResponse> Handle(DeleteOrganisationCommand request, CancellationToken cancellationToken)
+        public async Task<Unit> Handle(DeleteOrganisationCommand request, CancellationToken cancellationToken)
         {
-            var response = new BaseResponse();
             var organisation = await repository.GetByIdAsync(request.Id);
-            if (organisation is null)
-            {
-                response.Succes = false;
-                response.Message = $"L'organisation avec Id: {request.Id} n'existe pas !";
-                return response;
-            }
-
+            if (organisation is null) throw new NotFoundException(nameof(Organisation), request.Id);
             await repository.DeleteAsync(request.Id);
 
-            response.Succes = true;
-            response.Message = $"L'organisation avec Id: {request.Id} est supprimé !";
-
-
-            return response;
+            return Unit.Value;
         }
     }
 }

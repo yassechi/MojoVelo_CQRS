@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+﻿using Mojo.Application.DTOs.EntitiesDto.Message.Validators;
 
 namespace Mojo.Application.Features.Messages.Handler.Command
 {
@@ -40,7 +40,6 @@ namespace Mojo.Application.Features.Messages.Handler.Command
             response.Id = request.dto.Id;
 
             var message = _mapper.Map<Message>(request.dto);
-            message.DateEnvoi = DateTime.Now; 
 
             await _repository.CreateAsync(message);
 

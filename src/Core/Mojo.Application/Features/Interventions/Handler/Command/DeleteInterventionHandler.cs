@@ -2,7 +2,7 @@
 
 namespace Mojo.Application.Features.Interventions.Handler.Command
 {
-    public class DeleteInterventionHandler : IRequestHandler<DeleteInterventionCommand, BaseResponse>
+    public class DeleteInterventionHandler : IRequestHandler<DeleteInterventionCommand, Unit>
     {
         private readonly IInterventionRepository repository;
         private readonly IMapper mapper;
@@ -13,23 +13,13 @@ namespace Mojo.Application.Features.Interventions.Handler.Command
             this.mapper = mapper;
         }
 
-        public async Task<BaseResponse> Handle(DeleteInterventionCommand request, CancellationToken cancellationToken)
+        public async Task<Unit> Handle(DeleteInterventionCommand request, CancellationToken cancellationToken)
         {
-            var response = new BaseResponse();
             var intervention = await repository.GetByIdAsync(request.Id);
-
-            if (intervention is null)
-            {
-                response.Succes = false;
-                response.Message = $"L'intervention avec Id: {request.Id} n'existe pas !";
-                return response;
-            }
+            if (intervention is null) throw new NotFoundException(nameof(Intervention), request.Id);
             await repository.DeleteAsync(request.Id);
 
-            response.Succes = true;
-            response.Message = $"L'intervention avec Id: {request.Id} est supprimé !";
-
-            return response;
+            return Unit.Value;
         }
     }
 }

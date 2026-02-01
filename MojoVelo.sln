@@ -27,7 +27,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mojo.API", "src\API\Mojo.AP
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "DB", "DB", "{38CA0D8B-DE60-4138-BB81-1FF2E32FD60F}"
 	ProjectSection(SolutionItems) = preProject
-		DropTables.sql = DropTables.sql
 		inserts.sql = inserts.sql
 	EndProjectSection
 EndProject

@@ -7,4 +7,3 @@ namespace Mojo.Application.Features.Amortissments.Request.Query
         public int Id { get; set; }
     }
 }
- 

@@ -1,5 +1,8 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Mojo.Domain.Entities;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace Mojo.Persistence.Repositories
 {
@@ -12,20 +15,11 @@ namespace Mojo.Persistence.Repositories
             this.db = db;
         }
 
-        // ✅ Méthode pour trouver un vélo par numéro de série
-        public async Task<Velo?> FindByNumeroSerieAsync(string numeroSerie)
-        {
-            return await db.Set<Velo>()
-                .FirstOrDefaultAsync(v => v.NumeroSerie == numeroSerie);
-        }
-
-        // ✅ Méthode pour vérifier si un numéro de série existe déjà
         public async Task<bool> NumeroSerieExists(string numeroSerie, int id)
         {
-            var velo = await db.Set<Velo>()
-                .FirstOrDefaultAsync(v => v.NumeroSerie == numeroSerie && v.Id != id);
-
+            var velo = await db.FindAsync<Velo>(numeroSerie);
             return velo != null;
         }
     }
 }
+ 

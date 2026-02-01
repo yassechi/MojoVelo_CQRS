@@ -1,6 +1,4 @@
-﻿using FluentValidation;
-
-namespace Mojo.Application.DTOs.EntitiesDto.Discussion.Validators
+﻿namespace Mojo.Application.DTOs.EntitiesDto.Discussion.Validators
 {
     public class DiscussionValidator : AbstractValidator<DiscussionDto>
     {
@@ -24,6 +22,9 @@ namespace Mojo.Application.DTOs.EntitiesDto.Discussion.Validators
                 .NotEmpty().WithMessage("L'objet de la discussion est obligatoire.")
                 .MaximumLength(100).WithMessage("L'objet ne doit pas dépasser 100 caractères.");
 
+            RuleFor(d => d.DateCreation)
+                .NotEmpty().WithMessage("La date de création est obligatoire.")
+                .LessThanOrEqualTo(DateTime.Now).WithMessage("La date de création ne peut pas être dans le futur.");
         }
     }
 }

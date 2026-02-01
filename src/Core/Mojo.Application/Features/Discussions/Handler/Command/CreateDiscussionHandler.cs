@@ -35,8 +35,6 @@ namespace Mojo.Application.Features.Discussion.Handler.Command
 
             var discussion = _mapper.Map<Mojo.Domain.Entities.Discussion>(request.dto);
 
-            discussion.DateCreation = DateTime.Now;
-
             await _repository.CreateAsync(discussion);
 
             return response;

@@ -2,7 +2,7 @@
 
 namespace Mojo.Application.Features.Velos.Handler.Command
 {
-    public class DeleteVeloHandler : IRequestHandler<DeleteVeloCommand, BaseResponse>
+    public class DeleteVeloHandler : IRequestHandler<DeleteVeloCommand, Unit>
     {
         private readonly IVeloRepository repository;
         private readonly IMapper mapper;
@@ -13,24 +13,14 @@ namespace Mojo.Application.Features.Velos.Handler.Command
             this.mapper = mapper;
         }
 
-        public async Task<BaseResponse> Handle(DeleteVeloCommand request, CancellationToken cancellationToken)
+        public async Task<Unit> Handle(DeleteVeloCommand request, CancellationToken cancellationToken)
         {
-            var response = new BaseResponse();
             var velo = await repository.GetByIdAsync(request.Id);
-            if (velo is null)
-            {
-                response.Succes = false;
-                response.Message = $"Le velo avec Id: {request.Id} n'existe pas !";
-                return response;
-            }
+            if (velo is null) throw new NotFoundException(nameof(Velo), request.Id);
 
             await repository.DeleteAsync(request.Id);
 
-            response.Succes = true;
-            response.Message = $"Le velo avec Id: {request.Id} est supprimé !";
-
-
-            return response;
+            return Unit.Value;
         }
     }
 }

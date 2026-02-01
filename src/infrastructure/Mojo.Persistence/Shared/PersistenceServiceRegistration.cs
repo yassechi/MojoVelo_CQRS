@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Mojo.Persistence.Repositories;
@@ -15,10 +14,6 @@ namespace Mojo.Persistence.Shared
             {
                 o.UseSqlServer(configuration.GetConnectionString("DefaultConnection"));
             });
-
-            services.AddIdentityCore<User>()
-                .AddRoles<IdentityRole>() // Ajoute le support des rôles
-                .AddEntityFrameworkStores<MDbContext>(); // Lie les rôles au store EF
 
             // Configure Services 
             services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));

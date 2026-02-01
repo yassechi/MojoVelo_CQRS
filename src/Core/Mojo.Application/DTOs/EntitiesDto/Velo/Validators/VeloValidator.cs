@@ -1,6 +1,4 @@
-﻿using FluentValidation;
-
-namespace Mojo.Application.DTOs.EntitiesDto.Velo.Validators
+﻿namespace Mojo.Application.DTOs.EntitiesDto.Velo.Validators
 {
     public class VeloValidator : AbstractValidator<VeloDto>
     {
@@ -10,17 +8,12 @@ namespace Mojo.Application.DTOs.EntitiesDto.Velo.Validators
         {
             _veloRepository = veloRepository;
 
-            // ✅ RÈGLES POUR LA MISE À JOUR UNIQUEMENT
-            RuleSet("Update", () =>
-            {
-                RuleFor(v => v.Id)
-                    .NotEmpty().WithMessage("L'identifiant est obligatoire.")
-                    .GreaterThan(0).WithMessage("L'identifiant doit être supérieur à 0.")
-                    .MustAsync(async (id, token) => await _veloRepository.Exists(id))
-                    .WithMessage("Le vélo avec cet identifiant n'existe pas.");
-            });
+            RuleFor(v => v.Id)
+                .NotEmpty().WithMessage("L'identifiant est obligatoire.")
+                .GreaterThan(0).WithMessage("L'identifiant doit être supérieur à 0.")
+                .MustAsync(async (id, token) => await _veloRepository.Exists(id))
+                .WithMessage("Le vélo avec cet identifiant n'existe pas.");
 
-            // ✅ RÈGLES COMMUNES (CREATE ET UPDATE)
             RuleFor(v => v.NumeroSerie)
                 .NotEmpty().WithMessage("Le numéro de série est obligatoire.")
                 .MaximumLength(50).WithMessage("Le numéro de série ne doit pas dépasser 50 caractères.")

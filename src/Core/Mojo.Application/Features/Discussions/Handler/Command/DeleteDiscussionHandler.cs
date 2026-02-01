@@ -2,7 +2,7 @@
 
 namespace Mojo.Application.Features.Discussions.Handler.Command
 {
-    public class DeleteDiscussionHandler : IRequestHandler<DeleteDiscussionCommand, BaseResponse>
+    public class DeleteDiscussionHandler : IRequestHandler<DeleteDiscussionCommand, Unit>
     {
         private readonly IDiscussionRepository repository;
         private readonly IMapper mapper;
@@ -13,23 +13,13 @@ namespace Mojo.Application.Features.Discussions.Handler.Command
             this.mapper = mapper;
         }
 
-        public async Task<BaseResponse> Handle(DeleteDiscussionCommand request, CancellationToken cancellationToken)
+        public async Task<Unit> Handle(DeleteDiscussionCommand request, CancellationToken cancellationToken)
         {
-            var response = new BaseResponse();
             var discussion = await repository.GetByIdAsync(request.Id);
-            if (discussion is null)
-            {
-                response.Succes = false;
-                response.Message = $"La discussion avec Id: {request.Id} n'existe pas !";
-                return response;
-            }
+            if (discussion is null) throw new NotFoundException(nameof(Mojo.Domain.Entities.Discussion), request.Id);
 
             await repository.DeleteAsync(request.Id);
-
-            response.Succes = true;
-            response.Message = $"La discussion avec Id: {request.Id} est supprimé !";
-
-            return response;
+            return Unit.Value;
         }
     }
 }

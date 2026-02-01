@@ -19,22 +19,22 @@ namespace Mojo.Application.Features.Amortissments.Handler.Command
 
         {
             var response = new BaseResponse();
-            var validator = new AmortissementValidator(_veloRepository, _repository);
-            var res = await validator.ValidateAsync(request.AmortissmentDto);
+            var validator = new AmortissementValidator(_veloRepository);
+            var res = await validator.ValidateAsync(request.amortissmentDto, cancellationToken);
 
             if (res.IsValid == false)
             {
                 response.Succes = false;
                 response.Message = "Echec de creation !";
                 response.Errors = res.Errors.Select(e => e.ErrorMessage).ToList();
-                return response;
+                throw new Exception("La validation de l'amortissement a échoué.");
             }
 
             response.Succes = true;
             response.Message = "création ok.. ";
-            response.Id = request.AmortissmentDto.Id;
+            response.Id = request.amortissmentDto.Id;
 
-            var amortissement = _mapper.Map<Amortissement>(request.AmortissmentDto);
+            var amortissement = _mapper.Map<Amortissement>(request.amortissmentDto);
 
             await _repository.CreateAsync(amortissement);
 
