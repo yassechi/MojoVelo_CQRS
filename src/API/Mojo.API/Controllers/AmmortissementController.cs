@@ -1,9 +1,12 @@
 ﻿using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Mojo.API.Attributes;
 using Mojo.Application.DTOs.EntitiesDto.Amortissement;
 using Mojo.Application.Exceptions;
 using Mojo.Application.Features.Amortissments.Request.Command;
 using Mojo.Application.Features.Amortissments.Request.Query;
+using Mojo.Domain.Enums;
 
 namespace Mojo.API.Controllers
 {
@@ -19,6 +22,7 @@ namespace Mojo.API.Controllers
         }
 
         [HttpGet("get-all")]
+        [AuthorizeRole(UserRole.Admin)]
         public async Task<IActionResult> Get()
         {
             var amortissements = await _mediator.Send(new GetAllAmortissementRequest());

@@ -1,9 +1,5 @@
-﻿using Mojo.Application.DTOs.Identity;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using MediatR;
+using Mojo.Application.DTOs.Identity;
 
 namespace Mojo.Application.Features.Identity.Requests.Commands
 {

@@ -3,20 +3,24 @@ using Mojo.Application.DTOs.Identity;
 using Mojo.Application.Features.Identity.Requests.Commands;
 using Mojo.Application.Persistance.Contracts.Identity;
 
-namespace Mojo.Application.Features.Identity.Handlers.Commands;
-
-public class LoginCommandHandler : IRequestHandler<LoginCommand, AuthResponse>
+namespace Mojo.Application.Features.Identity.Handlers.Commands
 {
-    private readonly IAuthService _authService;
-
-    public LoginCommandHandler(IAuthService authService)
+    public class LoginCommandHandler : IRequestHandler<LoginCommand, AuthResponse>
     {
-        _authService = authService;
-    }
+        private readonly IAuthService _authService;
 
-    public async Task<AuthResponse> Handle(LoginCommand request, CancellationToken cancellationToken)
-    {
-        // On appelle le service d'authentification qu'on implémentera dans Persistence
-        return await _authService.Login(request.Email, request.Password);
+        public LoginCommandHandler(IAuthService authService)
+        {
+            _authService = authService;
+        }
+
+        public async Task<AuthResponse> Handle(LoginCommand request, CancellationToken cancellationToken)
+        {
+            return await _authService.Login(new LoginRequest
+            {
+                Email = request.Email,
+                Password = request.Password
+            });
+        }
     }
 }

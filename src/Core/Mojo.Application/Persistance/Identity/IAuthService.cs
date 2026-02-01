@@ -1,7 +1,9 @@
 ﻿using Mojo.Application.DTOs.Identity;
-namespace Mojo.Application.Persistance.Contracts.Identity;
 
-public interface IAuthService
+namespace Mojo.Application.Persistance.Contracts.Identity
 {
-    Task<AuthResponse> Login(string email, string password);
+    public interface IAuthService
+    {
+        Task<AuthResponse> Login(LoginRequest request);
+    }
 }

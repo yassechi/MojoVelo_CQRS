@@ -1,42 +1,97 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
-using Mojo.Application.Model;
+using Microsoft.OpenApi.Models;
 using Mojo.Application.Shared;
+using Mojo.Application.Model;
+using Mojo.Domain.Entities;
+using Mojo.Infrastructure;
 using Mojo.Infrastructure.Shared;
+using Mojo.Persistence;
+using Mojo.Persistence.DatabaseContext;
 using Mojo.Persistence.Shared;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// 1. Services des couches
+builder.Services.Configure<JwtSettings>(builder.Configuration.GetSection("JwtSettings"));
+builder.Services.ConfigureApplicationService();
 builder.Services.ConfigurePersistenceService(builder.Configuration);
 builder.Services.ConfigureInfrastructureService(builder.Configuration);
-builder.Services.ConfigureApplicationService();
 
-builder.Services.Configure<JwtSettings>(builder.Configuration.GetSection("JwtSettings"));
+// 2. Identity (Configuration UNIQUE pour éviter l'erreur de Scheme)
+builder.Services.AddIdentity<User, IdentityRole>(options =>
+{
+    options.Password.RequireDigit = true;
+    options.Password.RequiredLength = 8;
+    options.Password.RequireNonAlphanumeric = true;
+    options.Password.RequireUppercase = true;
+    options.Password.RequireLowercase = true;
+})
+.AddEntityFrameworkStores<MDbContext>()
+.AddDefaultTokenProviders();
 
-builder.Services.AddAuthentication(options => {
+// 3. JWT Authentication
+var jwtSettings = builder.Configuration.GetSection("JwtSettings");
+var key = Encoding.UTF8.GetBytes(jwtSettings["Key"] ?? "Cle_Secrete_Par_Defaut_32_Caracteres");
+
+builder.Services.AddAuthentication(options =>
+{
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
     options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-}).AddJwtBearer(o => {
-    o.TokenValidationParameters = new TokenValidationParameters
+    options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+.AddJwtBearer(options =>
+{
+    options.SaveToken = true;
+    options.RequireHttpsMetadata = false;
+    options.TokenValidationParameters = new TokenValidationParameters
     {
         ValidateIssuerSigningKey = true,
+        IssuerSigningKey = new SymmetricSecurityKey(key),
         ValidateIssuer = true,
+        ValidIssuer = jwtSettings["Issuer"],
         ValidateAudience = true,
+        ValidAudience = jwtSettings["Audience"],
         ValidateLifetime = true,
-        ClockSkew = TimeSpan.Zero,
-        ValidIssuer = builder.Configuration["JwtSettings:Issuer"],
-        ValidAudience = builder.Configuration["JwtSettings:Audience"],
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JwtSettings:Key"] ?? "CleDeSecuriteTresLongueDe32Caracteres"))
+        ClockSkew = TimeSpan.Zero
     };
 });
 
+builder.Services.AddAuthorization();
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
 
-builder.Services.AddCors(o => {
-    o.AddPolicy("CorsPolicy", p => p.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin());
+builder.Services.AddSwaggerGen(c =>
+{
+    c.SwaggerDoc("v1", new OpenApiInfo { Title = "MojoVelo API", Version = "v1" });
+    c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        Description = "JWT Authorization header using the Bearer scheme.",
+        Name = "Authorization",
+        In = ParameterLocation.Header,
+        Type = SecuritySchemeType.ApiKey,
+        Scheme = "Bearer"
+    });
+    c.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference { Type = ReferenceType.SecurityScheme, Id = "Bearer" }
+            },
+            new string[] {}
+        }
+    });
+});
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAll", policy =>
+    {
+        policy.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
+    });
 });
 
 var app = builder.Build();
@@ -47,10 +102,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
-app.UseCors("CorsPolicy");
+app.UseCors("AllowAll");
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
-
 app.Run();
