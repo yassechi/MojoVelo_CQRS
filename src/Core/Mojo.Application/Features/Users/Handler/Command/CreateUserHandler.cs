@@ -9,53 +9,55 @@ namespace Mojo.Application.Features.Users.Handler.Command
         private readonly IUserRepository _repository;
         private readonly IMapper _mapper;
         private readonly IOrganisationRepository _organisationRepository;
-        private readonly IEmailSender emailSender;
+        private readonly IEmailSender _emailSender;
 
         public CreateUserHandler(IUserRepository repository, IMapper mapper, IOrganisationRepository organisationRepository, IEmailSender emailSender)
         {
             _repository = repository;
             _mapper = mapper;
             _organisationRepository = organisationRepository;
-            this.emailSender = emailSender;
+            _emailSender = emailSender;
         }
 
         public async Task<BaseResponse> Handle(CreateUserCommand request, CancellationToken cancellationToken)
         {
             var response = new BaseResponse();
-            var validator = new UserValidator(_organisationRepository);
-            var res = await validator.ValidateAsync(request.dto, cancellationToken);
 
-            if (!res.IsValid)
+            var validator = new UserValidator(_organisationRepository);
+            var validationResult = await validator.ValidateAsync(request.dto, options =>
+            {
+                options.IncludeRuleSets("Create");
+            }, cancellationToken);
+
+            if (!validationResult.IsValid)
             {
                 response.Succes = false;
-                response.Message = "Echec de la création de l'utilsateur !";
-                response.Errors = res.Errors.Select(e => e.ErrorMessage).ToList();
+                response.Message = "Echec de la création de l'utilisateur : erreurs de validation.";
+                response.Errors = validationResult.Errors.Select(e => e.ErrorMessage).ToList();
+                return response;
             }
 
-            response.Succes = true;
-            response.Message = "Création de l'utilisateur avec succès..";
-            response.StrId = request.dto.Id;
-
             var user = _mapper.Map<User>(request.dto);
-
             await _repository.CreateAsync(user);
 
-            // Send Email New User
             try
             {
                 var email = new EmailMessage
                 {
-                    To = "yassechi@gmail.com",
-                    Subject = "test send mail Succes !",
-                    Body = "the User is benn added succefuly this is a body from message ..."
+                    To = user.Email,
+                    Subject = "Bienvenue sur MojoVelo",
+                    Body = $"Bonjour {user.FirstName} {user.LastName},\n\nVotre compte a été créé avec succès.\n\nCordialement,\nL'équipe MojoVelo"
                 };
-                await emailSender.SendEmail(email);
-
-
-            } catch (Exception)
-            {
-                throw;
+                await _emailSender.SendEmail(email);
             }
+            catch (Exception ex)
+            {
+                response.Errors.Add($"Avertissement : L'utilisateur a été créé mais l'email de bienvenue n'a pas pu être envoyé. Erreur : {ex.Message}");
+            }
+
+            response.Succes = true;
+            response.Message = "L'utilisateur a été créé avec succès.";
+            response.StrId = user.Id;
 
             return response;
         }

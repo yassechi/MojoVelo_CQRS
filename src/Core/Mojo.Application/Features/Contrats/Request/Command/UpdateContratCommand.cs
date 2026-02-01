@@ -2,7 +2,7 @@
 
 namespace Mojo.Application.Features.Contrats.Request.Command
 {
-    public class UpdateContratCommand : IRequest<Unit>
+    public class UpdateContratCommand : IRequest<BaseResponse>
     {
         public ContratDto dto { get; set; }
     }

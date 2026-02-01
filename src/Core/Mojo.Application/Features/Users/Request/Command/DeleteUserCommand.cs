@@ -1,7 +1,7 @@
 ﻿namespace Mojo.Application.Features.Users.Request.Command
 {
-    public class DeleteUserCommand : IRequest<Unit>
+    public class DeleteUserCommand : IRequest<BaseResponse>
     {
-        public int Id { get; set; }
+        public string Id { get; set; }
     }
 }

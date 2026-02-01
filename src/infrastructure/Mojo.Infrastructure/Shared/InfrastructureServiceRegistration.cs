@@ -1,7 +1,9 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Configuration;
-using Mojo.Infrastructure.Email;
+﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Mojo.Application.Persistance.Contracts.Identity;
 using Mojo.Application.Persistance.Emails;
+using Mojo.Infrastructure.Email;
+using Mojo.Infrastructure.Services;  // ← CHANGÉ ICI
 
 namespace Mojo.Infrastructure.Shared
 {
@@ -11,6 +13,7 @@ namespace Mojo.Infrastructure.Shared
         {
             services.Configure<EmailSender>(configuration.GetSection("EmailSettings"));
             services.AddTransient<IEmailSender, EmailSender>();
+            services.AddScoped<IAuthService, AuthService>();
         }
     }
-} 
+}

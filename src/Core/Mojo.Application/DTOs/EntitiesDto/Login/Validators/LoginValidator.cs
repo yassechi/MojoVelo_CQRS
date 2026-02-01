@@ -5,10 +5,12 @@
         public LoginDtoValidator()
         {
             RuleFor(p => p.UserName)
-                .NotEmpty().WithMessage("Le nom d'utilisateur est requis.");
+                .NotEmpty()
+                .WithMessage("Le nom d'utilisateur est requis.");
 
             RuleFor(p => p.Password)
-                .NotEmpty().WithMessage("Le mot de passe est requis.");
+                .NotEmpty()
+                .WithMessage("Le mot de passe est requis.");
         }
     }
 }

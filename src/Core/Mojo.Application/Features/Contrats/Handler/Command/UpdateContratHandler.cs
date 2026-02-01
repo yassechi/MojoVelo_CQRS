@@ -1,8 +1,11 @@
 ﻿using Mojo.Application.DTOs.EntitiesDto.Contrat.Validators;
+using MediatR;
+using AutoMapper;
+using Mojo.Application.DTOs.Common;
 
 namespace Mojo.Application.Features.Contrats.Handler.Command
 {
-    public class UpdateContratHandler : IRequestHandler<UpdateContratCommand, Unit>
+    public class UpdateContratHandler : IRequestHandler<UpdateContratCommand, BaseResponse>
     {
         private readonly IContratRepository _repository;
         private readonly IMapper _mapper;
@@ -17,21 +20,42 @@ namespace Mojo.Application.Features.Contrats.Handler.Command
             _userRepository = userRepository;
         }
 
-        public async Task<Unit> Handle(UpdateContratCommand request, CancellationToken cancellationToken)
+        public async Task<BaseResponse> Handle(UpdateContratCommand request, CancellationToken cancellationToken)
         {
+            var response = new BaseResponse();
             var validator = new ContratValidator(_veloRepository, _userRepository);
 
-            var res = await validator.ValidateAsync(request.dto, cancellationToken);
-            if (res.IsValid == false) throw new Exceptions.ValidationException(res);
+            var validationResult = await validator.ValidateAsync(request.dto, options =>
+            {
+                options.IncludeRuleSets("default", "Update");  // ← CORRECTION ICI !
+            }, cancellationToken);
+
+            if (!validationResult.IsValid)
+            {
+                response.Succes = false;
+                response.Message = "Echec de la modification du contrat : erreurs de validation.";
+                response.Errors = validationResult.Errors.Select(e => e.ErrorMessage).ToList();
+                return response;
+            }
 
             var oldContrat = await _repository.GetByIdAsync(request.dto.Id);
-            if (oldContrat == null) throw new Exception("Contrat introuvable.");
+
+            if (oldContrat == null)
+            {
+                response.Succes = false;
+                response.Message = "Echec de la modification du contrat.";
+                response.Errors.Add($"Aucun contrat trouvé avec l'Id {request.dto.Id}.");
+                return response;
+            }
 
             _mapper.Map(request.dto, oldContrat);
-
             await _repository.UpadteAsync(oldContrat);
 
-            return Unit.Value;
+            response.Succes = true;
+            response.Message = "Le contrat a été modifié avec succès.";
+            response.Id = oldContrat.Id;
+
+            return response;
         }
     }
 }

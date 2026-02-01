@@ -2,7 +2,7 @@
 
 namespace Mojo.Application.Features.Organisations.Request.Command
 {
-    public class UpdateOrganisationCommand : IRequest<Unit>
+    public class UpdateOrganisationCommand : IRequest<BaseResponse>
     {
         public OrganisationDto dto { get; set; }
     }

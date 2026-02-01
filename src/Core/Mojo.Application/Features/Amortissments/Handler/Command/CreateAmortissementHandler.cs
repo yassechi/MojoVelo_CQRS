@@ -15,32 +15,32 @@ namespace Mojo.Application.Features.Amortissments.Handler.Command
             _veloRepository = veloRepository;
         }
 
-        async Task<BaseResponse> IRequestHandler<CreateAmortissementCommand, BaseResponse>.Handle(CreateAmortissementCommand request, CancellationToken cancellationToken)
-
+        public async Task<BaseResponse> Handle(CreateAmortissementCommand request, CancellationToken cancellationToken)
         {
             var response = new BaseResponse();
-            var validator = new AmortissementValidator(_veloRepository);
-            var res = await validator.ValidateAsync(request.amortissmentDto, cancellationToken);
 
-            if (res.IsValid == false)
+            var validator = new AmortissementValidator(_veloRepository);
+            var validationResult = await validator.ValidateAsync(request.amortissmentDto, options =>
+            {
+                options.IncludeRuleSets("Create");
+            }, cancellationToken);
+
+            if (!validationResult.IsValid)
             {
                 response.Succes = false;
-                response.Message = "Echec de creation !";
-                response.Errors = res.Errors.Select(e => e.ErrorMessage).ToList();
-                throw new Exception("La validation de l'amortissement a échoué.");
+                response.Message = "Echec de la création de l'amortissement : erreurs de validation.";
+                response.Errors = validationResult.Errors.Select(e => e.ErrorMessage).ToList();
+                return response;
             }
 
-            response.Succes = true;
-            response.Message = "création ok.. ";
-            response.Id = request.amortissmentDto.Id;
-
             var amortissement = _mapper.Map<Amortissement>(request.amortissmentDto);
-
             await _repository.CreateAsync(amortissement);
+
+            response.Succes = true;
+            response.Message = "L'amortissement a été créé avec succès.";
+            response.Id = amortissement.Id;
 
             return response;
         }
-
-
     }
 }

@@ -2,7 +2,7 @@
 
 namespace Mojo.Application.Features.Users.Handler.Command
 {
-    public class UpdateUserHandler : IRequestHandler<UpdateUserCommand, Unit>
+    public class UpdateUserHandler : IRequestHandler<UpdateUserCommand, BaseResponse>
     {
         private readonly IUserRepository _repository;
         private readonly IMapper _mapper;
@@ -15,21 +15,42 @@ namespace Mojo.Application.Features.Users.Handler.Command
             _organisationRepository = organisationRepository;
         }
 
-        public async Task<Unit> Handle(UpdateUserCommand request, CancellationToken cancellationToken)
+        public async Task<BaseResponse> Handle(UpdateUserCommand request, CancellationToken cancellationToken)
         {
-            var validator = new UserValidator(_organisationRepository);
+            var response = new BaseResponse();
 
-            var res = await validator.ValidateAsync(request.dto, cancellationToken);
-            if (res.IsValid == false) throw new Exceptions.ValidationException(res);
+            var validator = new UserValidator(_organisationRepository);
+            var validationResult = await validator.ValidateAsync(request.dto, options =>
+            {
+                options.IncludeRuleSets("Update");
+            }, cancellationToken);
+
+            if (!validationResult.IsValid)
+            {
+                response.Succes = false;
+                response.Message = "Echec de la modification de l'utilisateur : erreurs de validation.";
+                response.Errors = validationResult.Errors.Select(e => e.ErrorMessage).ToList();
+                return response;
+            }
 
             var oldUser = await _repository.GetUserByStringId(request.dto.Id);
-            if (oldUser == null) throw new Exception("Utilisateur introuvable.");
+
+            if (oldUser == null)
+            {
+                response.Succes = false;
+                response.Message = "Echec de la modification de l'utilisateur.";
+                response.Errors.Add($"Aucun utilisateur trouvé avec l'Id {request.dto.Id}.");
+                return response;
+            }
 
             _mapper.Map(request.dto, oldUser);
-
             await _repository.UpadteAsync(oldUser);
 
-            return Unit.Value;
+            response.Succes = true;
+            response.Message = "L'utilisateur a été modifié avec succès.";
+            response.StrId = oldUser.Id;
+
+            return response;
         }
     }
 }

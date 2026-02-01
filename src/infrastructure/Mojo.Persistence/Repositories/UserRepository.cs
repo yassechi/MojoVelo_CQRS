@@ -8,24 +8,33 @@ namespace Mojo.Persistence.Repositories
 {
     public class UserRepository : GenericRepository<User>, IUserRepository
     {
-        private readonly MDbContext db;
+        private readonly MDbContext _db;
 
         public UserRepository(MDbContext db) : base(db)
         {
-            this.db = db;
+            _db = db;
+        }
+
+        public async Task DeleteByStringId(string id)
+        {
+            var user = await _db.Users.FindAsync(id);
+            if (user != null)
+            {
+                _db.Users.Remove(user);
+                await _db.SaveChangesAsync();
+            }
         }
 
         public async Task<User> GetUserByStringId(string id)
         {
-            var user = await db.FindAsync<User>(id);
+            var user = await _db.Users.FindAsync(id);
             return user;
         }
 
         public async Task<bool> UserExists(string id)
         {
-            var user = await db.FindAsync<User>(id);
+            var user = await _db.Users.FindAsync(id);
             return user != null;
-
         }
     }
 }

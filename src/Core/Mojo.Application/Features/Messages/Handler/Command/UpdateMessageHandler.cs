@@ -2,7 +2,7 @@
 
 namespace Mojo.Application.Features.Messages.Handler.Command
 {
-    public class UpdateMessageHandler : IRequestHandler<UpdateMessageCommand, Unit>
+    public class UpdateMessageHandler : IRequestHandler<UpdateMessageCommand, BaseResponse>
     {
         private readonly IMessageRepository _repository;
         private readonly IMapper _mapper;
@@ -21,21 +21,42 @@ namespace Mojo.Application.Features.Messages.Handler.Command
             _discussionRepository = discussionRepository;
         }
 
-        public async Task<Unit> Handle(UpdateMessageCommand request, CancellationToken cancellationToken)
+        public async Task<BaseResponse> Handle(UpdateMessageCommand request, CancellationToken cancellationToken)
         {
-            var validator = new MessageValidator(_userRepository, _discussionRepository);
+            var response = new BaseResponse();
 
-            var res = await validator.ValidateAsync(request.dto, cancellationToken);
-            if (res.IsValid == false) throw new Exceptions.ValidationException(res);
+            var validator = new MessageValidator(_userRepository, _discussionRepository);
+            var validationResult = await validator.ValidateAsync(request.dto, options =>
+            {
+                options.IncludeRuleSets("Update");
+            }, cancellationToken);
+
+            if (!validationResult.IsValid)
+            {
+                response.Succes = false;
+                response.Message = "Echec de la modification du message : erreurs de validation.";
+                response.Errors = validationResult.Errors.Select(e => e.ErrorMessage).ToList();
+                return response;
+            }
 
             var oldMessage = await _repository.GetByIdAsync(request.dto.Id);
-            if (oldMessage == null) throw new Exception("Message introuvable.");
+
+            if (oldMessage == null)
+            {
+                response.Succes = false;
+                response.Message = "Echec de la modification du message.";
+                response.Errors.Add($"Aucun message trouvé avec l'Id {request.dto.Id}.");
+                return response;
+            }
 
             _mapper.Map(request.dto, oldMessage);
-
             await _repository.UpadteAsync(oldMessage);
 
-            return Unit.Value;
+            response.Succes = true;
+            response.Message = "Le message a été modifié avec succès.";
+            response.Id = oldMessage.Id;
+
+            return response;
         }
     }
 }

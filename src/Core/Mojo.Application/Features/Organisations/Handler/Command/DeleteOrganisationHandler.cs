@@ -2,24 +2,41 @@
 
 namespace Mojo.Application.Features.Organisations.Handler.Command
 {
-    public class DeleteOrganisationHandler : IRequestHandler<DeleteOrganisationCommand, Unit>
+    public class DeleteOrganisationHandler : IRequestHandler<DeleteOrganisationCommand, BaseResponse>
     {
-        private readonly IOrganisationRepository repository;
-        private readonly IMapper mapper;
+        private readonly IOrganisationRepository _repository;
+        private readonly IMapper _mapper;
 
         public DeleteOrganisationHandler(IOrganisationRepository repository, IMapper mapper)
         {
-            this.repository = repository;
-            this.mapper = mapper;
+            _repository = repository;
+            _mapper = mapper;
         }
 
-        public async Task<Unit> Handle(DeleteOrganisationCommand request, CancellationToken cancellationToken)
+        public async Task<BaseResponse> Handle(DeleteOrganisationCommand request, CancellationToken cancellationToken)
         {
-            var organisation = await repository.GetByIdAsync(request.Id);
-            if (organisation is null) throw new NotFoundException(nameof(Organisation), request.Id);
-            await repository.DeleteAsync(request.Id);
+            var response = new BaseResponse();
 
-            return Unit.Value;
+            // Vérifier si l'entité existe
+            var organisation = await _repository.GetByIdAsync(request.Id);
+
+            if (organisation == null)
+            {
+                response.Succes = false;
+                response.Message = "Echec de la suppression de l'organisation.";
+                response.Errors.Add($"Aucune organisation trouvée avec l'Id {request.Id}.");
+                return response;
+            }
+
+            // Suppression
+            await _repository.DeleteAsync(request.Id);
+
+            // Succès
+            response.Succes = true;
+            response.Message = "L'organisation a été supprimée avec succès.";
+            response.Id = request.Id;
+
+            return response;
         }
     }
 }

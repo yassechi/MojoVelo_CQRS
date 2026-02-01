@@ -2,7 +2,7 @@
 
 namespace Mojo.Application.Features.Discussion.Handler.Command
 {
-    public class UpdateDiscussionHandler : IRequestHandler<UpdateDiscussionCommand, Unit>
+    public class UpdateDiscussionHandler : IRequestHandler<UpdateDiscussionCommand, BaseResponse>
     {
         private readonly IDiscussionRepository _repository;
         private readonly IMapper _mapper;
@@ -15,21 +15,42 @@ namespace Mojo.Application.Features.Discussion.Handler.Command
             _userRepository = userRepository;
         }
 
-        public async Task<Unit> Handle(UpdateDiscussionCommand request, CancellationToken cancellationToken)
+        public async Task<BaseResponse> Handle(UpdateDiscussionCommand request, CancellationToken cancellationToken)
         {
-            var validator = new DiscussionValidator(_userRepository);
+            var response = new BaseResponse();
 
-            var res = await validator.ValidateAsync(request.dto, cancellationToken);
-            if (res.IsValid == false) throw new Exceptions.ValidationException(res);
+            var validator = new DiscussionValidator(_userRepository);
+            var validationResult = await validator.ValidateAsync(request.dto, options =>
+            {
+                options.IncludeRuleSets("Update");
+            }, cancellationToken);
+
+            if (!validationResult.IsValid)
+            {
+                response.Succes = false;
+                response.Message = "Echec de la modification de la discussion : erreurs de validation.";
+                response.Errors = validationResult.Errors.Select(e => e.ErrorMessage).ToList();
+                return response;
+            }
 
             var oldDiscussion = await _repository.GetByIdAsync(request.dto.Id);
-            if (oldDiscussion == null) throw new Exception("Discussion introuvable.");
+
+            if (oldDiscussion == null)
+            {
+                response.Succes = false;
+                response.Message = "Echec de la modification de la discussion.";
+                response.Errors.Add($"Aucune discussion trouvée avec l'Id {request.dto.Id}.");
+                return response;
+            }
 
             _mapper.Map(request.dto, oldDiscussion);
-
             await _repository.UpadteAsync(oldDiscussion);
 
-            return Unit.Value;
+            response.Succes = true;
+            response.Message = "La discussion a été modifiée avec succès.";
+            response.Id = oldDiscussion.Id;
+
+            return response;
         }
     }
 }

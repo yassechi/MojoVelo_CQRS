@@ -4,33 +4,40 @@ namespace Mojo.Application.Features.Organisations.Handler.Command
 {
     public class CreateOrganisationHandler : IRequestHandler<CreateOrganisationCommand, BaseResponse>
     {
-        private readonly IOrganisationRepository repository;
-        private readonly IMapper mapper;
+        private readonly IOrganisationRepository _repository;
+        private readonly IMapper _mapper;
 
         public CreateOrganisationHandler(IOrganisationRepository repository, IMapper mapper)
         {
-            this.repository = repository;
-            this.mapper = mapper;
+            _repository = repository;
+            _mapper = mapper;
         }
 
         public async Task<BaseResponse> Handle(CreateOrganisationCommand request, CancellationToken cancellationToken)
         {
             var response = new BaseResponse();
+
             var validator = new OrganisationValidator();
-            var res = await validator.ValidateAsync(request.dto);
-            if (!res.IsValid)
+            var validationResult = await validator.ValidateAsync(request.dto, options =>
+            {
+                options.IncludeRuleSets("Create");
+            }, cancellationToken);
+
+            if (!validationResult.IsValid)
             {
                 response.Succes = false;
-                response.Message = "Echec de la création de l'organisation !";
-                response.Errors = res.Errors.Select(e => e.ErrorMessage).ToList();
+                response.Message = "Echec de la création de l'organisation : erreurs de validation.";
+                response.Errors = validationResult.Errors.Select(e => e.ErrorMessage).ToList();
+                return response;
             }
 
+            var organisation = _mapper.Map<Organisation>(request.dto);
+            await _repository.CreateAsync(organisation);
+
             response.Succes = true;
-            response.Message = "Création de l'organisation avec succès..";
-            response.Id = request.dto.Id;
-        
-            var organisation = mapper.Map<Organisation>(request.dto);
-            await repository.CreateAsync(organisation);
+            response.Message = "L'organisation a été créée avec succès.";
+            response.Id = organisation.Id;
+
             return response;
         }
     }

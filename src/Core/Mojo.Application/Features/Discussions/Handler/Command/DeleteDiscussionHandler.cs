@@ -2,24 +2,41 @@
 
 namespace Mojo.Application.Features.Discussions.Handler.Command
 {
-    public class DeleteDiscussionHandler : IRequestHandler<DeleteDiscussionCommand, Unit>
+    public class DeleteDiscussionHandler : IRequestHandler<DeleteDiscussionCommand, BaseResponse>
     {
-        private readonly IDiscussionRepository repository;
-        private readonly IMapper mapper;
+        private readonly IDiscussionRepository _repository;
+        private readonly IMapper _mapper;
 
         public DeleteDiscussionHandler(IDiscussionRepository repository, IMapper mapper)
         {
-            this.repository = repository;
-            this.mapper = mapper;
+            _repository = repository;
+            _mapper = mapper;
         }
 
-        public async Task<Unit> Handle(DeleteDiscussionCommand request, CancellationToken cancellationToken)
+        public async Task<BaseResponse> Handle(DeleteDiscussionCommand request, CancellationToken cancellationToken)
         {
-            var discussion = await repository.GetByIdAsync(request.Id);
-            if (discussion is null) throw new NotFoundException(nameof(Mojo.Domain.Entities.Discussion), request.Id);
+            var response = new BaseResponse();
 
-            await repository.DeleteAsync(request.Id);
-            return Unit.Value;
+            // Vérifier si l'entité existe
+            var discussion = await _repository.GetByIdAsync(request.Id);
+
+            if (discussion == null)
+            {
+                response.Succes = false;
+                response.Message = "Echec de la suppression de la discussion.";
+                response.Errors.Add($"Aucune discussion trouvée avec l'Id {request.Id}.");
+                return response;
+            }
+
+            // Suppression
+            await _repository.DeleteAsync(request.Id);
+
+            // Succès
+            response.Succes = true;
+            response.Message = "La discussion a été supprimée avec succès.";
+            response.Id = request.Id;
+
+            return response;
         }
     }
 }

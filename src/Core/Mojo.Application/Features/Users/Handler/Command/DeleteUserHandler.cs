@@ -2,24 +2,41 @@
 
 namespace Mojo.Application.Features.Users.Handler.Command
 {
-    public class DeleteUserHandler : IRequestHandler<DeleteUserCommand, Unit>
+    public class DeleteUserHandler : IRequestHandler<DeleteUserCommand, BaseResponse>
     {
-        private readonly IUserRepository repository;
-        private readonly IMapper mapper;
+        private readonly IUserRepository _repository;
+        private readonly IMapper _mapper;
 
         public DeleteUserHandler(IUserRepository repository, IMapper mapper)
         {
-            this.repository = repository;
-            this.mapper = mapper;
+            _repository = repository;
+            _mapper = mapper;
         }
 
-        public async Task<Unit> Handle(DeleteUserCommand request, CancellationToken cancellationToken)
+        public async Task<BaseResponse> Handle(DeleteUserCommand request, CancellationToken cancellationToken)
         {
-            var user = await repository.GetByIdAsync(request.Id);
-            if (user is null) throw new NotFoundException(nameof(User), request.Id);
-            await repository.DeleteAsync(request.Id);
+            var response = new BaseResponse();
 
-            return Unit.Value;
+            // Vérifier si l'entité existe (utiliser GetUserByStringId pour les ID string)
+            var user = await _repository.GetUserByStringId(request.Id);
+
+            if (user == null)
+            {
+                response.Succes = false;
+                response.Message = "Echec de la suppression de l'utilisateur.";
+                response.Errors.Add($"Aucun utilisateur trouvé avec l'Id {request.Id}.");
+                return response;
+            }
+
+            // Suppression
+            await _repository.DeleteByStringId(request.Id);
+
+            // Succès
+            response.Succes = true;
+            response.Message = "L'utilisateur a été supprimé avec succès.";
+            response.StrId = request.Id;
+
+            return response;
         }
     }
 }

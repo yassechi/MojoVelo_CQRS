@@ -9,22 +9,45 @@
             _userRepository = userRepository;
 
             RuleFor(d => d.MojoId)
-                .NotEmpty().WithMessage("L'identifiant Mojo est obligatoire.")
-                .MustAsync(async (id, token) => await _userRepository.UserExists(id))
-                .WithMessage("L'utilisateur Mojo spécifié n'existe pas.");
+                .NotEmpty()
+                .WithMessage("{PropertyName} est requis.")
+                .MustAsync(async (mojoId, cancellationToken) =>
+                {
+                    return await _userRepository.UserExists(mojoId);
+                })
+                .WithMessage("L'utilisateur Mojo avec l'Id {PropertyValue} n'existe pas.");
 
             RuleFor(d => d.ClientId)
-                .NotEmpty().WithMessage("L'identifiant du client est obligatoire.")
-                .MustAsync(async (id, token) => await _userRepository.UserExists(id))
-                .WithMessage("Le client spécifié n'existe pas.");
+                .NotEmpty()
+                .WithMessage("{PropertyName} est requis.")
+                .MustAsync(async (clientId, cancellationToken) =>
+                {
+                    return await _userRepository.UserExists(clientId);
+                })
+                .WithMessage("Le client avec l'Id {PropertyValue} n'existe pas.");
 
             RuleFor(d => d.Objet)
-                .NotEmpty().WithMessage("L'objet de la discussion est obligatoire.")
-                .MaximumLength(100).WithMessage("L'objet ne doit pas dépasser 100 caractères.");
+                .NotEmpty()
+                .WithMessage("L'objet de la discussion est obligatoire.")
+                .MaximumLength(100)
+                .WithMessage("L'objet ne doit pas dépasser 100 caractères.");
 
             RuleFor(d => d.DateCreation)
-                .NotEmpty().WithMessage("La date de création est obligatoire.")
-                .LessThanOrEqualTo(DateTime.Now).WithMessage("La date de création ne peut pas être dans le futur.");
+                .NotEmpty()
+                .WithMessage("La date de création est obligatoire.")
+                .LessThanOrEqualTo(DateTime.Now)
+                .WithMessage("La date de création ne peut pas être dans le futur.");
+
+            RuleSet("Create", () =>
+            {
+            });
+
+            RuleSet("Update", () =>
+            {
+                RuleFor(d => d.Id)
+                    .GreaterThan(0)
+                    .WithMessage("L'ID de la discussion est requis pour la mise à jour.");
+            });
         }
     }
 }

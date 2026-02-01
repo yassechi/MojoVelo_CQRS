@@ -1,7 +1,7 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Mojo.Application.DTOs.EntitiesDto.Organisation;
-using Mojo.Application.Features.Amortissments.Request.Command;
+using Mojo.Application.Exceptions;
 using Mojo.Application.Features.Organisations.Request.Command;
 using Mojo.Application.Features.Organisations.Request.Query;
 
@@ -11,50 +11,70 @@ namespace Mojo.API.Controllers
     [ApiController]
     public class OrganisationController : ControllerBase
     {
-        private readonly IMediator mediator;
+        private readonly IMediator _mediator;
 
         public OrganisationController(IMediator mediator)
         {
-            this.mediator = mediator;
+            _mediator = mediator;
         }
 
         [HttpGet("get-all")]
         public async Task<IActionResult> Get()
         {
-            var organisations = await mediator.Send(new GetAllOrganisationRequest());
+            var organisations = await _mediator.Send(new GetAllOrganisationRequest());
             return Ok(organisations);
         }
 
         [HttpGet("get-one/{id}")]
         public async Task<IActionResult> Get(int id)
         {
-            var organisation = await mediator.Send(new GetOrganisationDetailsRequest { Id = id });
-            return Ok(organisation);
+            try
+            {
+                var organisation = await _mediator.Send(new GetOrganisationDetailsRequest { Id = id });
+                return Ok(organisation);
+            }
+            catch (NotFoundException ex)
+            {
+                return NotFound(new { message = ex.Message });
+            }
         }
 
         [HttpPost("add")]
         public async Task<IActionResult> Add([FromBody] OrganisationDto organisationDto)
         {
-            var response = await mediator.Send(new CreateOrganisationCommand { dto = organisationDto });
+            var response = await _mediator.Send(new CreateOrganisationCommand { dto = organisationDto });
+
+            if (!response.Succes)
+            {
+                return BadRequest(response);
+            }
+
             return Ok(response);
         }
 
         [HttpPut("update")]
         public async Task<IActionResult> Update([FromBody] OrganisationDto organisationDto)
         {
-            var response = await mediator.Send(new UpdateOrganisationCommand { dto = organisationDto });
+            var response = await _mediator.Send(new UpdateOrganisationCommand { dto = organisationDto });
+
+            if (!response.Succes)
+            {
+                return BadRequest(response);
+            }
+
             return Ok(response);
         }
 
         [HttpDelete("delete/{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-            var response = await mediator.Send(new DeleteOrganisationCommand { Id = id });
+            var response = await _mediator.Send(new DeleteOrganisationCommand { Id = id });
 
             if (!response.Succes)
             {
                 return NotFound(response);
             }
+
             return Ok(response);
         }
     }

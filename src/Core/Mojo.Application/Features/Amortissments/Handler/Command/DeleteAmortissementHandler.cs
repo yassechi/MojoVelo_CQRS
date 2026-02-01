@@ -2,23 +2,41 @@
 
 namespace Mojo.Application.Features.Amortissments.Handler.Command
 {
-    public class DeleteAmortissementHandler : IRequestHandler<DeleteAmortissementCommand, Unit>
+    public class DeleteAmortissementHandler : IRequestHandler<DeleteAmortissementCommand, BaseResponse>
     {
-        private readonly IAmortissementRepository repository;
-        private readonly IMapper mapper;
+        private readonly IAmortissementRepository _repository;
+        private readonly IMapper _mapper;
 
         public DeleteAmortissementHandler(IAmortissementRepository repository, IMapper mapper)
         {
-            this.repository = repository;
-            this.mapper = mapper;
+            _repository = repository;
+            _mapper = mapper;
         }
-        public async Task<Unit> Handle(DeleteAmortissementCommand request, CancellationToken cancellationToken)
-        {
-            var amortissement = await repository.GetByIdAsync(request.Id);
-            if (amortissement is null) throw new NotFoundException(nameof(Amortissement), request.Id);
 
-            await repository.DeleteAsync(request.Id);
-            return Unit.Value;
+        public async Task<BaseResponse> Handle(DeleteAmortissementCommand request, CancellationToken cancellationToken)
+        {
+            var response = new BaseResponse();
+
+            // Vérifier si l'entité existe
+            var amortissement = await _repository.GetByIdAsync(request.Id);
+
+            if (amortissement == null)
+            {
+                response.Succes = false;
+                response.Message = "Echec de la suppression de l'amortissement.";
+                response.Errors.Add($"Aucun amortissement trouvé avec l'Id {request.Id}.");
+                return response;
+            }
+
+            // Suppression
+            await _repository.DeleteAsync(request.Id);
+
+            // Succès
+            response.Succes = true;
+            response.Message = "L'amortissement a été supprimé avec succès.";
+            response.Id = request.Id;
+
+            return response;
         }
     }
 }

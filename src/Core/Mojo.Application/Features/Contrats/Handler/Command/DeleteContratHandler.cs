@@ -2,24 +2,41 @@
 
 namespace Mojo.Application.Features.Contrats.Handler.Command
 {
-    public class DeleteContratHandler : IRequestHandler<DeleteContratCommand, Unit>
+    public class DeleteContratHandler : IRequestHandler<DeleteContratCommand, BaseResponse>
     {
-        private readonly IContratRepository repository;
-        private readonly IMapper mapper;
+        private readonly IContratRepository _repository;
+        private readonly IMapper _mapper;
 
         public DeleteContratHandler(IContratRepository repository, IMapper mapper)
         {
-            this.repository = repository;
-            this.mapper = mapper;
+            _repository = repository;
+            _mapper = mapper;
         }
 
-        public async Task<Unit> Handle(DeleteContratCommand request, CancellationToken cancellationToken)
+        public async Task<BaseResponse> Handle(DeleteContratCommand request, CancellationToken cancellationToken)
         {
-            var contrat = await repository.GetByIdAsync(request.Id);
-            if (contrat is null) throw new NotFoundException(nameof(Mojo.Domain.Entities.Contrat), request.Id);
-            await repository.DeleteAsync(request.Id);
-            
-            return Unit.Value;
+            var response = new BaseResponse();
+
+            // Vérifier si l'entité existe
+            var contrat = await _repository.GetByIdAsync(request.Id);
+
+            if (contrat == null)
+            {
+                response.Succes = false;
+                response.Message = "Echec de la suppression du contrat.";
+                response.Errors.Add($"Aucun contrat trouvé avec l'Id {request.Id}.");
+                return response;
+            }
+
+            // Suppression
+            await _repository.DeleteAsync(request.Id);
+
+            // Succès
+            response.Succes = true;
+            response.Message = "Le contrat a été supprimé avec succès.";
+            response.Id = request.Id;
+
+            return response;
         }
     }
 }

@@ -1,5 +1,7 @@
-﻿
-using Mojo.Application.DTOs.EntitiesDto.Contrat.Validators;
+﻿using System.Reflection;
+using FluentValidation;
+using Microsoft.Extensions.DependencyInjection;
+using Mojo.Application.MappingProfiles;
 
 namespace Mojo.Application.Shared
 {
@@ -7,25 +9,13 @@ namespace Mojo.Application.Shared
     {
         public static void ConfigureApplicationService(this IServiceCollection services)
         {
-            // Configure Automapper && Mediator && Fluent Validation
-            //services.AddAutoMapper(Assembly.GetExecutingAssembly());
-            //services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
-            services.AddAutoMapper(typeof(AmortissementMappingProfile));
-            services.AddMediatR(AppDomain.CurrentDomain.GetAssemblies());
-            services.AddValidatorsFromAssemblies(AppDomain.CurrentDomain.GetAssemblies());
+            var assembly = Assembly.GetExecutingAssembly();
 
-            //    foreach (var item in AppDomain.CurrentDomain.GetAssemblies().SelectMany(a => a.GetTypes().Where(t => t.IsSubclassOf(typeof(AbstractValidator<>)))).ToArray())
-            //    {
-            //        services.AddScoped(item.GetType());
-            //    }
+            services.AddAutoMapper(assembly);
 
+            services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(assembly));
 
-            //    services.AddScoped<ContratValidator>();
-
-            //}
+            services.AddValidatorsFromAssembly(assembly);
         }
     }
 }
-
-
-//builder.Services.ConfigurationApplicationService();

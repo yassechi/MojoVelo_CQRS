@@ -18,24 +18,27 @@ namespace Mojo.Application.Features.Discussion.Handler.Command
         public async Task<BaseResponse> Handle(CreateDiscussionCommand request, CancellationToken cancellationToken)
         {
             var response = new BaseResponse();
+
             var validator = new DiscussionValidator(_userRepository);
+            var validationResult = await validator.ValidateAsync(request.dto, options =>
+            {
+                options.IncludeRuleSets("Create");
+            }, cancellationToken);
 
-            var res = await validator.ValidateAsync(request.dto, cancellationToken);
-
-            if (!res.IsValid)
+            if (!validationResult.IsValid)
             {
                 response.Succes = false;
-                response.Message = "Echec de creation de la discussion !";
-                response.Errors = res.Errors.Select(e => e.ErrorMessage).ToList();
+                response.Message = "Echec de la création de la discussion : erreurs de validation.";
+                response.Errors = validationResult.Errors.Select(e => e.ErrorMessage).ToList();
+                return response;
             }
 
-            response.Succes = true;
-            response.Message = "Creation de la discussion avec succès..";
-            response.Id = request.dto.Id;
-
             var discussion = _mapper.Map<Mojo.Domain.Entities.Discussion>(request.dto);
-
             await _repository.CreateAsync(discussion);
+
+            response.Succes = true;
+            response.Message = "La discussion a été créée avec succès.";
+            response.Id = discussion.Id;
 
             return response;
         }

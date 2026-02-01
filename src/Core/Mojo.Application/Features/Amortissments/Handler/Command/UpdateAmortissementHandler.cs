@@ -1,8 +1,9 @@
-﻿ using Mojo.Application.DTOs.EntitiesDto.Amortissement.Validators;
+﻿using FluentValidation.Results;
+using Mojo.Application.DTOs.EntitiesDto.Amortissement.Validators;
 
-namespace Mojo.Application.Features.Amortissments.Handler.Command
+namespace Mojo.Application.Features.Amortissements.Handler.Command
 {
-    public class UpdateAmortissementHandler : IRequestHandler<UpdateAmortissementCommand, Unit>
+    public class UpdateAmortissementHandler : IRequestHandler<UpdateAmortissementCommand, BaseResponse>
     {
         private readonly IAmortissementRepository _repository;
         private readonly IMapper _mapper;
@@ -15,20 +16,42 @@ namespace Mojo.Application.Features.Amortissments.Handler.Command
             _veloRepository = veloRepository;
         }
 
-        public async Task<Unit> Handle(UpdateAmortissementCommand request, CancellationToken cancellationToken)
+        public async Task<BaseResponse> Handle(UpdateAmortissementCommand request, CancellationToken cancellationToken)
         {
-            var validator = new AmortissementValidator(_veloRepository);
+            var response = new BaseResponse();
 
-            var res = await validator.ValidateAsync(request.dto, cancellationToken);
-            if (res.IsValid == false) throw new Exceptions.ValidationException(res);
+            var validator = new AmortissementValidator(_veloRepository);
+            var validationResult = await validator.ValidateAsync(request.dto, options =>
+            {
+                options.IncludeRuleSets("Update");
+            }, cancellationToken);
+
+            if (!validationResult.IsValid)
+            {
+                response.Succes = false;
+                response.Message = "Echec de la modification de l'amortissement : erreurs de validation.";
+                response.Errors = validationResult.Errors.Select(e => e.ErrorMessage).ToList();
+                return response;
+            }
 
             var oldAmortissement = await _repository.GetByIdAsync(request.dto.Id);
-            if (oldAmortissement == null) throw new Exception("Amortissement introuvable.");
+
+            if (oldAmortissement == null)
+            {
+                response.Succes = false;
+                response.Message = "Echec de la modification de l'amortissement.";
+                response.Errors.Add($"Aucun amortissement trouvé avec l'Id {request.dto.Id}.");
+                return response;
+            }
 
             _mapper.Map(request.dto, oldAmortissement);
             await _repository.UpadteAsync(oldAmortissement);
 
-            return Unit.Value;
+            response.Succes = true;
+            response.Message = "L'amortissement a été modifié avec succès.";
+            response.Id = oldAmortissement.Id;
+
+            return response;
         }
     }
 }

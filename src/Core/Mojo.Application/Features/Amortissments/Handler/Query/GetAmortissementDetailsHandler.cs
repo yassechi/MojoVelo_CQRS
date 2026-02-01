@@ -1,4 +1,5 @@
 ﻿using Mojo.Application.DTOs.EntitiesDto.Amortissement;
+using Mojo.Domain.Entities;
 
 namespace Mojo.Application.Features.Amortissments.Handler.Query
 {
@@ -15,8 +16,13 @@ namespace Mojo.Application.Features.Amortissments.Handler.Query
         public async Task<AmortissmentDto> Handle(GetAmortissementDetailsRequest request, CancellationToken cancellationToken)
         {
             var amortissement = await repository.GetByIdAsync(request.Id);
-            if (amortissement is null) throw new Exception();
-            return  mapper.Map<AmortissmentDto>(amortissement);
+
+            if (amortissement == null)
+            {
+                throw new NotFoundException(nameof(Amortissement), request.Id);
+            }
+
+            return mapper.Map<AmortissmentDto>(amortissement);
         }
     }
 }

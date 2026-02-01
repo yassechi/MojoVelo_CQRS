@@ -9,24 +9,48 @@
             _veloRepository = veloRepository;
 
             RuleFor(i => i.VeloId)
-                .GreaterThan(0).WithMessage("L'identifiant du vélo doit être supérieur à 0.")
-                .MustAsync(async (id, token) => await _veloRepository.Exists(id))
-                .WithMessage("Le vélo spécifié n'existe pas dans la base de données.");
+                .GreaterThan(0)
+                .WithMessage("{PropertyName} doit être supérieur à 0.")
+                .MustAsync(async (veloId, cancellationToken) =>
+                {
+                    var velo = await _veloRepository.GetByIdAsync(veloId);
+                    return velo != null;
+                })
+                .WithMessage("Le vélo avec l'Id {PropertyValue} n'existe pas.");
 
             RuleFor(i => i.Cout)
-                .GreaterThanOrEqualTo(0).WithMessage("Le coût de l'intervention ne peut pas être négatif.");
+                .GreaterThanOrEqualTo(0)
+                .WithMessage("Le coût de l'intervention ne peut pas être négatif.");
 
             RuleFor(i => i.DateIntervention)
-                .NotEmpty().WithMessage("La date d'intervention est obligatoire.")
-                .GreaterThanOrEqualTo(DateTime.Today).WithMessage("La date d'intervention ne peut pas être dans le passé.");
+                .NotEmpty()
+                .WithMessage("La date d'intervention est obligatoire.");
 
             RuleFor(i => i.TypeIntervention)
-                .NotEmpty().WithMessage("Le type d'intervention est obligatoire.")
-                .MaximumLength(50).WithMessage("Le type d'intervention ne doit pas dépasser 50 caractères.");
+                .NotEmpty()
+                .WithMessage("Le type d'intervention est obligatoire.")
+                .MaximumLength(50)
+                .WithMessage("Le type d'intervention ne doit pas dépasser 50 caractères.");
 
             RuleFor(i => i.Description)
-                .NotEmpty().WithMessage("La description est obligatoire.")
-                .MinimumLength(10).WithMessage("La description doit contenir au moins 10 caractères pour être explicite.");
+                .NotEmpty()
+                .WithMessage("La description est obligatoire.")
+                .MinimumLength(10)
+                .WithMessage("La description doit contenir au moins 10 caractères.");
+
+            RuleSet("Create", () =>
+            {
+                RuleFor(i => i.DateIntervention)
+                    .GreaterThanOrEqualTo(DateTime.Today)
+                    .WithMessage("La date d'intervention ne peut pas être dans le passé.");
+            });
+
+            RuleSet("Update", () =>
+            {
+                RuleFor(i => i.Id)
+                    .GreaterThan(0)
+                    .WithMessage("L'ID de l'intervention est requis pour la mise à jour.");
+            });
         }
     }
 }

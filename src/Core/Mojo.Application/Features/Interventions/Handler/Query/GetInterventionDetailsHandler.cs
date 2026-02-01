@@ -1,28 +1,31 @@
 ﻿using Mojo.Application.DTOs.EntitiesDto.Intervention;
+using Mojo.Application.Exceptions;
+using MediatR;
+using AutoMapper;
 
 namespace Mojo.Application.Features.Interventions.Handler.Query
 {
     public class GetInterventionDetailsHandler : IRequestHandler<GetInterventionDetailsRequest, InterventionDto>
     {
-        private readonly IInterventionRepository repository;
-        private readonly IMapper mapper;
+        private readonly IInterventionRepository _repository;
+        private readonly IMapper _mapper;
 
         public GetInterventionDetailsHandler(IInterventionRepository repository, IMapper mapper)
         {
-            this.repository = repository;
-            this.mapper = mapper;
+            _repository = repository;
+            _mapper = mapper;
         }
 
         public async Task<InterventionDto> Handle(GetInterventionDetailsRequest request, CancellationToken cancellationToken)
         {
-            var intervention = await repository.GetByIdAsync(request.Id);
+            var intervention = await _repository.GetByIdAsync(request.Id);
 
             if (intervention == null)
             {
-                throw new Exception("Discussion non trouvée");
+                throw new NotFoundException(nameof(Intervention), request.Id);
             }
 
-            return mapper.Map<InterventionDto>(intervention);
+            return _mapper.Map<InterventionDto>(intervention);
         }
     }
 }

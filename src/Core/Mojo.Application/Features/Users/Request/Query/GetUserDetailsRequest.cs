@@ -4,6 +4,6 @@ namespace Mojo.Application.Features.Users.Request.Query
 {
     public class GetUserDetailsRequest : IRequest<UserDto>
     {
-        public int Id { get; set; }
+        public string Id { get; set; }
     }
 }

@@ -1,4 +1,6 @@
-﻿namespace Mojo.Application.DTOs.EntitiesDto.Contrat.Validators
+﻿using FluentValidation;
+
+namespace Mojo.Application.DTOs.EntitiesDto.Contrat.Validators
 {
     public class ContratValidator : AbstractValidator<ContratDto>
     {
@@ -11,32 +13,67 @@
             _userRepository = userRepository;
 
             RuleFor(c => c.VeloId)
-                .GreaterThan(0).WithMessage("L'identifiant du vélo doit être supérieur à 0.")
-                .MustAsync(async (id, token) => await _veloRepository.Exists(id))
-                .WithMessage("Le vélo spécifié n'existe pas.");
+                .GreaterThan(0)
+                .WithMessage("{PropertyName} doit être supérieur à 0.")
+                .MustAsync(async (veloId, cancellationToken) =>
+                {
+                    var velo = await _veloRepository.GetByIdAsync(veloId);
+                    return velo != null;
+                })
+                .WithMessage("Le vélo avec l'Id {PropertyValue} n'existe pas.");
 
             RuleFor(c => c.BeneficiaireId)
-                .GreaterThan(0).WithMessage("L'identifiant du bénéficiaire doit être supérieur à 0.")
-                .MustAsync(async (id, token) => await _userRepository.Exists(id))
-                .WithMessage("Le bénéficiaire spécifié n'existe pas.");
+                .NotEmpty()
+                .WithMessage("{PropertyName} est requis.")
+                .MustAsync(async (beneficiaireId, cancellationToken) =>
+                {
+                    var user = await _userRepository.GetUserByStringId(beneficiaireId);
+                    return user != null;
+                })
+                .WithMessage("Le bénéficiaire avec l'Id {PropertyValue} n'existe pas.");
 
             RuleFor(c => c.UserRhId)
-                .GreaterThan(0).WithMessage("L'identifiant du responsable RH doit être supérieur à 0.")
-                .MustAsync(async (id, token) => await _userRepository.Exists(id))
-                .WithMessage("Le responsable RH spécifié n'existe pas.");
+                .NotEmpty()
+                .WithMessage("{PropertyName} est requis.")
+                .MustAsync(async (userRhId, cancellationToken) =>
+                {
+                    var user = await _userRepository.GetUserByStringId(userRhId);
+                    return user != null;
+                })
+                .WithMessage("Le responsable RH avec l'Id {PropertyValue} n'existe pas.")
+                .MustAsync(async (userRhId, cancellationToken) =>
+                {
+                    var user = await _userRepository.GetUserByStringId(userRhId);
+                    if (user == null) return false;
+                    return (int)user.Role == 2;
+                })
+                .WithMessage("Le responsable RH doit avoir le rôle 'Négociateur' (Role = 2).");
 
             RuleFor(c => c.LoyerMensuelHT)
-                .GreaterThan(0).WithMessage("Le loyer mensuel HT doit être strictement supérieur à 0.");
+                .GreaterThan(0)
+                .WithMessage("{PropertyName} doit être strictement supérieur à 0.");
 
             RuleFor(c => c.DateDebut)
-                .NotEmpty().WithMessage("La date de début est obligatoire.")
-                .GreaterThanOrEqualTo(DateOnly.FromDateTime(DateTime.Today))
-                .WithMessage("La date de début ne peut pas être dans le passé.");
+                .NotEmpty()
+                .WithMessage("La date de début est obligatoire.");
 
             RuleFor(c => c.DateFin)
-                .NotEmpty().WithMessage("La date de fin est obligatoire.")
                 .GreaterThan(c => c.DateDebut)
                 .WithMessage("La date de fin doit être postérieure à la date de début.");
+
+            RuleSet("Create", () =>
+            {
+                RuleFor(c => c.DateDebut)
+                    .GreaterThanOrEqualTo(DateOnly.FromDateTime(DateTime.Today))
+                    .WithMessage("La date de début ne peut pas être dans le passé.");
+            });
+
+            RuleSet("Update", () =>
+            {
+                RuleFor(c => c.Id)
+                    .GreaterThan(0)
+                    .WithMessage("L'ID du contrat est requis pour la mise à jour.");
+            });
         }
     }
 }

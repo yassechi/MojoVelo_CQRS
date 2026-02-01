@@ -1,4 +1,7 @@
 ﻿using Mojo.Application.DTOs.EntitiesDto.Contrat.Validators;
+using MediatR;
+using AutoMapper;
+using Mojo.Application.DTOs.Common;
 
 namespace Mojo.Application.Features.Contrats.Handler.Command
 {
@@ -21,22 +24,26 @@ namespace Mojo.Application.Features.Contrats.Handler.Command
         {
             var response = new BaseResponse();
             var validator = new ContratValidator(_veloRepository, _userRepository);
-            var res = await validator.ValidateAsync(request.dto, cancellationToken);
 
-            if (res.IsValid == false)
+            var validationResult = await validator.ValidateAsync(request.dto, options =>
+            {
+                options.IncludeRuleSets("default", "Create");
+            }, cancellationToken);
+
+            if (!validationResult.IsValid)
             {
                 response.Succes = false;
-                response.Message = "Echec de creation du contrat !";
-                response.Errors = res.Errors.Select(e => e.ErrorMessage).ToList();
+                response.Message = "Echec de la création du contrat : erreurs de validation.";
+                response.Errors = validationResult.Errors.Select(e => e.ErrorMessage).ToList();
+                return response;
             }
 
-            response.Succes = true;
-            response.Message = "Creation avec succès..";
-            response.Id = request.dto.Id;
-
             var contrat = _mapper.Map<Mojo.Domain.Entities.Contrat>(request.dto);
-
             await _repository.CreateAsync(contrat);
+
+            response.Succes = true;
+            response.Message = "Le contrat a été créé avec succès.";
+            response.Id = contrat.Id;
 
             return response;
         }
