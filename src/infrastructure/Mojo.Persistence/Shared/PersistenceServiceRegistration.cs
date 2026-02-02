@@ -1,6 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Mojo.Application.Persistance.Contracts;
+using Mojo.Persistence.DatabaseContext;
 using Mojo.Persistence.Repositories;
 
 namespace Mojo.Persistence.Shared

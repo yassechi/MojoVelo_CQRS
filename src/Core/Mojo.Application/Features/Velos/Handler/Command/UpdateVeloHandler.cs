@@ -16,7 +16,6 @@ namespace Mojo.Application.Features.Velos.Handler.Command
         public async Task<BaseResponse> Handle(UpdateVeloCommand request, CancellationToken cancellationToken)
         {
             var response = new BaseResponse();
-
             var validator = new VeloValidator(_repository);
             var validationResult = await validator.ValidateAsync(request.dto, options =>
             {
@@ -25,29 +24,27 @@ namespace Mojo.Application.Features.Velos.Handler.Command
 
             if (!validationResult.IsValid)
             {
-                response.Succes = false;
+                response.Success = false;
                 response.Message = "Echec de la modification du vélo : erreurs de validation.";
                 response.Errors = validationResult.Errors.Select(e => e.ErrorMessage).ToList();
                 return response;
             }
 
             var oldVelo = await _repository.GetByIdAsync(request.dto.Id);
-
             if (oldVelo == null)
             {
-                response.Succes = false;
+                response.Success = false;
                 response.Message = "Echec de la modification du vélo.";
                 response.Errors.Add($"Aucun vélo trouvé avec l'Id {request.dto.Id}.");
                 return response;
             }
 
             _mapper.Map(request.dto, oldVelo);
-            await _repository.UpadteAsync(oldVelo);
+            await _repository.UpdateAsync(oldVelo);
 
-            response.Succes = true;
+            response.Success = true;
             response.Message = "Le vélo a été modifié avec succès.";
             response.Id = oldVelo.Id;
-
             return response;
         }
     }

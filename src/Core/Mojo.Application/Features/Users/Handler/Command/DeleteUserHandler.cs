@@ -17,25 +17,20 @@ namespace Mojo.Application.Features.Users.Handler.Command
         {
             var response = new BaseResponse();
 
-            // Vérifier si l'entité existe (utiliser GetUserByStringId pour les ID string)
             var user = await _repository.GetUserByStringId(request.Id);
-
             if (user == null)
             {
-                response.Succes = false;
+                response.Success = false;
                 response.Message = "Echec de la suppression de l'utilisateur.";
                 response.Errors.Add($"Aucun utilisateur trouvé avec l'Id {request.Id}.");
                 return response;
             }
 
-            // Suppression
             await _repository.DeleteByStringId(request.Id);
 
-            // Succès
-            response.Succes = true;
+            response.Success = true;
             response.Message = "L'utilisateur a été supprimé avec succès.";
             response.StrId = request.Id;
-
             return response;
         }
     }

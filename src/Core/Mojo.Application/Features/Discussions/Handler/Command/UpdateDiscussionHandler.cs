@@ -18,7 +18,6 @@ namespace Mojo.Application.Features.Discussion.Handler.Command
         public async Task<BaseResponse> Handle(UpdateDiscussionCommand request, CancellationToken cancellationToken)
         {
             var response = new BaseResponse();
-
             var validator = new DiscussionValidator(_userRepository);
             var validationResult = await validator.ValidateAsync(request.dto, options =>
             {
@@ -27,29 +26,27 @@ namespace Mojo.Application.Features.Discussion.Handler.Command
 
             if (!validationResult.IsValid)
             {
-                response.Succes = false;
+                response.Success = false;
                 response.Message = "Echec de la modification de la discussion : erreurs de validation.";
                 response.Errors = validationResult.Errors.Select(e => e.ErrorMessage).ToList();
                 return response;
             }
 
             var oldDiscussion = await _repository.GetByIdAsync(request.dto.Id);
-
             if (oldDiscussion == null)
             {
-                response.Succes = false;
+                response.Success = false;
                 response.Message = "Echec de la modification de la discussion.";
                 response.Errors.Add($"Aucune discussion trouvée avec l'Id {request.dto.Id}.");
                 return response;
             }
 
             _mapper.Map(request.dto, oldDiscussion);
-            await _repository.UpadteAsync(oldDiscussion);
+            await _repository.UpdateAsync(oldDiscussion);
 
-            response.Succes = true;
+            response.Success = true;
             response.Message = "La discussion a été modifiée avec succès.";
             response.Id = oldDiscussion.Id;
-
             return response;
         }
     }

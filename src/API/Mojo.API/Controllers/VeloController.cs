@@ -44,7 +44,7 @@ namespace Mojo.API.Controllers
         {
             var response = await _mediator.Send(new CreateVeloCommand { dto = veloDto });
 
-            if (!response.Succes)
+            if (!response.Success)
             {
                 return BadRequest(response);
             }
@@ -57,7 +57,7 @@ namespace Mojo.API.Controllers
         {
             var response = await _mediator.Send(new UpdateVeloCommand { dto = veloDto });
 
-            if (!response.Succes)
+            if (!response.Success)
             {
                 return BadRequest(response);
             }
@@ -70,7 +70,7 @@ namespace Mojo.API.Controllers
         {
             var response = await _mediator.Send(new DeleteVeloCommand { Id = id });
 
-            if (!response.Succes)
+            if (!response.Success)
             {
                 return NotFound(response);
             }

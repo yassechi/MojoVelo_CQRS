@@ -25,27 +25,23 @@ namespace Mojo.Application.Features.Messages.Handler.Command
         {
             var response = new BaseResponse();
 
-            // Validation (inclut la vérification de l'existence de l'utilisateur et de la discussion)
             var validator = new MessageValidator(_userRepository, _discussionRepository);
             var validationResult = await validator.ValidateAsync(request.dto, cancellationToken);
 
             if (!validationResult.IsValid)
             {
-                response.Succes = false;
+                response.Success = false;
                 response.Message = "Echec de la création du message : erreurs de validation.";
                 response.Errors = validationResult.Errors.Select(e => e.ErrorMessage).ToList();
                 return response;
             }
 
-            // Création
             var message = _mapper.Map<Message>(request.dto);
             await _repository.CreateAsync(message);
 
-            // Succès
-            response.Succes = true;
+            response.Success = true;
             response.Message = "Le message a été créé avec succès.";
             response.Id = message.Id;
-
             return response;
         }
     }

@@ -44,7 +44,7 @@ namespace Mojo.API.Controllers
         {
             var response = await _mediator.Send(new CreateContratCommand { dto = contratDto });
 
-            if (!response.Succes)
+            if (!response.Success)
             {
                 return BadRequest(response);
             }
@@ -57,7 +57,7 @@ namespace Mojo.API.Controllers
         {
             var response = await _mediator.Send(new UpdateContratCommand { dto = contratDto });
 
-            if (!response.Succes)
+            if (!response.Success)
             {
                 return BadRequest(response);
             }
@@ -70,7 +70,7 @@ namespace Mojo.API.Controllers
         {
             var response = await _mediator.Send(new DeleteContratCommand { Id = id });
 
-            if (!response.Succes)
+            if (!response.Success)
             {
                 return NotFound(response);
             }

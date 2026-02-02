@@ -18,7 +18,6 @@ namespace Mojo.Application.Features.Interventions.Handler.Command
         public async Task<BaseResponse> Handle(UpdateInterventionCommand request, CancellationToken cancellationToken)
         {
             var response = new BaseResponse();
-
             var validator = new InterventionValidator(_veloRepository);
             var validationResult = await validator.ValidateAsync(request.dto, options =>
             {
@@ -27,29 +26,27 @@ namespace Mojo.Application.Features.Interventions.Handler.Command
 
             if (!validationResult.IsValid)
             {
-                response.Succes = false;
+                response.Success = false;
                 response.Message = "Echec de la modification de l'intervention : erreurs de validation.";
                 response.Errors = validationResult.Errors.Select(e => e.ErrorMessage).ToList();
                 return response;
             }
 
             var oldIntervention = await _repository.GetByIdAsync(request.dto.Id);
-
             if (oldIntervention == null)
             {
-                response.Succes = false;
+                response.Success = false;
                 response.Message = "Echec de la modification de l'intervention.";
                 response.Errors.Add($"Aucune intervention trouvée avec l'Id {request.dto.Id}.");
                 return response;
             }
 
             _mapper.Map(request.dto, oldIntervention);
-            await _repository.UpadteAsync(oldIntervention);
+            await _repository.UpdateAsync(oldIntervention);
 
-            response.Succes = true;
+            response.Success = true;
             response.Message = "L'intervention a été modifiée avec succès.";
             response.Id = oldIntervention.Id;
-
             return response;
         }
     }

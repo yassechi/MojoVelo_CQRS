@@ -18,7 +18,6 @@ namespace Mojo.Application.Features.Amortissments.Handler.Command
         public async Task<BaseResponse> Handle(CreateAmortissementCommand request, CancellationToken cancellationToken)
         {
             var response = new BaseResponse();
-
             var validator = new AmortissementValidator(_veloRepository);
             var validationResult = await validator.ValidateAsync(request.amortissmentDto, options =>
             {
@@ -27,7 +26,7 @@ namespace Mojo.Application.Features.Amortissments.Handler.Command
 
             if (!validationResult.IsValid)
             {
-                response.Succes = false;
+                response.Success = false;
                 response.Message = "Echec de la création de l'amortissement : erreurs de validation.";
                 response.Errors = validationResult.Errors.Select(e => e.ErrorMessage).ToList();
                 return response;
@@ -36,10 +35,9 @@ namespace Mojo.Application.Features.Amortissments.Handler.Command
             var amortissement = _mapper.Map<Amortissement>(request.amortissmentDto);
             await _repository.CreateAsync(amortissement);
 
-            response.Succes = true;
+            response.Success = true;
             response.Message = "L'amortissement a été créé avec succès.";
             response.Id = amortissement.Id;
-
             return response;
         }
     }

@@ -16,7 +16,6 @@ namespace Mojo.Application.Features.Velos.Handler.Command
         public async Task<BaseResponse> Handle(CreateVeloCommand request, CancellationToken cancellationToken)
         {
             var response = new BaseResponse();
-
             var validator = new VeloValidator(_repository);
             var validationResult = await validator.ValidateAsync(request.dto, options =>
             {
@@ -25,7 +24,7 @@ namespace Mojo.Application.Features.Velos.Handler.Command
 
             if (!validationResult.IsValid)
             {
-                response.Succes = false;
+                response.Success = false;
                 response.Message = "Echec de la création du vélo : erreurs de validation.";
                 response.Errors = validationResult.Errors.Select(e => e.ErrorMessage).ToList();
                 return response;
@@ -34,10 +33,9 @@ namespace Mojo.Application.Features.Velos.Handler.Command
             var velo = _mapper.Map<Velo>(request.dto);
             await _repository.CreateAsync(velo);
 
-            response.Succes = true;
+            response.Success = true;
             response.Message = "Le vélo a été créé avec succès.";
             response.Id = velo.Id;
-
             return response;
         }
     }

@@ -1,4 +1,6 @@
 ﻿using Mojo.Application.DTOs.EntitiesDto.Message;
+using Mojo.Application.Exceptions;
+using Mojo.Domain.Entities;
 
 namespace Mojo.Application.Features.Messages.Handler.Query
 {
@@ -16,12 +18,10 @@ namespace Mojo.Application.Features.Messages.Handler.Query
         public async Task<MessageDto> Handle(GetMessageDetailsRequest request, CancellationToken cancellationToken)
         {
             var message = await repository.GetByIdAsync(request.Id);
-
             if (message == null)
             {
-                throw new Exception("Discussion non trouvée");
+                throw new NotFoundException(nameof(Message), request.Id);
             }
-
             return mapper.Map<MessageDto>(message);
         }
     }

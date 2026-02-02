@@ -1,4 +1,6 @@
 ﻿using Mojo.Application.DTOs.EntitiesDto.Velo;
+using Mojo.Application.Exceptions;
+using Mojo.Domain.Entities;
 
 namespace Mojo.Application.Features.Velos.Handler.Query
 {
@@ -16,12 +18,10 @@ namespace Mojo.Application.Features.Velos.Handler.Query
         public async Task<VeloDto> Handle(GetVeloDetailsRequest request, CancellationToken cancellationToken)
         {
             var velo = await repository.GetByIdAsync(request.Id);
-
             if (velo == null)
             {
-                throw new Exception("Velo non trouvé");
+                throw new NotFoundException(nameof(Velo), request.Id);
             }
-
             return mapper.Map<VeloDto>(velo);
         }
     }

@@ -1,4 +1,6 @@
 ﻿using Mojo.Application.DTOs.EntitiesDto.Contrat;
+using Mojo.Application.Exceptions;
+using Mojo.Domain.Entities;
 
 namespace Mojo.Application.Features.Contrats.Handler.Query
 {
@@ -16,12 +18,10 @@ namespace Mojo.Application.Features.Contrats.Handler.Query
         public async Task<ContratDto> Handle(GetContratDetailsRequest request, CancellationToken cancellationToken)
         {
             var contrat = await _repository.GetByIdAsync(request.Id);
-
             if (contrat == null)
             {
-                throw new Exception("Contrat non trouvé");
+                throw new NotFoundException(nameof(Contrat), request.Id);
             }
-
             return _mapper.Map<ContratDto>(contrat);
         }
     }

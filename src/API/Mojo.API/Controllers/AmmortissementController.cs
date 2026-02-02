@@ -48,7 +48,7 @@ namespace Mojo.API.Controllers
         {
             var response = await _mediator.Send(new CreateAmortissementCommand { amortissmentDto = amortissement });
 
-            if (!response.Succes)
+            if (!response.Success)
             {
                 return BadRequest(response);
             }
@@ -61,7 +61,7 @@ namespace Mojo.API.Controllers
         {
             var response = await _mediator.Send(new UpdateAmortissementCommand { dto = amortissmentDto });
 
-            if (!response.Succes)
+            if (!response.Success)
             {
                 return BadRequest(response);
             }
@@ -74,7 +74,7 @@ namespace Mojo.API.Controllers
         {
             var response = await _mediator.Send(new DeleteAmortissementCommand { Id = id });
 
-            if (!response.Succes)
+            if (!response.Success)
             {
                 return NotFound(response);
             }

@@ -19,7 +19,6 @@ namespace Mojo.Application.Features.Amortissements.Handler.Command
         public async Task<BaseResponse> Handle(UpdateAmortissementCommand request, CancellationToken cancellationToken)
         {
             var response = new BaseResponse();
-
             var validator = new AmortissementValidator(_veloRepository);
             var validationResult = await validator.ValidateAsync(request.dto, options =>
             {
@@ -28,29 +27,27 @@ namespace Mojo.Application.Features.Amortissements.Handler.Command
 
             if (!validationResult.IsValid)
             {
-                response.Succes = false;
+                response.Success = false;
                 response.Message = "Echec de la modification de l'amortissement : erreurs de validation.";
                 response.Errors = validationResult.Errors.Select(e => e.ErrorMessage).ToList();
                 return response;
             }
 
             var oldAmortissement = await _repository.GetByIdAsync(request.dto.Id);
-
             if (oldAmortissement == null)
             {
-                response.Succes = false;
+                response.Success = false;
                 response.Message = "Echec de la modification de l'amortissement.";
                 response.Errors.Add($"Aucun amortissement trouvé avec l'Id {request.dto.Id}.");
                 return response;
             }
 
             _mapper.Map(request.dto, oldAmortissement);
-            await _repository.UpadteAsync(oldAmortissement);
+            await _repository.UpdateAsync(oldAmortissement);
 
-            response.Succes = true;
+            response.Success = true;
             response.Message = "L'amortissement a été modifié avec succès.";
             response.Id = oldAmortissement.Id;
-
             return response;
         }
     }

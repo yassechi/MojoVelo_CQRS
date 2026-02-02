@@ -18,7 +18,6 @@ namespace Mojo.Application.Features.Interventions.Handler.Command
         public async Task<BaseResponse> Handle(CreateInterventionCommand request, CancellationToken cancellationToken)
         {
             var response = new BaseResponse();
-
             var validator = new InterventionValidator(_veloRepository);
             var validationResult = await validator.ValidateAsync(request.dto, options =>
             {
@@ -27,7 +26,7 @@ namespace Mojo.Application.Features.Interventions.Handler.Command
 
             if (!validationResult.IsValid)
             {
-                response.Succes = false;
+                response.Success = false;
                 response.Message = "Echec de la création de l'intervention : erreurs de validation.";
                 response.Errors = validationResult.Errors.Select(e => e.ErrorMessage).ToList();
                 return response;
@@ -36,10 +35,9 @@ namespace Mojo.Application.Features.Interventions.Handler.Command
             var intervention = _mapper.Map<Mojo.Domain.Entities.Intervention>(request.dto);
             await _repository.CreateAsync(intervention);
 
-            response.Succes = true;
+            response.Success = true;
             response.Message = "L'intervention a été créée avec succès.";
             response.Id = intervention.Id;
-
             return response;
         }
     }

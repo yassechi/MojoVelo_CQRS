@@ -2,7 +2,6 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-using Mojo.Application.Shared;
 using Mojo.Application.Model;
 using Mojo.Domain.Entities;
 using Mojo.Infrastructure;
@@ -11,6 +10,7 @@ using Mojo.Persistence;
 using Mojo.Persistence.DatabaseContext;
 using Mojo.Persistence.Shared;
 using System.Text;
+using Mojo.API.Dependencies;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -34,7 +34,12 @@ builder.Services.AddIdentity<User, IdentityRole>(options =>
 
 // 3. JWT Authentication
 var jwtSettings = builder.Configuration.GetSection("JwtSettings");
-var key = Encoding.UTF8.GetBytes(jwtSettings["Key"] ?? "Cle_Secrete_Par_Defaut_32_Caracteres");
+var jwtKey = jwtSettings["Key"];
+if (string.IsNullOrEmpty(jwtKey) || jwtKey.Length < 32)
+{
+    throw new InvalidOperationException("JWT Key manquante ou trop courte (minimum 32 caractères) dans appsettings.json");
+}
+var key = Encoding.UTF8.GetBytes(jwtKey);
 
 builder.Services.AddAuthentication(options =>
 {

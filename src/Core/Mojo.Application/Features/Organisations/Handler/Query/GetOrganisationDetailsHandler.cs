@@ -1,4 +1,6 @@
 ﻿using Mojo.Application.DTOs.EntitiesDto.Organisation;
+using Mojo.Application.Exceptions;
+using Mojo.Domain.Entities;
 
 namespace Mojo.Application.Features.Organisations.Handler.Query
 {
@@ -15,13 +17,11 @@ namespace Mojo.Application.Features.Organisations.Handler.Query
 
         public async Task<OrganisationDto> Handle(GetOrganisationDetailsRequest request, CancellationToken cancellationToken)
         {
-            Organisation organisation = await repository.GetByIdAsync(request.Id);
-
+            var organisation = await repository.GetByIdAsync(request.Id);
             if (organisation == null)
             {
-                throw new Exception("Organisation non trouvée");
+                throw new NotFoundException(nameof(Organisation), request.Id);
             }
-
             return mapper.Map<OrganisationDto>(organisation);
         }
     }

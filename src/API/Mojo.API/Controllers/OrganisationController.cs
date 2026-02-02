@@ -44,7 +44,7 @@ namespace Mojo.API.Controllers
         {
             var response = await _mediator.Send(new CreateOrganisationCommand { dto = organisationDto });
 
-            if (!response.Succes)
+            if (!response.Success)
             {
                 return BadRequest(response);
             }
@@ -57,7 +57,7 @@ namespace Mojo.API.Controllers
         {
             var response = await _mediator.Send(new UpdateOrganisationCommand { dto = organisationDto });
 
-            if (!response.Succes)
+            if (!response.Success)
             {
                 return BadRequest(response);
             }
@@ -70,7 +70,7 @@ namespace Mojo.API.Controllers
         {
             var response = await _mediator.Send(new DeleteOrganisationCommand { Id = id });
 
-            if (!response.Succes)
+            if (!response.Success)
             {
                 return NotFound(response);
             }

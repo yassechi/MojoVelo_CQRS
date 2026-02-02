@@ -24,7 +24,6 @@ namespace Mojo.Application.Features.Contrats.Handler.Command
         {
             var response = new BaseResponse();
             var validator = new ContratValidator(_veloRepository, _userRepository);
-
             var validationResult = await validator.ValidateAsync(request.dto, options =>
             {
                 options.IncludeRuleSets("default", "Create");
@@ -32,7 +31,7 @@ namespace Mojo.Application.Features.Contrats.Handler.Command
 
             if (!validationResult.IsValid)
             {
-                response.Succes = false;
+                response.Success = false;
                 response.Message = "Echec de la création du contrat : erreurs de validation.";
                 response.Errors = validationResult.Errors.Select(e => e.ErrorMessage).ToList();
                 return response;
@@ -41,10 +40,9 @@ namespace Mojo.Application.Features.Contrats.Handler.Command
             var contrat = _mapper.Map<Mojo.Domain.Entities.Contrat>(request.dto);
             await _repository.CreateAsync(contrat);
 
-            response.Succes = true;
+            response.Success = true;
             response.Message = "Le contrat a été créé avec succès.";
             response.Id = contrat.Id;
-
             return response;
         }
     }

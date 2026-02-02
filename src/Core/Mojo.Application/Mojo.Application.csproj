@@ -6,8 +6,11 @@
 	</PropertyGroup>
 	<ItemGroup>
 		<Compile Remove="Features\Message\**" />
+		<Compile Remove="Features\NewFolder\**" />
 		<EmbeddedResource Remove="Features\Message\**" />
+		<EmbeddedResource Remove="Features\NewFolder\**" />
 		<None Remove="Features\Message\**" />
+		<None Remove="Features\NewFolder\**" />
 	</ItemGroup>
 	<ItemGroup>
 		<ProjectReference Include="..\Mojo.Domain\Mojo.Domain.csproj" />

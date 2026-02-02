@@ -1,7 +1,7 @@
-﻿global using Mojo.Application.Persistance.Contracts;
-global using Mojo.Persistence.DatabaseContext;
-using Microsoft.EntityFrameworkCore;
-//using System.Data.Entity;
+﻿using Microsoft.EntityFrameworkCore;
+using Mojo.Application.Exceptions;
+using Mojo.Application.Persistance.Contracts;
+using Mojo.Persistence.DatabaseContext;
 
 namespace Mojo.Persistence.Repositories
 {
@@ -13,6 +13,7 @@ namespace Mojo.Persistence.Repositories
         {
             this.db = db;
         }
+
         public async Task CreateAsync(T entity)
         {
             await db.AddAsync(entity);
@@ -21,14 +22,20 @@ namespace Mojo.Persistence.Repositories
 
         public async Task DeleteAsync(int id)
         {
-            db.Set<T>().Remove(await GetByIdAsync(id));
+            var entity = await GetByIdAsync(id);
+            if (entity == null)
+            {
+                throw new NotFoundException(typeof(T).Name, id);
+            }
+
+            db.Set<T>().Remove(entity);
             await SaveChangesAsync();
         }
 
         public async Task<bool> Exists(int id)
         {
             var entry = await GetByIdAsync(id);
-            return entry != null;  
+            return entry != null;
         }
 
         public async Task<List<T>> GetAllAsync()
@@ -36,9 +43,9 @@ namespace Mojo.Persistence.Repositories
             return await db.Set<T>().AsNoTracking().ToListAsync();
         }
 
-        public async Task<T> GetByIdAsync(int id)
+        public async Task<T?> GetByIdAsync(int id)
         {
-           return await db.Set<T>().FindAsync(id);
+            return await db.Set<T>().FindAsync(id);
         }
 
         public async Task SaveChangesAsync()
@@ -46,9 +53,9 @@ namespace Mojo.Persistence.Repositories
             await db.SaveChangesAsync();
         }
 
-        public async Task UpadteAsync(T entity)
+        public async Task UpdateAsync(T entity)
         {
-            db.Entry(entity).State = (Microsoft.EntityFrameworkCore.EntityState)EntityState.Modified;
+            db.Set<T>().Update(entity);
             await SaveChangesAsync();
         }
     }

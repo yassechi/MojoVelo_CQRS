@@ -1,4 +1,6 @@
 ﻿global using Mojo.Domain.Entities;
+using Mojo.Application.Persistance.Contracts;
+using Mojo.Persistence.DatabaseContext;
 using System;
 using System.Collections.Generic;
 using System.Linq;
