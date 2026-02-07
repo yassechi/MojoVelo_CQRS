@@ -18,5 +18,6 @@
 	<ItemGroup>
 		<ProjectReference Include="..\..\Core\Mojo.Application\Mojo.Application.csproj" />
 		<ProjectReference Include="..\..\Core\Mojo.Domain\Mojo.Domain.csproj" />
+		<ProjectReference Include="..\Mojo.Persistence\Mojo.Persistence.csproj" />
 	</ItemGroup>
 </Project>

@@ -19,4 +19,8 @@
 		<ProjectReference Include="..\..\Core\Mojo.Application\Mojo.Application.csproj" />
 		<ProjectReference Include="..\..\Core\Mojo.Domain\Mojo.Domain.csproj" />
 	</ItemGroup>
+	
+	<ItemGroup>
+	  <Folder Include="Migrations\" />
+	</ItemGroup>
 </Project>

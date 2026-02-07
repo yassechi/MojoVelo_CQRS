@@ -4,8 +4,8 @@ using Microsoft.AspNetCore.Mvc;
 using Mojo.API.Attributes;
 using Mojo.Application.DTOs.EntitiesDto.Amortissement;
 using Mojo.Application.Exceptions;
+using Mojo.Application.Features.Amortissements.Request.Query;
 using Mojo.Application.Features.Amortissments.Request.Command;
-using Mojo.Application.Features.Amortissments.Request.Query;
 using Mojo.Domain.Enums;
 
 namespace Mojo.API.Controllers

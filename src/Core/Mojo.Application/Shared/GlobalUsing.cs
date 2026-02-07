@@ -1,5 +1,4 @@
-﻿global using Mojo.Application.Features.Amortissments.Request.Query;
-global using Mojo.Application.Features.Amortissments.Request.Command;
+﻿global using Mojo.Application.Features.Amortissments.Request.Command;
 global using Mojo.Application.Features.Interventions.Request.Command;
 global using Mojo.Application.Features.Organisations.Request.Command;
 global using Mojo.Application.Features.Organisations.Request.Query;

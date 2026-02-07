@@ -11,7 +11,7 @@ namespace Mojo.API.Dependencies
     {
         public static void ConfigureApplicationService(this IServiceCollection services)
         {
-            var assembly = Assembly.GetAssembly(typeof(CreateAmortissementHandler));
+            var assembly = Assembly.GetAssembly(typeof(CreateDemandeHandler));
             services.AddAutoMapper(assembly);
             services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(assembly));
         }

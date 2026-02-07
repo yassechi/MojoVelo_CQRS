@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Mojo.Persistence.Migrations
 {
     /// <inheritdoc />
-    public partial class initCreate : Migration
+    public partial class Init : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -36,6 +36,9 @@ namespace Mojo.Persistence.Migrations
                     Address = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     ContactEmail = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     IsActif = table.Column<bool>(type: "bit", nullable: false),
+                    IdContact = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    LogoUrl = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    EmailAutorise = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ModifiedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ModifiedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
@@ -99,6 +102,7 @@ namespace Mojo.Persistence.Migrations
                     TailleCm = table.Column<float>(type: "real", nullable: false),
                     IsActif = table.Column<bool>(type: "bit", nullable: false),
                     OrganisationId = table.Column<int>(type: "int", nullable: false),
+                    OrganisationId1 = table.Column<int>(type: "int", nullable: true),
                     UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     Email = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
@@ -122,7 +126,12 @@ namespace Mojo.Persistence.Migrations
                         column: x => x.OrganisationId,
                         principalTable: "Organisations",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_AspNetUsers_Organisations_OrganisationId1",
+                        column: x => x.OrganisationId1,
+                        principalTable: "Organisations",
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -273,8 +282,10 @@ namespace Mojo.Persistence.Migrations
                     DateDebut = table.Column<DateOnly>(type: "date", nullable: false),
                     DateFin = table.Column<DateOnly>(type: "date", nullable: false),
                     LoyerMensuelHT = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    StatutContrat = table.Column<bool>(type: "bit", nullable: false),
+                    StatutContrat = table.Column<int>(type: "int", nullable: false),
+                    Duree = table.Column<int>(type: "int", nullable: false),
                     VeloId = table.Column<int>(type: "int", nullable: false),
+                    Ref = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     BeneficiaireId = table.Column<string>(type: "nvarchar(450)", nullable: true),
                     UserRhId = table.Column<string>(type: "nvarchar(450)", nullable: true),
                     CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
@@ -336,6 +347,68 @@ namespace Mojo.Persistence.Migrations
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Documents",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    ContratId = table.Column<int>(type: "int", nullable: false),
+                    Fichier = table.Column<byte[]>(type: "varbinary(max)", nullable: true),
+                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ModifiedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ModifiedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Documents", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Documents_Contrats_ContratId",
+                        column: x => x.ContratId,
+                        principalTable: "Contrats",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Demandes",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Status = table.Column<int>(type: "int", nullable: false),
+                    IdUser = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    IdVelo = table.Column<int>(type: "int", nullable: false),
+                    DiscussionId = table.Column<int>(type: "int", nullable: false),
+                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ModifiedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ModifiedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Demandes", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Demandes_AspNetUsers_IdUser",
+                        column: x => x.IdUser,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Demandes_Discussions_DiscussionId",
+                        column: x => x.DiscussionId,
+                        principalTable: "Discussions",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Demandes_Velos_IdVelo",
+                        column: x => x.IdVelo,
+                        principalTable: "Velos",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -406,6 +479,13 @@ namespace Mojo.Persistence.Migrations
                 column: "OrganisationId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_AspNetUsers_OrganisationId1",
+                table: "AspNetUsers",
+                column: "OrganisationId1",
+                unique: true,
+                filter: "[OrganisationId1] IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
                 name: "UserNameIndex",
                 table: "AspNetUsers",
                 column: "NormalizedUserName",
@@ -428,6 +508,21 @@ namespace Mojo.Persistence.Migrations
                 column: "VeloId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Demandes_DiscussionId",
+                table: "Demandes",
+                column: "DiscussionId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Demandes_IdUser",
+                table: "Demandes",
+                column: "IdUser");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Demandes_IdVelo",
+                table: "Demandes",
+                column: "IdVelo");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Discussions_ClientId",
                 table: "Discussions",
                 column: "ClientId");
@@ -436,6 +531,12 @@ namespace Mojo.Persistence.Migrations
                 name: "IX_Discussions_MojoId",
                 table: "Discussions",
                 column: "MojoId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Documents_ContratId",
+                table: "Documents",
+                column: "ContratId",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_Interventions_VeloId",
@@ -470,7 +571,10 @@ namespace Mojo.Persistence.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
-                name: "Contrats");
+                name: "Demandes");
+
+            migrationBuilder.DropTable(
+                name: "Documents");
 
             migrationBuilder.DropTable(
                 name: "Interventions");
@@ -482,10 +586,13 @@ namespace Mojo.Persistence.Migrations
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
-                name: "Velos");
+                name: "Contrats");
 
             migrationBuilder.DropTable(
                 name: "Discussions");
+
+            migrationBuilder.DropTable(
+                name: "Velos");
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");

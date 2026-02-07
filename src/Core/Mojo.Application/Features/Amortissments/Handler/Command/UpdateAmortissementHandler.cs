@@ -3,13 +3,13 @@ using Mojo.Application.DTOs.EntitiesDto.Amortissement.Validators;
 
 namespace Mojo.Application.Features.Amortissements.Handler.Command
 {
-    public class UpdateAmortissementHandler : IRequestHandler<UpdateAmortissementCommand, BaseResponse>
+    public class UpdateDemandeHandler : IRequestHandler<UpdateAmortissementCommand, BaseResponse>
     {
         private readonly IAmortissementRepository _repository;
         private readonly IMapper _mapper;
         private readonly IVeloRepository _veloRepository;
 
-        public UpdateAmortissementHandler(IAmortissementRepository repository, IMapper mapper, IVeloRepository veloRepository)
+        public UpdateDemandeHandler(IAmortissementRepository repository, IMapper mapper, IVeloRepository veloRepository)
         {
             _repository = repository;
             _mapper = mapper;

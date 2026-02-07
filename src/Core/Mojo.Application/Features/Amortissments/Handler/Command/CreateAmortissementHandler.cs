@@ -2,13 +2,13 @@
 
 namespace Mojo.Application.Features.Amortissments.Handler.Command
 {
-    public class CreateAmortissementHandler : IRequestHandler<CreateAmortissementCommand, BaseResponse>
+    public class CreateDemandeHandler : IRequestHandler<CreateAmortissementCommand, BaseResponse>
     {
         private readonly IAmortissementRepository _repository;
         private readonly IMapper _mapper;
         private readonly IVeloRepository _veloRepository;
 
-        public CreateAmortissementHandler(IAmortissementRepository repository, IMapper mapper, IVeloRepository veloRepository)
+        public CreateDemandeHandler(IAmortissementRepository repository, IMapper mapper, IVeloRepository veloRepository)
         {
             _repository = repository;
             _mapper = mapper;

@@ -1,5 +1,5 @@
 ﻿using Mojo.Application.DTOs.EntitiesDto.Amortissement;
-using Mojo.Domain.Entities;
+using Mojo.Application.Features.Amortissements.Request.Query;
 
 namespace Mojo.Application.Features.Amortissments.Handler.Query
 {

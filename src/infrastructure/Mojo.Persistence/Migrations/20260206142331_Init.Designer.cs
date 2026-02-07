@@ -12,8 +12,8 @@ using Mojo.Persistence.DatabaseContext;
 namespace Mojo.Persistence.Migrations
 {
     [DbContext(typeof(MDbContext))]
-    [Migration("20260131151316_initCreate")]
-    partial class initCreate
+    [Migration("20260206142331_Init")]
+    partial class Init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -223,6 +223,9 @@ namespace Mojo.Persistence.Migrations
                     b.Property<DateOnly>("DateFin")
                         .HasColumnType("date");
 
+                    b.Property<int>("Duree")
+                        .HasColumnType("int");
+
                     b.Property<decimal>("LoyerMensuelHT")
                         .HasColumnType("decimal(18,2)");
 
@@ -232,8 +235,11 @@ namespace Mojo.Persistence.Migrations
                     b.Property<DateTime>("ModifiedDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<bool>("StatutContrat")
-                        .HasColumnType("bit");
+                    b.Property<string>("Ref")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("StatutContrat")
+                        .HasColumnType("int");
 
                     b.Property<string>("UserRhId")
                         .HasColumnType("nvarchar(450)");
@@ -250,6 +256,50 @@ namespace Mojo.Persistence.Migrations
                     b.HasIndex("VeloId");
 
                     b.ToTable("Contrats");
+                });
+
+            modelBuilder.Entity("Mojo.Domain.Entities.Demande", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("DiscussionId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("IdUser")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("IdVelo")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ModifiedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("ModifiedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DiscussionId");
+
+                    b.HasIndex("IdUser");
+
+                    b.HasIndex("IdVelo");
+
+                    b.ToTable("Demandes");
                 });
 
             modelBuilder.Entity("Mojo.Domain.Entities.Discussion", b =>
@@ -294,6 +344,40 @@ namespace Mojo.Persistence.Migrations
                     b.HasIndex("MojoId");
 
                     b.ToTable("Discussions");
+                });
+
+            modelBuilder.Entity("Mojo.Domain.Entities.Documents", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("ContratId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<byte[]>("Fichier")
+                        .HasColumnType("varbinary(max)");
+
+                    b.Property<string>("ModifiedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("ModifiedDate")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ContratId")
+                        .IsUnique();
+
+                    b.ToTable("Documents");
                 });
 
             modelBuilder.Entity("Mojo.Domain.Entities.Intervention", b =>
@@ -397,8 +481,17 @@ namespace Mojo.Persistence.Migrations
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("EmailAutorise")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("IdContact")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<bool>("IsActif")
                         .HasColumnType("bit");
+
+                    b.Property<string>("LogoUrl")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ModifiedBy")
                         .HasColumnType("nvarchar(max)");
@@ -459,6 +552,9 @@ namespace Mojo.Persistence.Migrations
                     b.Property<int>("OrganisationId")
                         .HasColumnType("int");
 
+                    b.Property<int?>("OrganisationId1")
+                        .HasColumnType("int");
+
                     b.Property<string>("PasswordHash")
                         .HasColumnType("nvarchar(max)");
 
@@ -495,6 +591,10 @@ namespace Mojo.Persistence.Migrations
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
                     b.HasIndex("OrganisationId");
+
+                    b.HasIndex("OrganisationId1")
+                        .IsUnique()
+                        .HasFilter("[OrganisationId1] IS NOT NULL");
 
                     b.ToTable("AspNetUsers", (string)null);
                 });
@@ -626,6 +726,33 @@ namespace Mojo.Persistence.Migrations
                     b.Navigation("Velo");
                 });
 
+            modelBuilder.Entity("Mojo.Domain.Entities.Demande", b =>
+                {
+                    b.HasOne("Mojo.Domain.Entities.Discussion", "Discussion")
+                        .WithMany()
+                        .HasForeignKey("DiscussionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Mojo.Domain.Entities.User", "User")
+                        .WithMany()
+                        .HasForeignKey("IdUser")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Mojo.Domain.Entities.Velo", "Velo")
+                        .WithMany()
+                        .HasForeignKey("IdVelo")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Discussion");
+
+                    b.Navigation("User");
+
+                    b.Navigation("Velo");
+                });
+
             modelBuilder.Entity("Mojo.Domain.Entities.Discussion", b =>
                 {
                     b.HasOne("Mojo.Domain.Entities.User", "Client")
@@ -641,6 +768,17 @@ namespace Mojo.Persistence.Migrations
                     b.Navigation("Client");
 
                     b.Navigation("Mojo");
+                });
+
+            modelBuilder.Entity("Mojo.Domain.Entities.Documents", b =>
+                {
+                    b.HasOne("Mojo.Domain.Entities.Contrat", "Contrat")
+                        .WithOne("Documents")
+                        .HasForeignKey("Mojo.Domain.Entities.Documents", "ContratId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Contrat");
                 });
 
             modelBuilder.Entity("Mojo.Domain.Entities.Intervention", b =>
@@ -668,17 +806,33 @@ namespace Mojo.Persistence.Migrations
             modelBuilder.Entity("Mojo.Domain.Entities.User", b =>
                 {
                     b.HasOne("Mojo.Domain.Entities.Organisation", "Organisation")
-                        .WithMany()
+                        .WithMany("Users")
                         .HasForeignKey("OrganisationId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
+                    b.HasOne("Mojo.Domain.Entities.Organisation", null)
+                        .WithOne("Contact")
+                        .HasForeignKey("Mojo.Domain.Entities.User", "OrganisationId1");
+
                     b.Navigation("Organisation");
+                });
+
+            modelBuilder.Entity("Mojo.Domain.Entities.Contrat", b =>
+                {
+                    b.Navigation("Documents");
                 });
 
             modelBuilder.Entity("Mojo.Domain.Entities.Discussion", b =>
                 {
                     b.Navigation("Messages");
+                });
+
+            modelBuilder.Entity("Mojo.Domain.Entities.Organisation", b =>
+                {
+                    b.Navigation("Contact");
+
+                    b.Navigation("Users");
                 });
 
             modelBuilder.Entity("Mojo.Domain.Entities.User", b =>

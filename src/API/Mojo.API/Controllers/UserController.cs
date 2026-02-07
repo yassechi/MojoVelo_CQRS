@@ -30,7 +30,7 @@ namespace Mojo.API.Controllers
         }
 
         [HttpGet("get-one/{id}")]
-        [AuthorizeRole(UserRole.Admin, UserRole.Manager, UserRole.User)]
+        //[AuthorizeRole(UserRole.Admin, UserRole.Manager, UserRole.User)]
         public async Task<IActionResult> GetById(string id)
         {
             try

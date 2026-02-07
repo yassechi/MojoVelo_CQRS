@@ -2,12 +2,12 @@
 
 namespace Mojo.Application.Features.Amortissments.Handler.Command
 {
-    public class DeleteAmortissementHandler : IRequestHandler<DeleteAmortissementCommand, BaseResponse>
+    public class DeleteDemandeHandler : IRequestHandler<DeleteAmortissementCommand, BaseResponse>
     {
         private readonly IAmortissementRepository _repository;
         private readonly IMapper _mapper;
 
-        public DeleteAmortissementHandler(IAmortissementRepository repository, IMapper mapper)
+        public DeleteDemandeHandler(IAmortissementRepository repository, IMapper mapper)
         {
             _repository = repository;
             _mapper = mapper;
