@@ -12,7 +12,7 @@ using Mojo.Persistence.DatabaseContext;
 namespace Mojo.Persistence.Migrations
 {
     [DbContext(typeof(MDbContext))]
-    [Migration("20260206142331_Init")]
+    [Migration("20260207010034_Init")]
     partial class Init
     {
         /// <inheritdoc />

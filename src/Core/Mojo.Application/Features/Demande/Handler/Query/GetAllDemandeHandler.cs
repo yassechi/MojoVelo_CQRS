@@ -22,9 +22,9 @@ namespace Mojo.Application.Features.Demandes.Handlers.Query
         public async Task<List<DemandeDto>> Handle(GetAllDemandeRequest request, CancellationToken cancellationToken)
         {
             var demandes = await _demandeRepository.GetAllAsync();
-
             return demandes.Select(d => new DemandeDto
             {
+                Id = d.Id,  
                 Status = d.Status,
                 IdUser = d.IdUser,
                 IdVelo = d.IdVelo,

@@ -45,7 +45,7 @@ namespace Mojo.Application.DTOs.EntitiesDto.Contrat.Validators
                 {
                     var user = await _userRepository.GetUserByStringId(userRhId);
                     if (user == null) return false;
-                    return (int)user.Role == 2;
+                    return (int)user.Role == 2 || (int)user.Role == 1;
                 })
                 .WithMessage("Le responsable RH doit avoir le rôle 'Négociateur' (Role = 2).");
 
