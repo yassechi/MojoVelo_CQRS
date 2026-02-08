@@ -67,7 +67,7 @@ namespace Mojo.API.Controllers
         }
 
         [HttpPut("update")]
-        [AuthorizeRole(UserRole.Admin, UserRole.Manager, UserRole.User)]
+        //[AuthorizeRole(UserRole.Admin, UserRole.Manager, UserRole.User)]
         public async Task<IActionResult> Update([FromBody] UserDto userDto)
         {
             var userId = User.FindFirst("uid")?.Value;

@@ -18,10 +18,12 @@ namespace Mojo.Application.Features.Discussions.Handler.Query
         public async Task<DiscussionDto> Handle(GetDiscussionDetailsRequest request, CancellationToken cancellationToken)
         {
             var discussion = await repository.GetByIdAsync(request.Id);
-            if (discussion == null)
+
+            if (discussion == null || !discussion.IsActif)
             {
                 throw new NotFoundException(nameof(Discussion), request.Id);
             }
+
             return mapper.Map<DiscussionDto>(discussion);
         }
     }

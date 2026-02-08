@@ -13,11 +13,12 @@ namespace Mojo.Application.Features.Amortissments.Handler.Query
             this.repository = repository;
             this.mapper = mapper;
         }
+
         public async Task<AmortissmentDto> Handle(GetAmortissementDetailsRequest request, CancellationToken cancellationToken)
         {
             var amortissement = await repository.GetByIdAsync(request.Id);
 
-            if (amortissement == null)
+            if (amortissement == null || !amortissement.IsActif)
             {
                 throw new NotFoundException(nameof(Amortissement), request.Id);
             }

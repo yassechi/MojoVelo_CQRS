@@ -16,20 +16,22 @@ namespace Mojo.Application.Features.Messages.Handler.Command
         public async Task<BaseResponse> Handle(DeleteMessageCommand request, CancellationToken cancellationToken)
         {
             var response = new BaseResponse();
-
             var message = await _repository.GetByIdAsync(request.Id);
+
             if (message == null)
             {
                 response.Success = false;
-                response.Message = "Echec de la suppression du message.";
+                response.Message = "Echec de la désactivation du message.";
                 response.Errors.Add($"Aucun message trouvé avec l'Id {request.Id}.");
                 return response;
             }
 
-            await _repository.DeleteAsync(request.Id);
+            // Au lieu de supprimer, on désactive le message
+            message.IsActif = false;
+            await _repository.UpdateAsync(message);
 
             response.Success = true;
-            response.Message = "Le message a été supprimé avec succès.";
+            response.Message = "Le message a été désactivé avec succès.";
             response.Id = request.Id;
             return response;
         }

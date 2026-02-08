@@ -14,7 +14,11 @@
         public async Task<List<Domain.Entities.Discussion>> Handle(GetAllDiscussionRequest request, CancellationToken cancellationToken)
         {
             var discussions = await repository.GetAllAsync();
-            return mapper.Map<List<Mojo.Domain.Entities.Discussion>>(discussions);
+
+            // Filtrer uniquement les discussions actives
+            var discussionsActives = discussions.Where(d => d.IsActif).ToList();
+
+            return mapper.Map<List<Mojo.Domain.Entities.Discussion>>(discussionsActives);
         }
     }
 }

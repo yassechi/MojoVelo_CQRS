@@ -12,7 +12,7 @@ using Mojo.Persistence.DatabaseContext;
 namespace Mojo.Persistence.Migrations
 {
     [DbContext(typeof(MDbContext))]
-    [Migration("20260207010034_Init")]
+    [Migration("20260207204236_Init")]
     partial class Init
     {
         /// <inheritdoc />
@@ -178,6 +178,9 @@ namespace Mojo.Persistence.Migrations
                     b.Property<int>("DureeMois")
                         .HasColumnType("int");
 
+                    b.Property<bool>("IsActif")
+                        .HasColumnType("bit");
+
                     b.Property<string>("ModifiedBy")
                         .HasColumnType("nvarchar(max)");
 
@@ -225,6 +228,9 @@ namespace Mojo.Persistence.Migrations
 
                     b.Property<int>("Duree")
                         .HasColumnType("int");
+
+                    b.Property<bool>("IsActif")
+                        .HasColumnType("bit");
 
                     b.Property<decimal>("LoyerMensuelHT")
                         .HasColumnType("decimal(18,2)");
@@ -282,6 +288,9 @@ namespace Mojo.Persistence.Migrations
                     b.Property<int>("IdVelo")
                         .HasColumnType("int");
 
+                    b.Property<bool>("IsActif")
+                        .HasColumnType("bit");
+
                     b.Property<string>("ModifiedBy")
                         .HasColumnType("nvarchar(max)");
 
@@ -321,6 +330,9 @@ namespace Mojo.Persistence.Migrations
 
                     b.Property<DateTime>("DateCreation")
                         .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsActif")
+                        .HasColumnType("bit");
 
                     b.Property<string>("ModifiedBy")
                         .HasColumnType("nvarchar(max)");
@@ -366,6 +378,9 @@ namespace Mojo.Persistence.Migrations
                     b.Property<byte[]>("Fichier")
                         .HasColumnType("varbinary(max)");
 
+                    b.Property<bool>("IsActif")
+                        .HasColumnType("bit");
+
                     b.Property<string>("ModifiedBy")
                         .HasColumnType("nvarchar(max)");
 
@@ -402,6 +417,9 @@ namespace Mojo.Persistence.Migrations
 
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsActif")
+                        .HasColumnType("bit");
 
                     b.Property<string>("ModifiedBy")
                         .HasColumnType("nvarchar(max)");
@@ -444,6 +462,9 @@ namespace Mojo.Persistence.Migrations
 
                     b.Property<int>("DiscussionId")
                         .HasColumnType("int");
+
+                    b.Property<bool>("IsActif")
+                        .HasColumnType("bit");
 
                     b.Property<string>("ModifiedBy")
                         .HasColumnType("nvarchar(max)");
@@ -612,6 +633,9 @@ namespace Mojo.Persistence.Migrations
 
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsActif")
+                        .HasColumnType("bit");
 
                     b.Property<string>("Marque")
                         .HasColumnType("nvarchar(max)");

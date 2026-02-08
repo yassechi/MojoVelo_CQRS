@@ -18,10 +18,12 @@ namespace Mojo.Application.Features.Messages.Handler.Query
         public async Task<MessageDto> Handle(GetMessageDetailsRequest request, CancellationToken cancellationToken)
         {
             var message = await repository.GetByIdAsync(request.Id);
-            if (message == null)
+
+            if (message == null || !message.IsActif)
             {
                 throw new NotFoundException(nameof(Message), request.Id);
             }
+
             return mapper.Map<MessageDto>(message);
         }
     }

@@ -1,7 +1,9 @@
-﻿using AutoMapper;
+﻿
+using AutoMapper;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Mojo.Application.DTOs.EntitiesDto.User.Validators;
+using FluentValidation.Results;
 using Mojo.Application.Features.Users.Request.Command;
 using Mojo.Application.Model;
 using Mojo.Application.Persistance.Contracts;
@@ -28,12 +30,33 @@ namespace Mojo.Application.Features.Users.Handler.Command
         public async Task<BaseResponse> Handle(UpdateUserCommand request, CancellationToken cancellationToken)
         {
             var response = new BaseResponse();
-
             var validator = new UserValidator(_organisationRepository);
+
+
+
             var validationResult = await validator.ValidateAsync(request.dto, options =>
             {
                 options.IncludeRuleSets("Update");
             }, cancellationToken);
+
+            // ========== LOGS DE DEBUG ==========
+            Console.WriteLine($"🔍 Validation Result: {validationResult.IsValid}");
+            Console.WriteLine($"🔍 Email: {request.dto.Email}");
+            Console.WriteLine($"🔍 OrganisationId: {request.dto.OrganisationId}");
+
+            if (!validationResult.IsValid)
+            {
+                Console.WriteLine("❌ ERREURS DE VALIDATION DÉTECTÉES:");
+                foreach (var error in validationResult.Errors)
+                {
+                    Console.WriteLine($"   - {error.PropertyName}: {error.ErrorMessage}");
+                }
+            }
+            else
+            {
+                Console.WriteLine("✅ Validation réussie");
+            }
+            // ===================================
 
             if (!validationResult.IsValid)
             {

@@ -18,10 +18,12 @@ namespace Mojo.Application.Features.Users.Handler.Query
         public async Task<UserDto> Handle(GetUserDetailsRequest request, CancellationToken cancellationToken)
         {
             var user = await repository.GetUserByStringId(request.Id);
-            if (user == null)
+
+            if (user == null || !user.IsActif)
             {
                 throw new NotFoundException(nameof(User), request.Id);
             }
+
             return mapper.Map<UserDto>(user);
         }
     }

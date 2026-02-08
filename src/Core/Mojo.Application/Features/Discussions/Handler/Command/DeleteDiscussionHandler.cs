@@ -16,20 +16,22 @@ namespace Mojo.Application.Features.Discussions.Handler.Command
         public async Task<BaseResponse> Handle(DeleteDiscussionCommand request, CancellationToken cancellationToken)
         {
             var response = new BaseResponse();
-
             var discussion = await _repository.GetByIdAsync(request.Id);
+
             if (discussion == null)
             {
                 response.Success = false;
-                response.Message = "Echec de la suppression de la discussion.";
+                response.Message = "Echec de la désactivation de la discussion.";
                 response.Errors.Add($"Aucune discussion trouvée avec l'Id {request.Id}.");
                 return response;
             }
 
-            await _repository.DeleteAsync(request.Id);
+            // Au lieu de supprimer, on désactive la discussion
+            discussion.IsActif = false;
+            await _repository.UpdateAsync(discussion);
 
             response.Success = true;
-            response.Message = "La discussion a été supprimée avec succès.";
+            response.Message = "La discussion a été désactivée avec succès.";
             response.Id = request.Id;
             return response;
         }

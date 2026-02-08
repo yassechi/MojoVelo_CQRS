@@ -20,7 +20,7 @@ namespace Mojo.Application.Features.Interventions.Handler.Query
         {
             var intervention = await _repository.GetByIdAsync(request.Id);
 
-            if (intervention == null)
+            if (intervention == null || !intervention.IsActif)
             {
                 throw new NotFoundException(nameof(Intervention), request.Id);
             }

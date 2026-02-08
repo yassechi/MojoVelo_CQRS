@@ -24,13 +24,14 @@ namespace Mojo.Application.Features.Demandes.Handlers.Query
         {
             var demande = await _demandeRepository.GetByIdAsync(request.Id);
 
-            if (demande == null)
+            if (demande == null || !demande.IsActif)
             {
                 throw new NotFoundException(nameof(Domain.Entities.Demande), request.Id);
             }
 
             return new DemandeDto
             {
+                Id = demande.Id,
                 Status = demande.Status,
                 IdUser = demande.IdUser,
                 IdVelo = demande.IdVelo,

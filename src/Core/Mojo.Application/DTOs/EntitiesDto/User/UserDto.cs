@@ -10,7 +10,7 @@ namespace Mojo.Application.DTOs.EntitiesDto.User
         [Required]
         public string FirstName { get; set; } = null!;
         [Required]
-        public string LasttName { get; set; } = null!;
+        public string LastName { get; set; } = null!;
         [Required]
         public string UserName { get; set; } = null!;
         [Required]

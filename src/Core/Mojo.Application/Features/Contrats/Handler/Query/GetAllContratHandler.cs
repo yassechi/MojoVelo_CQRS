@@ -16,8 +16,11 @@ namespace Mojo.Application.Features.Contrat.Handler.Query
         public async Task<List<ContratDto>> Handle(GetAllContratRequest request, CancellationToken cancellationToken)
         {
             var contrats = await repository.GetAllAsync();
-            return mapper.Map<List<ContratDto>>(contrats);
+
+            // Filtrer uniquement les contrats actifs
+            var contratsActifs = contrats.Where(c => c.IsActif).ToList();
+
+            return mapper.Map<List<ContratDto>>(contratsActifs);
         }
     }
 }
-        

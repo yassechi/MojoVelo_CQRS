@@ -18,10 +18,12 @@ namespace Mojo.Application.Features.Organisations.Handler.Query
         public async Task<OrganisationDto> Handle(GetOrganisationDetailsRequest request, CancellationToken cancellationToken)
         {
             var organisation = await repository.GetByIdAsync(request.Id);
-            if (organisation == null)
+
+            if (organisation == null || !organisation.IsActif)
             {
                 throw new NotFoundException(nameof(Organisation), request.Id);
             }
+
             return mapper.Map<OrganisationDto>(organisation);
         }
     }

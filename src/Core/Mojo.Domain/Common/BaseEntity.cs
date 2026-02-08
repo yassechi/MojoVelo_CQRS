@@ -15,5 +15,6 @@ namespace Mojo.Domain.Common
         public DateTime ModifiedDate { get; set; }
         public string ModifiedBy { get; set; } = null!;
         public string CreatedBy { get; set; } = null!;
+        public bool IsActif { get; set; } = true;
     }
 }

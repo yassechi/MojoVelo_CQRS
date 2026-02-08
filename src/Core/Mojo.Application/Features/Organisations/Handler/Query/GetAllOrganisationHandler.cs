@@ -16,7 +16,11 @@ namespace Mojo.Application.Features.Organisations.Handler.Query
         public async Task<List<OrganisationDto>> Handle(GetAllOrganisationRequest request, CancellationToken cancellationToken)
         {
             var organisations = await repository.GetAllAsync();
-            return mapper.Map<List<OrganisationDto>>(organisations);
+
+            // Filtrer uniquement les organisations actives
+            var organisationsActives = organisations.Where(o => o.IsActif).ToList();
+
+            return mapper.Map<List<OrganisationDto>>(organisationsActives);
         }
     }
 }

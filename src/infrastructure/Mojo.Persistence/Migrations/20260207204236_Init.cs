@@ -63,7 +63,8 @@ namespace Mojo.Persistence.Migrations
                     CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ModifiedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ModifiedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    IsActif = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -148,7 +149,8 @@ namespace Mojo.Persistence.Migrations
                     CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ModifiedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ModifiedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    IsActif = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -175,7 +177,8 @@ namespace Mojo.Persistence.Migrations
                     CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ModifiedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ModifiedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    IsActif = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -291,7 +294,8 @@ namespace Mojo.Persistence.Migrations
                     CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ModifiedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ModifiedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    IsActif = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -330,7 +334,8 @@ namespace Mojo.Persistence.Migrations
                     CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ModifiedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ModifiedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    IsActif = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -360,7 +365,8 @@ namespace Mojo.Persistence.Migrations
                     CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ModifiedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ModifiedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    IsActif = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -386,7 +392,8 @@ namespace Mojo.Persistence.Migrations
                     CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ModifiedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ModifiedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    IsActif = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -423,7 +430,8 @@ namespace Mojo.Persistence.Migrations
                     CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ModifiedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ModifiedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    IsActif = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {

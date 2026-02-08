@@ -16,7 +16,11 @@ namespace Mojo.Application.Features.Messages.Handler.Query
         public async Task<List<MessageDto>> Handle(GetAllMessageRequest request, CancellationToken cancellationToken)
         {
             var messages = await repository.GetAllAsync();
-            return mapper.Map<List<MessageDto>>(messages);
+
+            // Filtrer uniquement les messages actifs
+            var messagesActifs = messages.Where(m => m.IsActif).ToList();
+
+            return mapper.Map<List<MessageDto>>(messagesActifs);
         }
     }
 }

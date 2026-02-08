@@ -18,10 +18,12 @@ namespace Mojo.Application.Features.Contrats.Handler.Query
         public async Task<ContratDto> Handle(GetContratDetailsRequest request, CancellationToken cancellationToken)
         {
             var contrat = await _repository.GetByIdAsync(request.Id);
-            if (contrat == null)
+
+            if (contrat == null || !contrat.IsActif)
             {
                 throw new NotFoundException(nameof(Contrat), request.Id);
             }
+
             return _mapper.Map<ContratDto>(contrat);
         }
     }

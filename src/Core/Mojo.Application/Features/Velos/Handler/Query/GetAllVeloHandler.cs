@@ -16,7 +16,11 @@ namespace Mojo.Application.Features.Velos.Handler.Query
         public async Task<List<VeloDto>> Handle(GetAllVeloRequest request, CancellationToken cancellationToken)
         {
             var velos = await repository.GetAllAsync();
-            return mapper.Map<List<VeloDto>>(velos);
+
+            // Filtrer uniquement les vélos actifs
+            var velosActifs = velos.Where(v => v.IsActif).ToList();
+
+            return mapper.Map<List<VeloDto>>(velosActifs);
         }
     }
 }

@@ -18,10 +18,12 @@ namespace Mojo.Application.Features.Velos.Handler.Query
         public async Task<VeloDto> Handle(GetVeloDetailsRequest request, CancellationToken cancellationToken)
         {
             var velo = await repository.GetByIdAsync(request.Id);
-            if (velo == null)
+
+            if (velo == null || !velo.IsActif)
             {
                 throw new NotFoundException(nameof(Velo), request.Id);
             }
+
             return mapper.Map<VeloDto>(velo);
         }
     }

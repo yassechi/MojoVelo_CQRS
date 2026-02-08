@@ -16,7 +16,11 @@ namespace Mojo.Application.Features.Users.Handler.Query
         public async Task<List<UserDto>> Handle(GetAllUserRequest request, CancellationToken cancellationToken)
         {
             var users = await repository.GetAllAsync();
-            return mapper.Map<List<UserDto>>(users);
+
+            // Filtrer uniquement les utilisateurs actifs
+            var usersActifs = users.Where(u => u.IsActif).ToList();
+
+            return mapper.Map<List<UserDto>>(usersActifs);
         }
     }
 }

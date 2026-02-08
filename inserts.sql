@@ -81,75 +81,122 @@ INSERT INTO [AspNetRoleClaims] ([RoleId], [ClaimType], [ClaimValue]) VALUES
 -----------------------------------------------------------
 -- 10. [Velos]
 -----------------------------------------------------------
-INSERT INTO [Velos] ([Marque], [Modele], [NumeroSerie], [PrixAchat], [Status], [CreatedDate], [ModifiedDate]) VALUES
-('Moustache','Lundi 27','SN2026-001',2500,1,GETDATE(),GETDATE()), ('VanMoof','S5','SN2026-002',2900,1,GETDATE(),GETDATE()), ('Cowboy','C4','SN2026-003',2700,1,GETDATE(),GETDATE()), ('Giant','Explore','SN2026-004',2300,1,GETDATE(),GETDATE()), ('Specialized','Vado','SN2026-005',3500,1,GETDATE(),GETDATE()),
-('Trek','Allant','SN2026-006',3800,1,GETDATE(),GETDATE()), ('Gazelle','Ultimate','SN2026-007',3100,0,GETDATE(),GETDATE()), ('Decathlon','Elops','SN2026-008',1400,1,GETDATE(),GETDATE()), ('Canyon','Precede','SN2026-009',4200,1,GETDATE(),GETDATE()), ('Riese','Nevo','SN2026-010',5200,0,GETDATE(),GETDATE());
+INSERT INTO [Velos] ([Marque], [Modele], [NumeroSerie], [PrixAchat], [Status], [IsActif], [CreatedDate], [ModifiedDate]) VALUES
+('Moustache','Lundi 27','SN2026-001',2500,1,1,GETDATE(),GETDATE()), 
+('VanMoof','S5','SN2026-002',2900,1,1,GETDATE(),GETDATE()), 
+('Cowboy','C4','SN2026-003',2700,1,1,GETDATE(),GETDATE()), 
+('Giant','Explore','SN2026-004',2300,1,1,GETDATE(),GETDATE()), 
+('Specialized','Vado','SN2026-005',3500,1,1,GETDATE(),GETDATE()),
+('Trek','Allant','SN2026-006',3800,1,1,GETDATE(),GETDATE()), 
+('Gazelle','Ultimate','SN2026-007',3100,0,1,GETDATE(),GETDATE()), 
+('Decathlon','Elops','SN2026-008',1400,1,1,GETDATE(),GETDATE()), 
+('Canyon','Precede','SN2026-009',4200,1,1,GETDATE(),GETDATE()), 
+('Riese','Nevo','SN2026-010',5200,0,1,GETDATE(),GETDATE());
 
 -----------------------------------------------------------
 -- 11. [Contrats]
 -----------------------------------------------------------
-INSERT INTO [Contrats] ([Ref], [VeloId], [BeneficiaireId], [UserRhId], [DateDebut], [DateFin], [Duree], [LoyerMensuelHT], [StatutContrat], [CreatedDate], [ModifiedDate]) VALUES
-('CTR-M01',1,'U04','U03','2026-01-01','2028-01-01',24,85,1,GETDATE(),GETDATE()), ('CTR-V02',2,'U05','U03','2026-01-01','2028-01-01',24,95,1,GETDATE(),GETDATE()), ('CTR-E03',3,'U07','U03','2026-01-01','2028-01-01',24,110,1,GETDATE(),GETDATE()), ('CTR-L04',4,'U09','U03','2026-01-01','2028-01-01',24,120,1,GETDATE(),GETDATE()), ('CTR-N05',5,'U10','U03','2026-01-01','2028-01-01',24,130,1,GETDATE(),GETDATE()),
-('CTR-G06',6,'U04','U03','2026-02-01','2029-02-01',36,140,1,GETDATE(),GETDATE()), ('CTR-U07',7,'U05','U03','2026-02-01','2029-02-01',36,150,0,GETDATE(),GETDATE()), ('CTR-S08',8,'U07','U03','2026-02-01','2029-02-01',36,60,1,GETDATE(),GETDATE()), ('CTR-SO09',9,'U09','U03','2026-02-01','2029-02-01',36,180,2,GETDATE(),GETDATE()), ('CTR-A10',1,'U10','U03','2026-03-01','2029-03-01',36,85,1,GETDATE(),GETDATE());
+INSERT INTO [Contrats] ([Ref], [VeloId], [BeneficiaireId], [UserRhId], [DateDebut], [DateFin], [Duree], [LoyerMensuelHT], [StatutContrat], [IsActif], [CreatedDate], [ModifiedDate]) VALUES
+('CTR-M01',1,'U04','U03','2026-01-01','2028-01-01',24,85,1,1,GETDATE(),GETDATE()), 
+('CTR-V02',2,'U05','U03','2026-01-01','2028-01-01',24,95,1,1,GETDATE(),GETDATE()), 
+('CTR-E03',3,'U07','U03','2026-01-01','2028-01-01',24,110,1,1,GETDATE(),GETDATE()), 
+('CTR-L04',4,'U09','U03','2026-01-01','2028-01-01',24,120,1,1,GETDATE(),GETDATE()), 
+('CTR-N05',5,'U10','U03','2026-01-01','2028-01-01',24,130,1,1,GETDATE(),GETDATE()),
+('CTR-G06',6,'U04','U03','2026-02-01','2029-02-01',36,140,1,1,GETDATE(),GETDATE()), 
+('CTR-U07',7,'U05','U03','2026-02-01','2029-02-01',36,150,0,1,GETDATE(),GETDATE()), 
+('CTR-S08',8,'U07','U03','2026-02-01','2029-02-01',36,60,1,1,GETDATE(),GETDATE()), 
+('CTR-SO09',9,'U09','U03','2026-02-01','2029-02-01',36,180,2,1,GETDATE(),GETDATE()), 
+('CTR-A10',1,'U10','U03','2026-03-01','2029-03-01',36,85,1,1,GETDATE(),GETDATE());
 
 -----------------------------------------------------------
 -- 12. [Amortissements]
 -----------------------------------------------------------
-INSERT INTO [Amortissements] ([VeloId], [DateDebut], [DureeMois], [ValeurInit], [ValeurResiduelleFinale], [CreatedDate], [ModifiedDate]) VALUES
-(1,'2026-01-01',48,2500,500,GETDATE(),GETDATE()), (2,'2026-01-01',48,2900,580,GETDATE(),GETDATE()), (3,'2026-01-01',48,2700,540,GETDATE(),GETDATE()), (4,'2026-01-01',48,2300,460,GETDATE(),GETDATE()), (5,'2026-02-01',60,3500,700,GETDATE(),GETDATE()),
-(6,'2026-02-01',60,3800,760,GETDATE(),GETDATE()), (7,'2026-02-01',60,3100,620,GETDATE(),GETDATE()), (8,'2026-03-01',48,1400,280,GETDATE(),GETDATE()), (9,'2026-03-01',60,4200,840,GETDATE(),GETDATE()), (10,'2026-03-01',60,5200,1040,GETDATE(),GETDATE());
+INSERT INTO [Amortissements] ([VeloId], [DateDebut], [DureeMois], [ValeurInit], [ValeurResiduelleFinale], [IsActif], [CreatedDate], [ModifiedDate]) VALUES
+(1,'2026-01-01',48,2500,500,1,GETDATE(),GETDATE()), 
+(2,'2026-01-01',48,2900,580,1,GETDATE(),GETDATE()), 
+(3,'2026-01-01',48,2700,540,1,GETDATE(),GETDATE()), 
+(4,'2026-01-01',48,2300,460,1,GETDATE(),GETDATE()), 
+(5,'2026-02-01',60,3500,700,1,GETDATE(),GETDATE()),
+(6,'2026-02-01',60,3800,760,1,GETDATE(),GETDATE()), 
+(7,'2026-02-01',60,3100,620,1,GETDATE(),GETDATE()), 
+(8,'2026-03-01',48,1400,280,1,GETDATE(),GETDATE()), 
+(9,'2026-03-01',60,4200,840,1,GETDATE(),GETDATE()), 
+(10,'2026-03-01',60,5200,1040,1,GETDATE(),GETDATE());
 
 -----------------------------------------------------------
 -- 13. [Discussions]
 -----------------------------------------------------------
-INSERT INTO [Discussions] ([Objet], [ClientId], [MojoId], [Status], [DateCreation], [CreatedDate], [ModifiedDate]) VALUES
-('Panne batterie','U04','U01',1,GETDATE(),GETDATE(),GETDATE()), ('Facture loyer','U05','U02',1,GETDATE(),GETDATE(),GETDATE()), ('Entretien annuel','U07','U01',1,GETDATE(),GETDATE(),GETDATE()), ('Vélo volé','U09','U01',0,GETDATE(),GETDATE(),GETDATE()), ('Bruit pédalier','U10','U02',1,GETDATE(),GETDATE(),GETDATE()),
-('Changement RIB','U04','U02',1,GETDATE(),GETDATE(),GETDATE()), ('Freins lâches','U05','U06',1,GETDATE(),GETDATE(),GETDATE()), ('Extension garantie','U07','U06',1,GETDATE(),GETDATE(),GETDATE()), ('Usure pneus','U09','U01',1,GETDATE(),GETDATE(),GETDATE()), ('Clés perdues','U10','U02',1,GETDATE(),GETDATE(),GETDATE());
+INSERT INTO [Discussions] ([Objet], [ClientId], [MojoId], [Status], [IsActif], [DateCreation], [CreatedDate], [ModifiedDate]) VALUES
+('Panne batterie','U04','U01',1,1,GETDATE(),GETDATE(),GETDATE()), 
+('Facture loyer','U05','U02',1,1,GETDATE(),GETDATE(),GETDATE()), 
+('Entretien annuel','U07','U01',1,1,GETDATE(),GETDATE(),GETDATE()), 
+('Vélo volé','U09','U01',0,1,GETDATE(),GETDATE(),GETDATE()), 
+('Bruit pédalier','U10','U02',1,1,GETDATE(),GETDATE(),GETDATE()),
+('Changement RIB','U04','U02',1,1,GETDATE(),GETDATE(),GETDATE()), 
+('Freins lâches','U05','U06',1,1,GETDATE(),GETDATE(),GETDATE()), 
+('Extension garantie','U07','U06',1,1,GETDATE(),GETDATE(),GETDATE()), 
+('Usure pneus','U09','U01',1,1,GETDATE(),GETDATE(),GETDATE()), 
+('Clés perdues','U10','U02',1,1,GETDATE(),GETDATE(),GETDATE());
 
 -----------------------------------------------------------
 -- 14. [Messages]
 -----------------------------------------------------------
-INSERT INTO [Messages] ([Contenu], [DiscussionId], [DateEnvoi], [CreatedDate], [ModifiedDate]) VALUES
-('Le vélo ne s''allume plus ce matin.', 1, GETDATE(), GETDATE(), GETDATE()),
-('Vérifiez que la batterie est bien enclenchée.', 1, GETDATE(), GETDATE(), GETDATE()),
-('C''est fait, mais l''écran reste noir.', 1, GETDATE(), GETDATE(), GETDATE()),
-('Pouvez-vous m''envoyer la facture de janvier ?', 2, GETDATE(), GETDATE(), GETDATE()),
-('Elle est disponible dans votre espace client.', 2, GETDATE(), GETDATE(), GETDATE()),
-('Mon pneu arrière est lisse.', 9, GETDATE(), GETDATE(), GETDATE()),
-('Nous prenons rendez-vous pour le remplacement.', 9, GETDATE(), GETDATE(), GETDATE()),
-('On m''a volé mon vélo à Marseille.', 4, GETDATE(), GETDATE(), GETDATE()),
-('Veuillez joindre le dépôt de plainte PDF.', 4, GETDATE(), GETDATE(), GETDATE()),
-('Voici le document scanné.', 4, GETDATE(), GETDATE(), GETDATE());
+INSERT INTO [Messages] ([Contenu], [DiscussionId], [IsActif], [DateEnvoi], [CreatedDate], [ModifiedDate]) VALUES
+('Le vélo ne s''allume plus ce matin.', 1, 1, GETDATE(), GETDATE(), GETDATE()),
+('Vérifiez que la batterie est bien enclenchée.', 1, 1, GETDATE(), GETDATE(), GETDATE()),
+('C''est fait, mais l''écran reste noir.', 1, 1, GETDATE(), GETDATE(), GETDATE()),
+('Pouvez-vous m''envoyer la facture de janvier ?', 2, 1, GETDATE(), GETDATE(), GETDATE()),
+('Elle est disponible dans votre espace client.', 2, 1, GETDATE(), GETDATE(), GETDATE()),
+('Mon pneu arrière est lisse.', 9, 1, GETDATE(), GETDATE(), GETDATE()),
+('Nous prenons rendez-vous pour le remplacement.', 9, 1, GETDATE(), GETDATE(), GETDATE()),
+('On m''a volé mon vélo à Marseille.', 4, 1, GETDATE(), GETDATE(), GETDATE()),
+('Veuillez joindre le dépôt de plainte PDF.', 4, 1, GETDATE(), GETDATE(), GETDATE()),
+('Voici le document scanné.', 4, 1, GETDATE(), GETDATE(), GETDATE());
 
 -----------------------------------------------------------
 -- 15. [Demandes]
 -----------------------------------------------------------
-INSERT INTO [Demandes] ([IdUser], [IdVelo], [DiscussionId], [Status], [CreatedDate], [ModifiedDate]) VALUES
-('U04',1,1,1,GETDATE(),GETDATE()), ('U05',2,2,1,GETDATE(),GETDATE()), ('U07',3,3,1,GETDATE(),GETDATE()), ('U09',4,4,3,GETDATE(),GETDATE()), ('U10',5,5,1,GETDATE(),GETDATE()),
-('U04',6,6,1,GETDATE(),GETDATE()), ('U05',7,7,2,GETDATE(),GETDATE()), ('U07',8,8,2,GETDATE(),GETDATE()), ('U09',9,9,1,GETDATE(),GETDATE()), ('U10',10,10,1,GETDATE(),GETDATE());
+INSERT INTO [Demandes] ([IdUser], [IdVelo], [DiscussionId], [Status], [IsActif], [CreatedDate], [ModifiedDate]) VALUES
+('U04',1,1,1,1,GETDATE(),GETDATE()), 
+('U05',2,2,1,1,GETDATE(),GETDATE()), 
+('U07',3,3,1,1,GETDATE(),GETDATE()), 
+('U09',4,4,3,1,GETDATE(),GETDATE()), 
+('U10',5,5,1,1,GETDATE(),GETDATE()),
+('U04',6,6,1,1,GETDATE(),GETDATE()), 
+('U05',7,7,2,1,GETDATE(),GETDATE()), 
+('U07',8,8,2,1,GETDATE(),GETDATE()), 
+('U09',9,9,1,1,GETDATE(),GETDATE()), 
+('U10',10,10,1,1,GETDATE(),GETDATE());
 
 -----------------------------------------------------------
 -- 16. [Interventions]
 -----------------------------------------------------------
-INSERT INTO [Interventions] ([VeloId], [TypeIntervention], [Description], [DateIntervention], [Cout], [CreatedDate], [ModifiedDate]) VALUES
-(1,'Batterie','Changement cellules',GETDATE(),450,GETDATE(),GETDATE()), (2,'Pneus','Marathon Plus',GETDATE(),85,GETDATE(),GETDATE()), (3,'Freins','Purge liquide',GETDATE(),50,GETDATE(),GETDATE()), (7,'Cadre','Soudure support',GETDATE(),120,GETDATE(),GETDATE()), (8,'Logiciel','Update V3',GETDATE(),0,GETDATE(),GETDATE()),
-(1,'Look','Peinture cadre',GETDATE(),60,GETDATE(),GETDATE()), (2,'Moteur','Nettoyage capteur',GETDATE(),90,GETDATE(),GETDATE()), (3,'Selle','Echange confort',GETDATE(),45,GETDATE(),GETDATE()), (4,'Chaine','Graissage',GETDATE(),25,GETDATE(),GETDATE()), (5,'Feu','Echange LED',GETDATE(),30,GETDATE(),GETDATE());
+INSERT INTO [Interventions] ([VeloId], [TypeIntervention], [Description], [DateIntervention], [Cout], [IsActif], [CreatedDate], [ModifiedDate]) VALUES
+(1,'Batterie','Changement cellules',GETDATE(),450,1,GETDATE(),GETDATE()), 
+(2,'Pneus','Marathon Plus',GETDATE(),85,1,GETDATE(),GETDATE()), 
+(3,'Freins','Purge liquide',GETDATE(),50,1,GETDATE(),GETDATE()), 
+(7,'Cadre','Soudure support',GETDATE(),120,1,GETDATE(),GETDATE()), 
+(8,'Logiciel','Update V3',GETDATE(),0,1,GETDATE(),GETDATE()),
+(1,'Look','Peinture cadre',GETDATE(),60,1,GETDATE(),GETDATE()), 
+(2,'Moteur','Nettoyage capteur',GETDATE(),90,1,GETDATE(),GETDATE()), 
+(3,'Selle','Echange confort',GETDATE(),45,1,GETDATE(),GETDATE()), 
+(4,'Chaine','Graissage',GETDATE(),25,1,GETDATE(),GETDATE()), 
+(5,'Feu','Echange LED',GETDATE(),30,1,GETDATE(),GETDATE());
 
 -----------------------------------------------------------
 -- 17. [Documents] (PDF Binaires Variés)
 -----------------------------------------------------------
--- Signature PDF standard (Variée pour simuler des fichiers différents)
-INSERT INTO [Documents] ([ContratId], [Fichier], [CreatedDate], [ModifiedDate]) VALUES
-(1, 0x255044462D312E340A25C3A4C3BCC3B6C39F0A312030206F626A, GETDATE(), GETDATE()),
-(2, 0x255044462D312E370A25C3A4C3BCC3B6C39F0A312030206F626A, GETDATE(), GETDATE()),
-(3, 0x255044462D312E340A25C3A4C3BCC3B6C39F0A312030206F626A, GETDATE(), GETDATE()),
-(4, 0x255044462D312E370A25C3A4C3BCC3B6C39F0A312030206F626A, GETDATE(), GETDATE()),
-(5, 0x255044462D312E340A25C3A4C3BCC3B6C39F0A312030206F626A, GETDATE(), GETDATE()),
-(6, 0x255044462D312E370A25C3A4C3BCC3B6C39F0A312030206F626A, GETDATE(), GETDATE()),
-(7, 0x255044462D312E340A25C3A4C3BCC3B6C39F0A312030206F626A, GETDATE(), GETDATE()),
-(8, 0x255044462D312E370A25C3A4C3BCC3B6C39F0A312030206F626A, GETDATE(), GETDATE()),
-(9, 0x255044462D312E340A25C3A4C3BCC3B6C39F0A312030206F626A, GETDATE(), GETDATE()),
-(10, 0x255044462D312E370A25C3A4C3BCC3B6C39F0A312030206F626A, GETDATE(), GETDATE());
+INSERT INTO [Documents] ([ContratId], [Fichier], [IsActif], [CreatedDate], [ModifiedDate]) VALUES
+(1, 0x255044462D312E340A25C3A4C3BCC3B6C39F0A312030206F626A, 1, GETDATE(), GETDATE()),
+(2, 0x255044462D312E370A25C3A4C3BCC3B6C39F0A312030206F626A, 1, GETDATE(), GETDATE()),
+(3, 0x255044462D312E340A25C3A4C3BCC3B6C39F0A312030206F626A, 1, GETDATE(), GETDATE()),
+(4, 0x255044462D312E370A25C3A4C3BCC3B6C39F0A312030206F626A, 1, GETDATE(), GETDATE()),
+(5, 0x255044462D312E340A25C3A4C3BCC3B6C39F0A312030206F626A, 1, GETDATE(), GETDATE()),
+(6, 0x255044462D312E370A25C3A4C3BCC3B6C39F0A312030206F626A, 1, GETDATE(), GETDATE()),
+(7, 0x255044462D312E340A25C3A4C3BCC3B6C39F0A312030206F626A, 1, GETDATE(), GETDATE()),
+(8, 0x255044462D312E370A25C3A4C3BCC3B6C39F0A312030206F626A, 1, GETDATE(), GETDATE()),
+(9, 0x255044462D312E340A25C3A4C3BCC3B6C39F0A312030206F626A, 1, GETDATE(), GETDATE()),
+(10, 0x255044462D312E370A25C3A4C3BCC3B6C39F0A312030206F626A, 1, GETDATE(), GETDATE());
 
 -----------------------------------------------------------
 -- 18. [AspNetUserRoles] (Seconde passe pour remplir les 18 tables)

@@ -16,20 +16,22 @@ namespace Mojo.Application.Features.Users.Handler.Command
         public async Task<BaseResponse> Handle(DeleteUserCommand request, CancellationToken cancellationToken)
         {
             var response = new BaseResponse();
-
             var user = await _repository.GetUserByStringId(request.Id);
+
             if (user == null)
             {
                 response.Success = false;
-                response.Message = "Echec de la suppression de l'utilisateur.";
+                response.Message = "Echec de la désactivation de l'utilisateur.";
                 response.Errors.Add($"Aucun utilisateur trouvé avec l'Id {request.Id}.");
                 return response;
             }
 
-            await _repository.DeleteByStringId(request.Id);
+            // Au lieu de supprimer, on désactive l'utilisateur
+            user.IsActif = false;
+            await _repository.UpdateAsync(user);
 
             response.Success = true;
-            response.Message = "L'utilisateur a été supprimé avec succès.";
+            response.Message = "L'utilisateur a été désactivé avec succès.";
             response.StrId = request.Id;
             return response;
         }

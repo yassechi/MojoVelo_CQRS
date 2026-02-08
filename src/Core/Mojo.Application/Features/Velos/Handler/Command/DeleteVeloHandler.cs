@@ -16,20 +16,22 @@ namespace Mojo.Application.Features.Velos.Handler.Command
         public async Task<BaseResponse> Handle(DeleteVeloCommand request, CancellationToken cancellationToken)
         {
             var response = new BaseResponse();
-
             var velo = await _repository.GetByIdAsync(request.Id);
+
             if (velo == null)
             {
                 response.Success = false;
-                response.Message = "Echec de la suppression du vélo.";
+                response.Message = "Echec de la désactivation du vélo.";
                 response.Errors.Add($"Aucun vélo trouvé avec l'Id {request.Id}.");
                 return response;
             }
 
-            await _repository.DeleteAsync(request.Id);
+            // Au lieu de supprimer, on désactive le vélo
+            velo.IsActif = false;
+            await _repository.UpdateAsync(velo);
 
             response.Success = true;
-            response.Message = "Le vélo a été supprimé avec succès.";
+            response.Message = "Le vélo a été désactivé avec succès.";
             response.Id = request.Id;
             return response;
         }

@@ -16,20 +16,22 @@ namespace Mojo.Application.Features.Organisations.Handler.Command
         public async Task<BaseResponse> Handle(DeleteOrganisationCommand request, CancellationToken cancellationToken)
         {
             var response = new BaseResponse();
-
             var organisation = await _repository.GetByIdAsync(request.Id);
+
             if (organisation == null)
             {
                 response.Success = false;
-                response.Message = "Echec de la suppression de l'organisation.";
+                response.Message = "Echec de la désactivation de l'organisation.";
                 response.Errors.Add($"Aucune organisation trouvée avec l'Id {request.Id}.");
                 return response;
             }
 
-            await _repository.DeleteAsync(request.Id);
+            // Au lieu de supprimer, on désactive l'organisation
+            organisation.IsActif = false;
+            await _repository.UpdateAsync(organisation);
 
             response.Success = true;
-            response.Message = "L'organisation a été supprimée avec succès.";
+            response.Message = "L'organisation a été désactivée avec succès.";
             response.Id = request.Id;
             return response;
         }

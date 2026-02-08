@@ -13,10 +13,15 @@ namespace Mojo.Application.Features.Amortissments.Handler.Query
             this.repository = repository;
             this.mapper = mapper;
         }
+
         public async Task<List<AmortissmentDto>> Handle(GetAllAmortissementRequest request, CancellationToken cancellationToken)
         {
             var amortissements = await repository.GetAllAsync();
-            return mapper.Map<List<AmortissmentDto>>(amortissements);
+
+            // Filtrer uniquement les amortissements actifs
+            var amortissementsActifs = amortissements.Where(a => a.IsActif).ToList();
+
+            return mapper.Map<List<AmortissmentDto>>(amortissementsActifs);
         }
     }
 }
