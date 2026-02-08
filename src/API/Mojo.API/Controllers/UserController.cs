@@ -22,7 +22,7 @@ namespace Mojo.API.Controllers
         }
 
         [HttpGet("get-all")]
-        [AuthorizeRole(UserRole.Admin)]
+        //[AuthorizeRole(UserRole.Admin)]
         public async Task<IActionResult> GetAll()
         {
             var users = await _mediator.Send(new GetAllUserRequest());

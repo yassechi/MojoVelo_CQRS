@@ -1,8 +1,8 @@
-﻿using Microsoft.Extensions.Options;
+﻿using System.Net;
+using System.Net.Mail;
+using Microsoft.Extensions.Options;
 using Mojo.Application.Model;
 using Mojo.Application.Persistance.Emails;
-using SendGrid;
-using SendGrid.Helpers.Mail;
 
 namespace Mojo.Infrastructure.Email
 {
@@ -14,20 +14,55 @@ namespace Mojo.Infrastructure.Email
         {
             _emailSettings = emailSettings.Value;
         }
+
         public async Task<bool> SendEmail(EmailMessage email)
         {
-            var client = new SendGridClient(_emailSettings.ApiKey);
-            var to = new EmailAddress(email.To);
-            var from = new EmailAddress
-            {
-                Email = _emailSettings.FromAddress,
-                Name = _emailSettings.FromName
-            };
-            var message = MailHelper.CreateSingleEmail(from, to, email.Subject, email.Body, email.Body);
-            var response = await client.SendEmailAsync(message);
-            return response.StatusCode == System.Net.HttpStatusCode.OK || response.StatusCode == System.Net.HttpStatusCode.Accepted;
+            Console.WriteLine("=== DÉBUT ENVOI EMAIL ===");
+            Console.WriteLine($"To: {email.To}");
+            Console.WriteLine($"Subject: {email.Subject}");
+            Console.WriteLine($"SmtpServer: {_emailSettings.SmtpServer}");
+            Console.WriteLine($"SmtpPort: {_emailSettings.SmtpPort}");
+            Console.WriteLine($"SmtpUsername: {_emailSettings.SmtpUsername}");
+            Console.WriteLine($"FromAddress: {_emailSettings.FromAddress}");
 
+            try
+            {
+                using (var smtpClient = new SmtpClient(_emailSettings.SmtpServer, _emailSettings.SmtpPort))
+                {
+                    smtpClient.EnableSsl = true;
+                    smtpClient.UseDefaultCredentials = false;
+                    smtpClient.Credentials = new NetworkCredential(
+                        _emailSettings.SmtpUsername,
+                        _emailSettings.SmtpPassword
+                    );
+
+                    var mailMessage = new MailMessage
+                    {
+                        From = new MailAddress(_emailSettings.FromAddress, _emailSettings.FromName),
+                        Subject = email.Subject,
+                        Body = email.Body,
+                        IsBodyHtml = true
+                    };
+
+                    mailMessage.To.Add(email.To);
+
+                    Console.WriteLine("Envoi de l'email en cours...");
+                    await smtpClient.SendMailAsync(mailMessage);
+                    Console.WriteLine("✅ EMAIL ENVOYÉ AVEC SUCCÈS !");
+
+                    return true;
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("=== ❌ ERREUR ENVOI EMAIL ===");
+                Console.WriteLine($"Type: {ex.GetType().Name}");
+                Console.WriteLine($"Message: {ex.Message}");
+                Console.WriteLine($"InnerException: {ex.InnerException?.Message}");
+                Console.WriteLine($"StackTrace: {ex.StackTrace}");
+                Console.WriteLine("============================");
+                return false;
+            }
         }
     }
 }
-  

@@ -12,6 +12,7 @@ namespace Mojo.Application.DTOs.EntitiesDto.User.Validators
         {
             _organisationRepository = organisationRepository;
 
+            // Règles communes (toujours exécutées)
             RuleFor(u => u.FirstName)
                 .NotEmpty()
                 .WithMessage("Le prénom est obligatoire.")
@@ -29,16 +30,6 @@ namespace Mojo.Application.DTOs.EntitiesDto.User.Validators
                 .WithMessage("Le nom d'utilisateur est obligatoire.")
                 .MaximumLength(20)
                 .WithMessage("Le nom d'utilisateur ne doit pas dépasser 20 caractères.");
-
-            // ✅ UNE SEULE règle Email avec TOUTES les validations
-            RuleFor(u => u.Email)
-                .NotEmpty()
-                .WithMessage("L'adresse email est obligatoire.")
-                .EmailAddress()
-                .WithMessage("Le format de l'email est invalide.")
-                .MustAsync(async (dto, email, cancellationToken) =>
-                    await EmailDomainMatchesOrganisation(dto.OrganisationId, email, cancellationToken))
-                .WithMessage(u => $"L'organisation sélectionnée n'autorise pas le domaine @{u.Email?.Split('@').LastOrDefault()}. Veuillez contacter votre administrateur.");
 
             RuleFor(u => u.Role)
                 .NotNull()
@@ -61,6 +52,15 @@ namespace Mojo.Application.DTOs.EntitiesDto.User.Validators
 
             RuleSet("Create", () =>
             {
+                RuleFor(u => u.Email)
+                    .NotEmpty()
+                    .WithMessage("L'adresse email est obligatoire.")
+                    .EmailAddress()
+                    .WithMessage("Le format de l'email est invalide.")
+                    .MustAsync(async (dto, email, cancellationToken) =>
+                        await EmailDomainMatchesOrganisation(dto.OrganisationId, email, cancellationToken))
+                    .WithMessage(u => $"L'organisation sélectionnée n'autorise pas le domaine @{u.Email?.Split('@').LastOrDefault()}.");
+
                 RuleFor(u => u.Password)
                     .NotEmpty()
                     .WithMessage("Le mot de passe est obligatoire.")
@@ -78,6 +78,15 @@ namespace Mojo.Application.DTOs.EntitiesDto.User.Validators
                     .NotEmpty()
                     .WithMessage("L'ID de l'utilisateur est requis pour la mise à jour.");
 
+                RuleFor(u => u.Email)
+                    .NotEmpty()
+                    .WithMessage("L'adresse email est obligatoire.")
+                    .EmailAddress()
+                    .WithMessage("Le format de l'email est invalide.")
+                    .MustAsync(async (dto, email, cancellationToken) =>
+                        await EmailDomainMatchesOrganisation(dto.OrganisationId, email, cancellationToken))
+                    .WithMessage(u => $"L'organisation sélectionnée n'autorise pas le domaine @{u.Email?.Split('@').LastOrDefault()}.");
+
                 RuleFor(u => u.Password)
                     .MinimumLength(8)
                     .When(u => !string.IsNullOrEmpty(u.Password))
@@ -93,29 +102,16 @@ namespace Mojo.Application.DTOs.EntitiesDto.User.Validators
 
         private async Task<bool> EmailDomainMatchesOrganisation(int organisationId, string email, CancellationToken cancellationToken)
         {
-            Console.WriteLine($"🔍 VALIDATION EMAIL APPELÉE - OrgId: {organisationId}, Email: {email}");
-
             if (string.IsNullOrWhiteSpace(email) || !email.Contains("@"))
-            {
-                Console.WriteLine("❌ Email vide ou sans @");
                 return false;
-            }
 
             var emailDomain = "@" + email.Split('@')[1];
-            Console.WriteLine($"🔍 Domain extrait: {emailDomain}");
-
             var organisation = await _organisationRepository.GetByIdAsync(organisationId);
-            Console.WriteLine($"🔍 Organisation trouvée: {organisation?.Name}, EmailAutorise: {organisation?.EmailAutorise}");
 
             if (organisation == null || !organisation.IsActif)
-            {
-                Console.WriteLine("❌ Organisation null ou inactive");
                 return false;
-            }
 
-            var result = organisation.EmailAutorise == emailDomain;
-            Console.WriteLine($"🔍 Résultat validation: {result}");
-            return result;
+            return organisation.EmailAutorise == emailDomain;
         }
     }
 }

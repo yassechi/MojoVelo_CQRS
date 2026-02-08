@@ -5,6 +5,7 @@ using Microsoft.IdentityModel.Tokens;
 using Mojo.Application.DTOs.Identity;
 using Mojo.Application.Model;
 using Mojo.Application.Persistance.Contracts.Identity;
+using Mojo.Application.Persistance.Emails;  // ← Ajouté
 using Mojo.Domain.Entities;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -21,19 +22,22 @@ namespace Mojo.Infrastructure.Services
         private readonly JwtSettings _jwtSettings;
         private readonly ILogger<AuthService> _logger;
         private readonly MDbContext _context;
+        private readonly IEmailSender _emailSender;  // ← Ajouté
 
         public AuthService(
             UserManager<User> userManager,
             SignInManager<User> signInManager,
             IOptions<JwtSettings> jwtSettings,
             ILogger<AuthService> logger,
-            MDbContext context)
+            MDbContext context,
+            IEmailSender emailSender)  // ← Ajouté
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _jwtSettings = jwtSettings.Value;
             _logger = logger;
             _context = context;
+            _emailSender = emailSender;  // ← Ajouté
         }
 
         public async Task<AuthResponse> Login(LoginRequest request)
@@ -116,7 +120,7 @@ namespace Mojo.Infrastructure.Services
                     Role = request.Role,
                     TailleCm = request.TailleCm ?? 0,
                     IsActif = true,
-                    OrganisationId = organisation.Id  // ← Association automatique
+                    OrganisationId = organisation.Id
                 };
 
                 var result = await _userManager.CreateAsync(user, request.Password);
@@ -187,16 +191,45 @@ namespace Mojo.Infrastructure.Services
                 var user = await _userManager.FindByEmailAsync(request.Email);
                 if (user == null)
                 {
+                    // Pour la sécurité, on ne révèle pas si l'email existe ou non
                     return true;
                 }
 
+                // Générer le token de réinitialisation
                 var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+
+                // Créer le lien de réinitialisation (à adapter selon votre frontend)
+                var resetLink = $"http://localhost:4200/reset-password?token={Uri.EscapeDataString(token)}&email={Uri.EscapeDataString(user.Email)}";
+
+                // Envoyer l'email
+                var emailMessage = new EmailMessage
+                {
+                    To = user.Email,
+                    Subject = "Réinitialisation de votre mot de passe - MojoVelo",
+                    Body = $@"
+                        <html>
+                        <body style='font-family: Arial, sans-serif;'>
+                            <h2>Réinitialisation de mot de passe</h2>
+                            <p>Bonjour {user.FirstName} {user.LastName},</p>
+                            <p>Vous avez demandé à réinitialiser votre mot de passe.</p>
+                            <p>Cliquez sur le lien ci-dessous pour réinitialiser votre mot de passe :</p>
+                            <p><a href='{resetLink}' style='background-color: #1e3a8a; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;'>Réinitialiser mon mot de passe</a></p>
+                            <p>Ce lien expire dans 24 heures.</p>
+                            <p>Si vous n'avez pas demandé cette réinitialisation, ignorez cet email.</p>
+                            <br/>
+                            <p>Cordialement,<br/>L'équipe MojoVelo</p>
+                        </body>
+                        </html>
+                    "
+                };
+
+                await _emailSender.SendEmail(emailMessage);
 
                 return true;
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Erreur lors de la génération du token de réinitialisation");
+                _logger.LogError(ex, "Erreur lors de l'envoi de l'email de réinitialisation");
                 throw;
             }
         }
