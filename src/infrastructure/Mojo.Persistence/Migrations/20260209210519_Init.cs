@@ -362,6 +362,8 @@ namespace Mojo.Persistence.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     ContratId = table.Column<int>(type: "int", nullable: false),
                     Fichier = table.Column<byte[]>(type: "varbinary(max)", nullable: true),
+                    NomFichier = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    TypeFichier = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ModifiedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ModifiedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),

@@ -384,6 +384,12 @@ namespace Mojo.Persistence.Migrations
                     b.Property<DateTime>("ModifiedDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("NomFichier")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("TypeFichier")
+                        .HasColumnType("nvarchar(max)");
+
                     b.HasKey("Id");
 
                     b.HasIndex("ContratId")

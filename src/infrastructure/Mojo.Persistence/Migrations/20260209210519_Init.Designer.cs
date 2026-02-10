@@ -12,7 +12,7 @@ using Mojo.Persistence.DatabaseContext;
 namespace Mojo.Persistence.Migrations
 {
     [DbContext(typeof(MDbContext))]
-    [Migration("20260207204236_Init")]
+    [Migration("20260209210519_Init")]
     partial class Init
     {
         /// <inheritdoc />
@@ -386,6 +386,12 @@ namespace Mojo.Persistence.Migrations
 
                     b.Property<DateTime>("ModifiedDate")
                         .HasColumnType("datetime2");
+
+                    b.Property<string>("NomFichier")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("TypeFichier")
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 

@@ -12,9 +12,12 @@ namespace Mojo.Domain.Entities
     {
         [ForeignKey(nameof(Contrat))]
         public int ContratId { get; set; }
-
         public Contrat Contrat { get; set; } = null!;
 
         public byte[] Fichier { get; set; } = null!;
+
+        public string NomFichier { get; set; } = string.Empty;
+
+        public string TypeFichier { get; set; } = string.Empty;
     }
 }

@@ -32,6 +32,7 @@ namespace Mojo.Persistence.Shared
             services.AddScoped<IOrganisationRepository, OrganisationRepository>();
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IVeloRepository, VeloRepository>();
+            services.AddScoped<IDocumentRepository, DocumentRepository>();
 
             // Tests
             services.AddScoped<IUnitOfWork, UnitOfWork>();
