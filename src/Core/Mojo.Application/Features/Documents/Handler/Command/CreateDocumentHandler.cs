@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using MediatR;
+using Mojo.Application.DTOs.EntitiesDto.Documents;
 using Mojo.Application.DTOs.EntitiesDto.Documents.Validators;
 using Mojo.Application.Features.Documents.Request.Command;
 using Mojo.Application.Persistance.Contracts;
@@ -37,7 +38,15 @@ namespace Mojo.Application.Features.Documents.Handler.Command
                 return response;
             }
 
+
             var document = _mapper.Map<Mojo.Domain.Entities.Documents>(request.dto);
+
+            //var s = request.dto.File.OpenReadStream();
+            //MemoryStream ms = new MemoryStream();
+            //s.CopyTo(ms);
+
+            //document.Fichier = ms.ToArray();
+
             await _repository.CreateAsync(document);
 
             response.Success = true;

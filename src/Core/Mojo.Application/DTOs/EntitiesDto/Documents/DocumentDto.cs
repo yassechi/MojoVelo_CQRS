@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using Microsoft.AspNetCore.Http;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Mojo.Application.DTOs.EntitiesDto.Documents
 {
@@ -8,6 +9,8 @@ namespace Mojo.Application.DTOs.EntitiesDto.Documents
         public int ContratId { get; set; }
 
         public byte[] Fichier { get; set; } = null!;
+
+        //public IFormFile File { get; set; }
 
         public string NomFichier { get; set; } = string.Empty;
 

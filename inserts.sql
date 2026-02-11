@@ -307,7 +307,7 @@ SET IDENTITY_INSERT [Interventions] OFF;
 GO
 
 -----------------------------------------------------------
--- 17. [Documents] ? AVEC NomFichier ET TypeFichier
+-- 17. [Documents] AVEC NomFichier ET TypeFichier
 -----------------------------------------------------------
 SET IDENTITY_INSERT [Documents] ON;
 
@@ -333,5 +333,5 @@ GO
 COMMIT;
 GO
 
-PRINT 'Script exécuté avec succès ! ?';
+PRINT 'Script exécuté avec succès ! ';
 GO

@@ -8,7 +8,7 @@ namespace Mojo.API.Controllers
     {
         private readonly IWebHostEnvironment _environment;
         private readonly long _maxFileSize = 5 * 1024 * 1024; // 5 MB
-        private readonly string[] _allowedExtensions = { ".jpg", ".jpeg", ".png", ".gif" };
+        //private readonly string[] _allowedExtensions = { ".jpg", ".jpeg", ".png", ".gif" };
 
         public FileController(IWebHostEnvironment environment)
         {
@@ -32,12 +32,12 @@ namespace Mojo.API.Controllers
                     return BadRequest(new { message = "Le fichier est trop volumineux (max 5 MB)" });
                 }
 
-                // Validation : extension
+                //Validation : extension
                 var extension = Path.GetExtension(file.FileName).ToLowerInvariant();
-                if (!_allowedExtensions.Contains(extension))
-                {
-                    return BadRequest(new { message = "Format de fichier non autorisé (jpg, jpeg, png, gif uniquement)" });
-                }
+                //if (!_allowedExtensions.Contains(extension))
+                //{
+                //    return BadRequest(new { message = "Format de fichier non autorisé (jpg, jpeg, png, gif uniquement)" });
+                //}
 
                 // Génération nom unique
                 var fileName = $"{Guid.NewGuid()}{extension}";
