@@ -1,8 +1,10 @@
 ﻿using MediatR;
+using Mojo.API.Attributes;
 using Mojo.Application.DTOs.Identity;
 
 namespace Mojo.Application.Features.Identity.Requests.Commands
 {
+    [PasswordConfirm]
     public class RegisterCommand : IRequest<AuthResponse>
     {
         public string FirstName { get; set; } = string.Empty;

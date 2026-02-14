@@ -49,7 +49,7 @@ namespace Mojo.Application.Features.Demandes.Handlers.Command
 
             var demande = new Demande
             {
-                Status = request.dto.Status,
+                Status = Domain.Enums.DemandeStatus.Encours,
                 IdUser = request.dto.IdUser,
                 IdVelo = request.dto.IdVelo,
                 DiscussionId = request.dto.DiscussionId,

@@ -1,6 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using MediatR;
+﻿using MediatR;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Mojo.API.Attributes;
 using Mojo.Application.Features.Identity.Requests.Commands;
 using System.Security.Claims;
 
@@ -41,6 +42,7 @@ namespace Mojo.API.Controllers
         }
 
         [HttpPost("register")]
+        [PasswordConfirm]
         public async Task<IActionResult> Register([FromBody] RegisterCommand command)
         {
             try

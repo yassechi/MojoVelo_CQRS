@@ -5,7 +5,7 @@ using Mojo.Application.Persistance.Contracts;
 using Mojo.Persistence.DatabaseContext;
 using Mojo.Persistence.Repositories;
 
-namespace Mojo.Persistence.Shared
+namespace Mojo.API.Dependencies
 {
     public static class PersistenceServiceRegistration
     {

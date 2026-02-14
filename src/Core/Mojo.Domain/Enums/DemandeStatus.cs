@@ -9,8 +9,9 @@ namespace Mojo.Domain.Enums
     public enum DemandeStatus
     {
         Encours = 1,
-        Attente = 2,
-        AttenteComagnie = 3,
-        Valide = 4
+        AttenteComagnie = 2,
+        Finalisation = 3,
+        Valide = 4,
+        Refusé = 5
     }
 }

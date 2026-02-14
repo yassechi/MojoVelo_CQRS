@@ -6,7 +6,7 @@ namespace Mojo.Application.MappingProfiles
     {
         public VeloMappingProfile()
         {
-            CreateMap<Velo, VeloDto>();
+            CreateMap<Velo, VeloDto>().ReverseMap();
         }
     }
 }

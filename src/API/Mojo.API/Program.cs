@@ -5,10 +5,8 @@ using Microsoft.OpenApi.Models;
 using Mojo.Application.Model;
 using Mojo.Domain.Entities;
 using Mojo.Infrastructure;
-using Mojo.Infrastructure.Shared;
 using Mojo.Persistence;
 using Mojo.Persistence.DatabaseContext;
-using Mojo.Persistence.Shared;
 using System.Text;
 using Mojo.API.Dependencies;
 

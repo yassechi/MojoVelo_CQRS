@@ -6,7 +6,7 @@ using Mojo.Application.Persistance.Emails;
 using Mojo.Infrastructure.Email;
 using Mojo.Infrastructure.Services;
 
-namespace Mojo.Infrastructure.Shared
+namespace Mojo.API.Dependencies
 {
     public static class InfrastructureServiceRegistration
     {

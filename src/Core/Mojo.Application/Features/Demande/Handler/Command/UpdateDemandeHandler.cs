@@ -57,7 +57,7 @@ namespace Mojo.Application.Features.Demandes.Handlers.Command
                 return response;
             }
 
-            demande.Status = request.dto.Status;
+            //demande.Status = request.dto.Status;
             demande.IdUser = request.dto.IdUser;
             demande.IdVelo = request.dto.IdVelo;
             demande.DiscussionId = request.dto.DiscussionId;

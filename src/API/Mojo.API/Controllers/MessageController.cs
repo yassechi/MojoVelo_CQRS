@@ -77,5 +77,12 @@ namespace Mojo.API.Controllers
 
             return Ok(response);
         }
+
+        [HttpGet("get-by-discussion/{discussionId}")]
+        public async Task<IActionResult> GetByDiscussion(int discussionId)
+        {
+            var messages = await _mediator.Send(new GetMessagesByDiscussionRequest { DiscussionId = discussionId });
+            return Ok(messages);
+        }
     }
 }
