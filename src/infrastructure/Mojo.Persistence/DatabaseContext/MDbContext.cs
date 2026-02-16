@@ -62,6 +62,19 @@ namespace Mojo.Persistence.DatabaseContext
             modelBuilder.Entity<Contrat>().Property(c => c.LoyerMensuelHT).HasColumnType("decimal(18,2)");
             modelBuilder.Entity<Intervention>().Property(i => i.Cout).HasColumnType("decimal(18,2)");
             modelBuilder.Entity<Velo>().Property(v => v.PrixAchat).HasColumnType("decimal(18,2)");
+            modelBuilder.Entity<MoisAmortissement>().Property(m => m.Montant).HasColumnType("decimal(18,2)");
+
+            // 6. Mois d'amortissement (1 amortissement -> N mois)
+            modelBuilder.Entity<MoisAmortissement>(entity =>
+            {
+                entity.HasOne(m => m.Amortissement)
+                      .WithMany(a => a.MoisAmortissements)
+                      .HasForeignKey(m => m.AmortissementId)
+                      .OnDelete(DeleteBehavior.Cascade);
+
+                entity.HasIndex(m => new { m.AmortissementId, m.NumeroMois })
+                      .IsUnique();
+            });
         }
 
         public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
@@ -90,6 +103,7 @@ namespace Mojo.Persistence.DatabaseContext
         public virtual DbSet<Velo> Velos { get; set; }
         public virtual DbSet<Demande> Demandes { get; set; }
         public virtual DbSet<Documents> Documents { get; set; }
+        public virtual DbSet<MoisAmortissement> MoisAmortissements { get; set; }
     }
 }
 

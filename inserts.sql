@@ -25,10 +25,24 @@ GO
 -----------------------------------------------------------
 -- 1. [__EFMigrationsHistory]
 -----------------------------------------------------------
-IF NOT EXISTS (SELECT * FROM [__EFMigrationsHistory] WHERE [MigrationId] = '20250101_Init')
+IF NOT EXISTS (SELECT * FROM [__EFMigrationsHistory] WHERE [MigrationId] = '20260209210519_Init')
 BEGIN
     INSERT INTO [__EFMigrationsHistory] ([MigrationId], [ProductVersion]) VALUES 
-    ('20250101_Init', '8.0.0');
+    ('20260209210519_Init', '9.0.13');
+END
+GO
+
+IF NOT EXISTS (SELECT * FROM [__EFMigrationsHistory] WHERE [MigrationId] = '20260215172527_AddVeloType')
+BEGIN
+    INSERT INTO [__EFMigrationsHistory] ([MigrationId], [ProductVersion]) VALUES 
+    ('20260215172527_AddVeloType', '9.0.13');
+END
+GO
+
+IF NOT EXISTS (SELECT * FROM [__EFMigrationsHistory] WHERE [MigrationId] = '20260215215753_AddMoisAmortissements')
+BEGIN
+    INSERT INTO [__EFMigrationsHistory] ([MigrationId], [ProductVersion]) VALUES 
+    ('20260215215753_AddMoisAmortissements', '9.0.13');
 END
 GO
 
@@ -71,17 +85,19 @@ GO
 -----------------------------------------------------------
 -- 4. [AspNetUsers]
 -----------------------------------------------------------
+DECLARE @PwdHash NVARCHAR(200) = 'AQEAAAAQJwAAEAAAAJflvadxoWrhVBE7/QxdrqsgAAAAOWAdkB8b1m5kHncu4EVOUGelE2nLEcKBqsW2A4zKhjI=';
+
 INSERT INTO [AspNetUsers] ([Id], [FirstName], [LastName], [OrganisationId], [Email], [NormalizedEmail], [UserName], [NormalizedUserName], [IsActif], [Role], [TailleCm], [EmailConfirmed], [PhoneNumberConfirmed], [TwoFactorEnabled], [LockoutEnabled], [AccessFailedCount], [PasswordHash], [SecurityStamp], [ConcurrencyStamp]) VALUES
-('U01','Jean','Admin',1,'jean@mojo.com','JEAN@MOJO.COM','jadmin','JADMIN',1,1,180,1,0,0,1,0,'AQAAAAIAAYagAAAAEDummyHash1',NEWID(),NEWID()),
-('U02','Marc','Manager',1,'marc@mojo.com','MARC@MOJO.COM','mmanager','MMANAGER',1,2,175,1,0,0,1,0,'AQAAAAIAAYagAAAAEDummyHash2',NEWID(),NEWID()),
-('U03','Sophie','RH',2,'sophie@velocite.com','SOPHIE@VELOCITE.COM','srh','SRH',1,5,165,1,0,0,1,0,'AQAAAAIAAYagAAAAEDummyHash3',NEWID(),NEWID()),
-('U04','Luc','Client',2,'luc@gmail.com','LUC@GMAIL.COM','lclient','LCLIENT',1,3,178,1,0,0,1,0,'AQAAAAIAAYagAAAAEDummyHash4',NEWID(),NEWID()),
-('U05','Eva','User',3,'eva@outlook.com','EVA@OUTLOOK.COM','euser','EUSER',1,3,162,1,0,0,1,0,'AQAAAAIAAYagAAAAEDummyHash5',NEWID(),NEWID()),
-('U06','Tom','Tech',4,'tom@tech.com','TOM@TECH.COM','ttech','TTECH',1,4,185,1,0,0,1,0,'AQAAAAIAAYagAAAAEDummyHash6',NEWID(),NEWID()),
-('U07','Lea','User',5,'lea@nantes.com','LEA@NANTES.COM','luser','LUSER',1,3,170,1,0,0,1,0,'AQAAAAIAAYagAAAAEDummyHash7',NEWID(),NEWID()),
-('U08','Bob','Mojo',1,'bob@mojo.com','BOB@MOJO.COM','bmojo','BMOJO',1,2,182,1,0,0,1,0,'AQAAAAIAAYagAAAAEDummyHash8',NEWID(),NEWID()),
-('U09','Kim','User',6,'kim@green.com','KIM@GREEN.COM','kuser','KUSER',1,3,160,1,0,0,1,0,'AQAAAAIAAYagAAAAEDummyHash9',NEWID(),NEWID()),
-('U10','Ian','User',7,'ian@urban.com','IAN@URBAN.COM','iuser','IUSER',1,3,188,1,0,0,1,0,'AQAAAAIAAYagAAAAEDummyHash10',NEWID(),NEWID());
+('U01','Jean','Admin',1,'jean@mojo.com','JEAN@MOJO.COM','jadmin','JADMIN',1,1,180,1,0,0,1,0,@PwdHash,NEWID(),NEWID()),
+('U02','Marc','Manager',1,'marc@mojo.com','MARC@MOJO.COM','mmanager','MMANAGER',1,2,175,1,0,0,1,0,@PwdHash,NEWID(),NEWID()),
+('U03','Sophie','RH',2,'sophie@velocite.com','SOPHIE@VELOCITE.COM','srh','SRH',1,5,165,1,0,0,1,0,@PwdHash,NEWID(),NEWID()),
+('U04','Luc','Client',2,'luc@gmail.com','LUC@GMAIL.COM','lclient','LCLIENT',1,3,178,1,0,0,1,0,@PwdHash,NEWID(),NEWID()),
+('U05','Eva','User',3,'eva@outlook.com','EVA@OUTLOOK.COM','euser','EUSER',1,3,162,1,0,0,1,0,@PwdHash,NEWID(),NEWID()),
+('U06','Tom','Tech',4,'tom@tech.com','TOM@TECH.COM','ttech','TTECH',1,4,185,1,0,0,1,0,@PwdHash,NEWID(),NEWID()),
+('U07','Lea','User',5,'lea@nantes.com','LEA@NANTES.COM','luser','LUSER',1,3,170,1,0,0,1,0,@PwdHash,NEWID(),NEWID()),
+('U08','Bob','Mojo',1,'bob@mojo.com','BOB@MOJO.COM','bmojo','BMOJO',1,2,182,1,0,0,1,0,@PwdHash,NEWID(),NEWID()),
+('U09','Kim','User',6,'kim@green.com','KIM@GREEN.COM','kuser','KUSER',1,3,160,1,0,0,1,0,@PwdHash,NEWID(),NEWID()),
+('U10','Ian','User',7,'ian@urban.com','IAN@URBAN.COM','iuser','IUSER',1,3,188,1,0,0,1,0,@PwdHash,NEWID(),NEWID());
 GO
 
 -----------------------------------------------------------
@@ -167,21 +183,21 @@ SET IDENTITY_INSERT [AspNetRoleClaims] OFF;
 GO
 
 -----------------------------------------------------------
--- 10. [Velos]
+-- 10. [Velos] (ajout Type)
 -----------------------------------------------------------
 SET IDENTITY_INSERT [Velos] ON;
 
-INSERT INTO [Velos] ([Id], [Marque], [Modele], [NumeroSerie], [PrixAchat], [Status], [IsActif], [CreatedDate], [ModifiedDate], [CreatedBy], [ModifiedBy]) VALUES
-(1, 'Moustache','Lundi 27','SN2026-001',2500,1,1,GETDATE(),GETDATE(),'System','System'), 
-(2, 'VanMoof','S5','SN2026-002',2900,1,1,GETDATE(),GETDATE(),'System','System'), 
-(3, 'Cowboy','C4','SN2026-003',2700,1,1,GETDATE(),GETDATE(),'System','System'), 
-(4, 'Giant','Explore','SN2026-004',2300,1,1,GETDATE(),GETDATE(),'System','System'), 
-(5, 'Specialized','Vado','SN2026-005',3500,1,1,GETDATE(),GETDATE(),'System','System'),
-(6, 'Trek','Allant','SN2026-006',3800,1,1,GETDATE(),GETDATE(),'System','System'), 
-(7, 'Gazelle','Ultimate','SN2026-007',3100,0,1,GETDATE(),GETDATE(),'System','System'), 
-(8, 'Decathlon','Elops','SN2026-008',1400,1,1,GETDATE(),GETDATE(),'System','System'), 
-(9, 'Canyon','Precede','SN2026-009',4200,1,1,GETDATE(),GETDATE(),'System','System'), 
-(10, 'Riese','Nevo','SN2026-010',5200,0,1,GETDATE(),GETDATE(),'System','System');
+INSERT INTO [Velos] ([Id], [Marque], [Modele], [Type], [NumeroSerie], [PrixAchat], [Status], [IsActif], [CreatedDate], [ModifiedDate], [CreatedBy], [ModifiedBy]) VALUES
+(1, 'Moustache','Lundi 27','VTC','SN2026-001',2500,1,1,GETDATE(),GETDATE(),'System','System'), 
+(2, 'VanMoof','S5','Urbain','SN2026-002',2900,1,1,GETDATE(),GETDATE(),'System','System'), 
+(3, 'Cowboy','C4','Urbain','SN2026-003',2700,1,1,GETDATE(),GETDATE(),'System','System'), 
+(4, 'Giant','Explore','Trekking','SN2026-004',2300,1,1,GETDATE(),GETDATE(),'System','System'), 
+(5, 'Specialized','Vado','VTC','SN2026-005',3500,1,1,GETDATE(),GETDATE(),'System','System'),
+(6, 'Trek','Allant','VTC','SN2026-006',3800,1,1,GETDATE(),GETDATE(),'System','System'), 
+(7, 'Gazelle','Ultimate','Urbain','SN2026-007',3100,0,1,GETDATE(),GETDATE(),'System','System'), 
+(8, 'Decathlon','Elops','Ville','SN2026-008',1400,1,1,GETDATE(),GETDATE(),'System','System'), 
+(9, 'Canyon','Precede','Cargo','SN2026-009',4200,1,1,GETDATE(),GETDATE(),'System','System'), 
+(10, 'Riese','Nevo','VAE','SN2026-010',5200,0,1,GETDATE(),GETDATE(),'System','System');
 
 SET IDENTITY_INSERT [Velos] OFF;
 GO
@@ -224,6 +240,35 @@ INSERT INTO [Amortissements] ([Id], [VeloId], [DateDebut], [DureeMois], [ValeurI
 (10, 10,'2026-03-01',60,5200,1040,1,GETDATE(),GETDATE(),'System','System');
 
 SET IDENTITY_INSERT [Amortissements] OFF;
+GO
+
+-----------------------------------------------------------
+-- 12.5 [MoisAmortissements]
+-----------------------------------------------------------
+;WITH N AS (
+    SELECT 1 AS Numero
+    UNION ALL
+    SELECT Numero + 1 FROM N WHERE Numero < 120
+)
+INSERT INTO [MoisAmortissements]
+([AmortissementId], [NumeroMois], [Montant], [IsActif], [CreatedDate], [ModifiedDate], [CreatedBy], [ModifiedBy])
+SELECT 
+    a.Id,
+    n.Numero,
+    CAST((a.ValeurInit - a.ValeurResiduelleFinale) / a.DureeMois AS decimal(18,2)) AS Montant,
+    1,
+    GETDATE(),
+    GETDATE(),
+    'System',
+    'System'
+FROM [Amortissements] a
+JOIN N ON N.Numero <= a.DureeMois
+WHERE NOT EXISTS (
+    SELECT 1
+    FROM [MoisAmortissements] m
+    WHERE m.AmortissementId = a.Id AND m.NumeroMois = n.Numero
+)
+OPTION (MAXRECURSION 0);
 GO
 
 -----------------------------------------------------------
@@ -322,7 +367,6 @@ INSERT INTO [Documents] ([Id], [ContratId], [Fichier], [NomFichier], [TypeFichie
 (8, 8, 0x255044462D312E370A25C3A4C3BCC3B6C39F0A312030206F626A, 'Contrat_CTR-S08.pdf', 'pdf', 1, GETDATE(), GETDATE(), 'System', 'System'),
 (9, 9, 0x255044462D312E340A25C3A4C3BCC3B6C39F0A312030206F626A, 'Contrat_CTR-SO09.pdf', 'pdf', 1, GETDATE(), GETDATE(), 'System', 'System'),
 (10, 10, 0x255044462D312E370A25C3A4C3BCC3B6C39F0A312030206F626A, 'Contrat_CTR-A10.pdf', 'pdf', 1, GETDATE(), GETDATE(), 'System', 'System'),
--- Documents supplémentaires pour tester plusieurs documents par contrat
 (11, 1, 0x255044462D312E370A25C3A4C3BCC3B6C39F0A312030206F626A, 'Assurance_CTR-M01.pdf', 'pdf', 1, GETDATE(), GETDATE(), 'System', 'System'),
 (12, 1, 0x255044462D312E370A25C3A4C3BCC3B6C39F0A312030206F626A, 'Facture_CTR-M01_Jan2026.pdf', 'pdf', 1, GETDATE(), GETDATE(), 'System', 'System'),
 (13, 2, 0x255044462D312E370A25C3A4C3BCC3B6C39F0A312030206F626A, 'Facture_CTR-V02_Jan2026.pdf', 'pdf', 1, GETDATE(), GETDATE(), 'System', 'System');

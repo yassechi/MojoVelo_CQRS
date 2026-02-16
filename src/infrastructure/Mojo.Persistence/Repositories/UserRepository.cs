@@ -1,4 +1,6 @@
-﻿using Mojo.Application.Persistance.Contracts;
+using Microsoft.EntityFrameworkCore;
+using Mojo.Application.Persistance.Contracts;
+using Mojo.Domain.Entities;
 using Mojo.Persistence.DatabaseContext;
 using System;
 using System.Collections.Generic;
@@ -37,6 +39,13 @@ namespace Mojo.Persistence.Repositories
         {
             var user = await _db.Users.FindAsync(id);
             return user != null;
+        }
+
+        public async Task<List<User>> GetByOrganisationIdAsync(int organisationId)
+        {
+            return await _db.Users
+                .Where(u => u.OrganisationId == organisationId && u.IsActif)
+                .ToListAsync();
         }
     }
 }

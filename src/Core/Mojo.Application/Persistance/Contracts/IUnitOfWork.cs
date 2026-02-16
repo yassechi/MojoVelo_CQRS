@@ -14,6 +14,7 @@ namespace Mojo.Application.Persistance.Contracts
         IContratRepository ContratRepository { get; }
         IInterventionRepository InterventionRepository { get; }
         IAmortissementRepository AmortissementRepository { get; }
+        IMoisAmortissementRepository MoisAmortissementRepository { get; }
 
         // --- Tables SAV / Communication ---
         IDiscussionRepository DiscussionRepository { get; }

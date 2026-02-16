@@ -53,6 +53,11 @@ namespace Mojo.Application.DTOs.EntitiesDto.Contrat.Validators
                 .GreaterThan(0)
                 .WithMessage("{PropertyName} doit être strictement supérieur à 0.");
 
+            RuleFor(c => c.MontantAmortissementMensuel)
+                .GreaterThan(0)
+                .WithMessage("Le montant d'amortissement mensuel doit être strictement supérieur à 0.")
+                .When(c => c.MontantAmortissementMensuel.HasValue);
+
             RuleFor(c => c.DateDebut)
                 .NotEmpty()
                 .WithMessage("La date de début est obligatoire.");

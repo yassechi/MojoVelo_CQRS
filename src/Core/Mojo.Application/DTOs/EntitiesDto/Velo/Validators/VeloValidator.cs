@@ -27,6 +27,10 @@
                 .NotEmpty()
                 .WithMessage("Le modèle est obligatoire.");
 
+            RuleFor(v => v.Type)
+                .MaximumLength(100)
+                .WithMessage("Le type ne doit pas dépasser 100 caractères.");
+
             RuleFor(v => v.PrixAchat)
                 .GreaterThan(0)
                 .WithMessage("Le prix d'achat doit être supérieur à 0.");

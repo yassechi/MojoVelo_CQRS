@@ -25,6 +25,13 @@ namespace Mojo.API.Controllers
             return Ok(velos);
         }
 
+        [HttpGet("get-types")]
+        public async Task<IActionResult> GetTypes()
+        {
+            var types = await _mediator.Send(new GetVeloTypesRequest());
+            return Ok(types);
+        }
+
         [HttpGet("get-one/{id}")]
         public async Task<IActionResult> Get(int id)
         {

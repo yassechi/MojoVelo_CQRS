@@ -8,5 +8,7 @@ namespace Mojo.Application.Persistance.Contracts
 {
     public interface IDemandeRepository : IGenericRepository<Demande>
     {
+        Task<List<Demande>> GetByUserIdAsync(string userId);
+        Task<List<Demande>> GetByOrganisationIdAsync(int organisationId);
     }
 }

@@ -26,6 +26,7 @@ namespace Mojo.API.Dependencies
             services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
             services.AddScoped<IAmortissementRepository, AmortissementRepository>();
             services.AddScoped<IContratRepository, ContratRepository>();
+            services.AddScoped<IDemandeRepository, DemandeRepository>();
             services.AddScoped<IDiscussionRepository, DiscussionRepository>();
             services.AddScoped<IInterventionRepository, InterventionRepository>();
             services.AddScoped<IMessageRepository, MessageRepository>();
@@ -33,6 +34,7 @@ namespace Mojo.API.Dependencies
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IVeloRepository, VeloRepository>();
             services.AddScoped<IDocumentRepository, DocumentRepository>();
+            services.AddScoped<IMoisAmortissementRepository, MoisAmortissementRepository>();
 
             // Tests
             services.AddScoped<IUnitOfWork, UnitOfWork>();

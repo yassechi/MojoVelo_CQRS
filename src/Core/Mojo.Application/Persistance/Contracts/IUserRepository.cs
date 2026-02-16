@@ -5,5 +5,6 @@ namespace Mojo.Application.Persistance.Contracts
         Task<User> GetUserByStringId(string id);
         Task<bool> UserExists(string id);
         Task DeleteByStringId(string id);  
+        Task<List<User>> GetByOrganisationIdAsync(int organisationId);
     }
 }

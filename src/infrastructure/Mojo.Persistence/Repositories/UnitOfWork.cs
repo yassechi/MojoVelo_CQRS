@@ -13,6 +13,7 @@ namespace Mojo.Persistence.Repositories
         private IContratRepository? _contratRepository;
         private IInterventionRepository? _interventionRepository;
         private IAmortissementRepository? _amortissementRepository;
+        private IMoisAmortissementRepository? _moisAmortissementRepository;
         private IDiscussionRepository? _discussionRepository;
         private IMessageRepository? _messageRepository;
 
@@ -36,6 +37,9 @@ namespace Mojo.Persistence.Repositories
 
         public IAmortissementRepository AmortissementRepository =>
             _amortissementRepository ??= new AmortissementRepository(_context);
+
+        public IMoisAmortissementRepository MoisAmortissementRepository =>
+            _moisAmortissementRepository ??= new MoisAmortissementRepository(_context);
 
         public IDiscussionRepository DiscussionRepository =>
             _discussionRepository ??= new DiscussionRepository(_context);

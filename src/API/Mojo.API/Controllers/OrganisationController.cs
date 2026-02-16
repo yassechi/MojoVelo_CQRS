@@ -25,6 +25,17 @@ namespace Mojo.API.Controllers
             return Ok(organisations);
         }
 
+        [HttpGet("list")]
+        public async Task<IActionResult> GetList([FromQuery] bool? isActif, [FromQuery] string? search)
+        {
+            var organisations = await _mediator.Send(new GetOrganisationListRequest
+            {
+                IsActif = isActif,
+                Search = search
+            });
+            return Ok(organisations);
+        }
+
         [HttpGet("get-one/{id}")]
         public async Task<IActionResult> Get(int id)
         {
@@ -37,6 +48,16 @@ namespace Mojo.API.Controllers
             {
                 return NotFound(new { message = ex.Message });
             }
+        }
+
+        [HttpGet("resolve")]
+        public async Task<IActionResult> Resolve([FromQuery] string emailOrDomain)
+        {
+            var organisation = await _mediator.Send(new ResolveOrganisationRequest
+            {
+                EmailOrDomain = emailOrDomain
+            });
+            return Ok(organisation);
         }
 
         [HttpPost("add")]

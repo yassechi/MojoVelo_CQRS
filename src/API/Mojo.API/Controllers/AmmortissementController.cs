@@ -43,6 +43,13 @@ namespace Mojo.API.Controllers
             }
         }
 
+        [HttpGet("get-by-velo/{veloId}")]
+        public async Task<IActionResult> GetByVelo(int veloId)
+        {
+            var amortissements = await _mediator.Send(new GetAmortissementsByVeloRequest { VeloId = veloId });
+            return Ok(amortissements);
+        }
+
         [HttpPost("add")]
         public async Task<IActionResult> Add([FromBody] AmortissmentDto amortissement)
         {

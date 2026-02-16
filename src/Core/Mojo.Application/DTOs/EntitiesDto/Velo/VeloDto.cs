@@ -7,6 +7,7 @@ namespace Mojo.Application.DTOs.EntitiesDto.Velo
         public string NumeroSerie { get; set; } = null!;
         public string Marque { get; set; } = null!;
         public string Modele { get; set; } = null!;
+        public string? Type { get; set; }
         public decimal PrixAchat { get; set; }
         public bool Status { get; set; }
     }

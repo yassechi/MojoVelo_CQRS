@@ -17,7 +17,7 @@ namespace Mojo.Persistence.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "9.0.12")
+                .HasAnnotation("ProductVersion", "9.0.13")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -482,6 +482,46 @@ namespace Mojo.Persistence.Migrations
                     b.ToTable("Messages");
                 });
 
+            modelBuilder.Entity("Mojo.Domain.Entities.MoisAmortissement", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("AmortissementId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsActif")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("ModifiedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("ModifiedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<decimal>("Montant")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("NumeroMois")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AmortissementId", "NumeroMois")
+                        .IsUnique();
+
+                    b.ToTable("MoisAmortissements");
+                });
+
             modelBuilder.Entity("Mojo.Domain.Entities.Organisation", b =>
                 {
                     b.Property<int>("Id")
@@ -661,6 +701,9 @@ namespace Mojo.Persistence.Migrations
                     b.Property<bool>("Status")
                         .HasColumnType("bit");
 
+                    b.Property<string>("Type")
+                        .HasColumnType("nvarchar(max)");
+
                     b.HasKey("Id");
 
                     b.ToTable("Velos");
@@ -830,6 +873,17 @@ namespace Mojo.Persistence.Migrations
                     b.Navigation("Discussion");
                 });
 
+            modelBuilder.Entity("Mojo.Domain.Entities.MoisAmortissement", b =>
+                {
+                    b.HasOne("Mojo.Domain.Entities.Amortissement", "Amortissement")
+                        .WithMany("MoisAmortissements")
+                        .HasForeignKey("AmortissementId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Amortissement");
+                });
+
             modelBuilder.Entity("Mojo.Domain.Entities.User", b =>
                 {
                     b.HasOne("Mojo.Domain.Entities.Organisation", "Organisation")
@@ -843,6 +897,11 @@ namespace Mojo.Persistence.Migrations
                         .HasForeignKey("Mojo.Domain.Entities.User", "OrganisationId1");
 
                     b.Navigation("Organisation");
+                });
+
+            modelBuilder.Entity("Mojo.Domain.Entities.Amortissement", b =>
+                {
+                    b.Navigation("MoisAmortissements");
                 });
 
             modelBuilder.Entity("Mojo.Domain.Entities.Contrat", b =>

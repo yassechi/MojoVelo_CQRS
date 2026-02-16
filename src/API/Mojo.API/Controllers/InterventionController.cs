@@ -39,6 +39,13 @@ namespace Mojo.API.Controllers
             }
         }
 
+        [HttpGet("get-by-velo/{veloId}")]
+        public async Task<IActionResult> GetByVelo(int veloId)
+        {
+            var interventions = await _mediator.Send(new GetInterventionsByVeloRequest { VeloId = veloId });
+            return Ok(interventions);
+        }
+
         [HttpPost("add")]
         public async Task<IActionResult> Add([FromBody] InterventionDto interventionDto)
         {

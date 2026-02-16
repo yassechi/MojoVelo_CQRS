@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Mojo.Application.DTOs.EntitiesDto.Contrat
 {
-    public class ContratDto : BaseDto<int>  // ? Doit �tre BaseDto, pas BaseEntity
+    public class ContratDto : BaseDto<int>  // ? Doit ï¿½tre BaseDto, pas BaseEntity
     {
         [Column(TypeName = "date")]
         public DateOnly DateDebut { get; set; } = DateOnly.FromDateTime(DateTime.Now);
@@ -13,13 +13,15 @@ namespace Mojo.Application.DTOs.EntitiesDto.Contrat
 
         public decimal LoyerMensuelHT { get; set; }
 
-        public StatutContrat StatutContrat { get; set; }  // ? Doit �tre StatutContrat, pas bool
+        public decimal? MontantAmortissementMensuel { get; set; }
 
-        public int Duree { get; set; }  // ? Ce champ doit �tre pr�sent
+        public StatutContrat StatutContrat { get; set; }  // ? Doit être StatutContrat, pas bool
+
+        public int Duree { get; set; }  // ? Ce champ doit ï¿½tre prï¿½sent
 
         public int VeloId { get; set; }
 
-        public string Ref { get; set; } = string.Empty;  // ? Ce champ doit �tre pr�sent
+        public string Ref { get; set; } = string.Empty;  // ? Ce champ doit ï¿½tre prï¿½sent
 
         public string BeneficiaireId { get; set; } = null!;
 

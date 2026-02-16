@@ -44,6 +44,34 @@ namespace Mojo.API.Controllers
             }
         }
 
+        [HttpGet("get-by-organisation/{organisationId}")]
+        public async Task<IActionResult> GetByOrganisation(int organisationId, [FromQuery] int? role)
+        {
+            var users = await _mediator.Send(new GetUsersByOrganisationRequest
+            {
+                OrganisationId = organisationId,
+                Role = role
+            });
+            return Ok(users);
+        }
+
+        [HttpGet("list")]
+        public async Task<IActionResult> GetList(
+            [FromQuery] int? role,
+            [FromQuery] bool? isActif,
+            [FromQuery] string? search,
+            [FromQuery] int? organisationId)
+        {
+            var users = await _mediator.Send(new GetUserListRequest
+            {
+                Role = role,
+                IsActif = isActif,
+                Search = search,
+                OrganisationId = organisationId
+            });
+            return Ok(users);
+        }
+
         [HttpGet("me")]
         [AuthorizeRole(UserRole.Admin, UserRole.Manager, UserRole.User)]
         public async Task<IActionResult> GetCurrentUser()

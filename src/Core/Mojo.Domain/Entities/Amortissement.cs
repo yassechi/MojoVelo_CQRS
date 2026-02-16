@@ -13,5 +13,7 @@ namespace Mojo.Domain.Entities
         [ForeignKey(nameof(Velo))]
         public int VeloId { get; set; }
         public Velo Velo { get; set; } 
+
+        public ICollection<MoisAmortissement> MoisAmortissements { get; set; } = new List<MoisAmortissement>();
     }
 }
