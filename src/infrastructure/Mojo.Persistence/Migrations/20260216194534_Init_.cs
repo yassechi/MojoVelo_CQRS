@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Mojo.Persistence.Migrations
 {
     /// <inheritdoc />
-    public partial class Init : Migration
+    public partial class Init_ : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -58,6 +58,7 @@ namespace Mojo.Persistence.Migrations
                     NumeroSerie = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Marque = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Modele = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Type = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     PrixAchat = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     Status = table.Column<bool>(type: "bit", nullable: false),
                     CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
@@ -355,6 +356,32 @@ namespace Mojo.Persistence.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "MoisAmortissements",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    AmortissementId = table.Column<int>(type: "int", nullable: false),
+                    NumeroMois = table.Column<int>(type: "int", nullable: false),
+                    Montant = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ModifiedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ModifiedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    IsActif = table.Column<bool>(type: "bit", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_MoisAmortissements", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_MoisAmortissements_Amortissements_AmortissementId",
+                        column: x => x.AmortissementId,
+                        principalTable: "Amortissements",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Documents",
                 columns: table => new
                 {
@@ -557,14 +584,17 @@ namespace Mojo.Persistence.Migrations
                 name: "IX_Messages_DiscussionId",
                 table: "Messages",
                 column: "DiscussionId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_MoisAmortissements_AmortissementId_NumeroMois",
+                table: "MoisAmortissements",
+                columns: new[] { "AmortissementId", "NumeroMois" },
+                unique: true);
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropTable(
-                name: "Amortissements");
-
             migrationBuilder.DropTable(
                 name: "AspNetRoleClaims");
 
@@ -593,6 +623,9 @@ namespace Mojo.Persistence.Migrations
                 name: "Messages");
 
             migrationBuilder.DropTable(
+                name: "MoisAmortissements");
+
+            migrationBuilder.DropTable(
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
@@ -602,10 +635,13 @@ namespace Mojo.Persistence.Migrations
                 name: "Discussions");
 
             migrationBuilder.DropTable(
-                name: "Velos");
+                name: "Amortissements");
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");
+
+            migrationBuilder.DropTable(
+                name: "Velos");
 
             migrationBuilder.DropTable(
                 name: "Organisations");
