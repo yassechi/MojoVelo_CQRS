@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Mojo.Persistence.Migrations
 {
     /// <inheritdoc />
-    public partial class Init_ : Migration
+    public partial class Init : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -473,6 +473,38 @@ namespace Mojo.Persistence.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "VuesMessages",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    MessageId = table.Column<int>(type: "int", nullable: false),
+                    ViewedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ModifiedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ModifiedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    IsActif = table.Column<bool>(type: "bit", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_VuesMessages", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_VuesMessages_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_VuesMessages_Messages_MessageId",
+                        column: x => x.MessageId,
+                        principalTable: "Messages",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_Amortissements_VeloId",
                 table: "Amortissements",
@@ -590,6 +622,17 @@ namespace Mojo.Persistence.Migrations
                 table: "MoisAmortissements",
                 columns: new[] { "AmortissementId", "NumeroMois" },
                 unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_VuesMessages_MessageId",
+                table: "VuesMessages",
+                column: "MessageId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_VuesMessages_UserId_MessageId",
+                table: "VuesMessages",
+                columns: new[] { "UserId", "MessageId" },
+                unique: true);
         }
 
         /// <inheritdoc />
@@ -620,10 +663,10 @@ namespace Mojo.Persistence.Migrations
                 name: "Interventions");
 
             migrationBuilder.DropTable(
-                name: "Messages");
+                name: "MoisAmortissements");
 
             migrationBuilder.DropTable(
-                name: "MoisAmortissements");
+                name: "VuesMessages");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");
@@ -632,16 +675,19 @@ namespace Mojo.Persistence.Migrations
                 name: "Contrats");
 
             migrationBuilder.DropTable(
-                name: "Discussions");
-
-            migrationBuilder.DropTable(
                 name: "Amortissements");
 
             migrationBuilder.DropTable(
-                name: "AspNetUsers");
+                name: "Messages");
 
             migrationBuilder.DropTable(
                 name: "Velos");
+
+            migrationBuilder.DropTable(
+                name: "Discussions");
+
+            migrationBuilder.DropTable(
+                name: "AspNetUsers");
 
             migrationBuilder.DropTable(
                 name: "Organisations");

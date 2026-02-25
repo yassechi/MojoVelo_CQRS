@@ -40,20 +40,6 @@ namespace Mojo.API.Controllers
             }
         }
 
-        [HttpGet("get-detail/{id}")]
-        public async Task<IActionResult> GetDetail(int id)
-        {
-            try
-            {
-                var contrat = await _mediator.Send(new GetContratDetailViewRequest { Id = id });
-                return Ok(contrat);
-            }
-            catch (NotFoundException ex)
-            {
-                return NotFound(new { message = ex.Message });
-            }
-        }
-
         [HttpGet("edit-data/{id}")]
         public async Task<IActionResult> GetEditData(int id)
         {

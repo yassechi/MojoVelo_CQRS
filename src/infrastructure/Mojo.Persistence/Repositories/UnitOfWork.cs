@@ -16,6 +16,7 @@ namespace Mojo.Persistence.Repositories
         private IMoisAmortissementRepository? _moisAmortissementRepository;
         private IDiscussionRepository? _discussionRepository;
         private IMessageRepository? _messageRepository;
+        private IVuesMessageRepository? _vuesMessageRepository;
 
         public UnitOfWork(MDbContext context)
         {
@@ -46,6 +47,9 @@ namespace Mojo.Persistence.Repositories
 
         public IMessageRepository MessageRepository =>
             _messageRepository ??= new MessageRepository(_context);
+
+        public IVuesMessageRepository VuesMessageRepository =>
+            _vuesMessageRepository ??= new VuesMessageRepository(_context);
 
         // Cette méthode valide TOUS les changements en une seule transaction SQL [cite: 2026-01-31]
         public async Task<int> Save()

@@ -75,6 +75,25 @@ namespace Mojo.Persistence.DatabaseContext
                 entity.HasIndex(m => new { m.AmortissementId, m.NumeroMois })
                       .IsUnique();
             });
+
+            // 7. VuesMessage (lecture des messages)
+            modelBuilder.Entity<VuesMessage>(entity =>
+            {
+                entity.Property(vm => vm.UserId).IsRequired();
+
+                entity.HasIndex(vm => new { vm.UserId, vm.MessageId })
+                      .IsUnique();
+
+                entity.HasOne(vm => vm.User)
+                      .WithMany()
+                      .HasForeignKey(vm => vm.UserId)
+                      .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasOne(vm => vm.Message)
+                      .WithMany()
+                      .HasForeignKey(vm => vm.MessageId)
+                      .OnDelete(DeleteBehavior.Cascade);
+            });
         }
 
         public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
@@ -99,6 +118,7 @@ namespace Mojo.Persistence.DatabaseContext
         public virtual DbSet<Discussion> Discussions { get; set; }
         public virtual DbSet<Intervention> Interventions { get; set; }
         public virtual DbSet<Message> Messages { get; set; }
+        public virtual DbSet<VuesMessage> VuesMessages { get; set; }
         public virtual DbSet<Organisation> Organisations { get; set; }
         public virtual DbSet<Velo> Velos { get; set; }
         public virtual DbSet<Demande> Demandes { get; set; }

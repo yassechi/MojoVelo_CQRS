@@ -19,6 +19,7 @@ namespace Mojo.Application.Persistance.Contracts
         // --- Tables SAV / Communication ---
         IDiscussionRepository DiscussionRepository { get; }
         IMessageRepository MessageRepository { get; }
+        IVuesMessageRepository VuesMessageRepository { get; }
 
         // --- Méthode de validation globale ---
         Task<int> Save();

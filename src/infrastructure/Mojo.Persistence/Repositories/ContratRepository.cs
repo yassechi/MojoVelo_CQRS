@@ -24,6 +24,8 @@ namespace Mojo.Persistence.Repositories
             return await _db.Set<Contrat>()
                 .Where(c => c.BeneficiaireId == userId && c.IsActif)
                 .ToListAsync();
+
+            //_db.Organisations.IgnoreQueryFilters
         }
 
         public async Task<List<Contrat>> GetByOrganisationIdAsync(int organisationId)

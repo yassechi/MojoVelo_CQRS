@@ -30,6 +30,7 @@ namespace Mojo.API.Dependencies
             services.AddScoped<IDiscussionRepository, DiscussionRepository>();
             services.AddScoped<IInterventionRepository, InterventionRepository>();
             services.AddScoped<IMessageRepository, MessageRepository>();
+            services.AddScoped<IVuesMessageRepository, VuesMessageRepository>();
             services.AddScoped<IOrganisationRepository, OrganisationRepository>();
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IVeloRepository, VeloRepository>();

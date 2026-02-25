@@ -312,6 +312,22 @@ SET IDENTITY_INSERT [Messages] OFF;
 GO
 
 -----------------------------------------------------------
+-- 14.5 [VuesMessages]
+-----------------------------------------------------------
+SET IDENTITY_INSERT [VuesMessages] ON;
+
+INSERT INTO [VuesMessages] ([Id], [UserId], [MessageId], [ViewedAt], [IsActif], [CreatedDate], [ModifiedDate], [CreatedBy], [ModifiedBy]) VALUES
+(1, 'U01', 1, GETDATE(), 1, GETDATE(), GETDATE(), 'System', 'System'),
+(2, 'U01', 2, GETDATE(), 1, GETDATE(), GETDATE(), 'System', 'System'),
+(3, 'U02', 4, GETDATE(), 1, GETDATE(), GETDATE(), 'System', 'System'),
+(4, 'U04', 1, GETDATE(), 1, GETDATE(), GETDATE(), 'System', 'System'),
+(5, 'U05', 4, GETDATE(), 1, GETDATE(), GETDATE(), 'System', 'System'),
+(6, 'U09', 8, GETDATE(), 1, GETDATE(), GETDATE(), 'System', 'System');
+
+SET IDENTITY_INSERT [VuesMessages] OFF;
+GO
+
+-----------------------------------------------------------
 -- 15. [Demandes]
 -----------------------------------------------------------
 SET IDENTITY_INSERT [Demandes] ON;
@@ -379,3 +395,4 @@ GO
 
 PRINT 'Script exécuté avec succès ! ';
 GO
+
