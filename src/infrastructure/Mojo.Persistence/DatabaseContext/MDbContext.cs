@@ -57,6 +57,15 @@ namespace Mojo.Persistence.DatabaseContext
                       .OnDelete(DeleteBehavior.Restrict);
             });
 
+            // 4.1 Organisation logos (1 organisation -> N logos)
+            modelBuilder.Entity<OrganisationLogo>(entity =>
+            {
+                entity.HasOne(l => l.Organisation)
+                      .WithMany(o => o.OrganisationLogos)
+                      .HasForeignKey(l => l.OrganisationId)
+                      .OnDelete(DeleteBehavior.Cascade);
+            });
+
             // 5. Précision des types Decimal pour SQL Server
             modelBuilder.Entity<Amortissement>().Property(a => a.ValeurInit).HasColumnType("decimal(18,2)");
             modelBuilder.Entity<Contrat>().Property(c => c.LoyerMensuelHT).HasColumnType("decimal(18,2)");
@@ -123,6 +132,7 @@ namespace Mojo.Persistence.DatabaseContext
         public virtual DbSet<Velo> Velos { get; set; }
         public virtual DbSet<Demande> Demandes { get; set; }
         public virtual DbSet<Documents> Documents { get; set; }
+        public virtual DbSet<OrganisationLogo> OrganisationLogos { get; set; }
         public virtual DbSet<MoisAmortissement> MoisAmortissements { get; set; }
     }
 }

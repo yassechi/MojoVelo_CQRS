@@ -7,6 +7,7 @@ namespace Mojo.Application.Persistance.Contracts
     {
         // --- Tables Identité & Utilisateurs ---
         IOrganisationRepository OrganisationRepository { get; }
+        IOrganisationLogoRepository OrganisationLogoRepository { get; }
         // Note: Le UserManager gère souvent les Users, mais on peut avoir un Repo pour les lectures complexes
 
         // --- Tables Métier (Vélos & Gestion) ---

@@ -31,11 +31,17 @@ namespace Mojo.Application.Features.Dashboard.Handler.Query
             var users = (await _userRepository.GetAllAsync()).Where(u => u.IsActif).ToList();
             var velos = (await _veloRepository.GetAllAsync()).Where(v => v.IsActif).ToList();
 
+            var today = DateOnly.FromDateTime(DateTime.Today);
+            var threshold = today.AddDays(30);
+
             var dto = new AdminDashboardDto
             {
                 PendingDemandes = demandes.Count(d => d.Status == DemandeStatus.AttenteComagnie),
                 ActiveContrats = contrats.Count(c => c.StatutContrat == StatutContrat.EnCours),
-                BudgetTotal = contrats.Sum(c => (c.LoyerMensuelHT) * (c.Duree == 0 ? 36 : c.Duree))
+                ExpiringContrats = contrats.Count(c =>
+                    c.StatutContrat == StatutContrat.EnCours &&
+                    c.DateFin >= today &&
+                    c.DateFin <= threshold)
             };
 
             var usersById = users.ToDictionary(u => u.Id);
@@ -62,8 +68,9 @@ namespace Mojo.Application.Features.Dashboard.Handler.Query
                 .ToList();
 
             var recentDemandes = demandes
-                .OrderByDescending(d => d.Id)
-                .Take(3);
+                .OrderByDescending(d => d.CreatedDate)
+                .ThenByDescending(d => d.Id)
+                .Take(5);
 
             foreach (var demande in recentDemandes)
             {
@@ -79,27 +86,6 @@ namespace Mojo.Application.Features.Dashboard.Handler.Query
                     Title = $"Demande #{demande.Id}",
                     Detail = $"{userName} - {bikeTitle}",
                     Time = demande.CreatedDate == default ? "En cours" : demande.CreatedDate.ToString("yyyy-MM-dd")
-                });
-            }
-
-            var recentContrats = contrats
-                .OrderByDescending(c => c.DateDebut)
-                .Take(2);
-
-            foreach (var contrat in recentContrats)
-            {
-                var userName = usersById.TryGetValue(contrat.BeneficiaireId, out var user)
-                    ? $"{user.FirstName} {user.LastName}".Trim()
-                    : contrat.BeneficiaireId;
-                var bikeTitle = velosById.TryGetValue(contrat.VeloId, out var velo)
-                    ? velo.Modele
-                    : $"#{contrat.VeloId}";
-
-                dto.ActivityFeed.Add(new ActivityFeedItemDto
-                {
-                    Title = $"Contrat {contrat.Ref}",
-                    Detail = $"{userName} - {bikeTitle}",
-                    Time = contrat.DateDebut.ToString("yyyy-MM-dd")
                 });
             }
 

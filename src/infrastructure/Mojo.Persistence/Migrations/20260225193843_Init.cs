@@ -37,7 +37,6 @@ namespace Mojo.Persistence.Migrations
                     ContactEmail = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     IsActif = table.Column<bool>(type: "bit", nullable: false),
                     IdContact = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    LogoUrl = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     EmailAutorise = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ModifiedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
@@ -134,6 +133,33 @@ namespace Mojo.Persistence.Migrations
                         column: x => x.OrganisationId1,
                         principalTable: "Organisations",
                         principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "OrganisationLogos",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    OrganisationId = table.Column<int>(type: "int", nullable: false),
+                    Fichier = table.Column<byte[]>(type: "varbinary(max)", nullable: true),
+                    NomFichier = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    TypeFichier = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ModifiedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ModifiedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    IsActif = table.Column<bool>(type: "bit", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_OrganisationLogos", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_OrganisationLogos_Organisations_OrganisationId",
+                        column: x => x.OrganisationId,
+                        principalTable: "Organisations",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -624,6 +650,11 @@ namespace Mojo.Persistence.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
+                name: "IX_OrganisationLogos_OrganisationId",
+                table: "OrganisationLogos",
+                column: "OrganisationId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_VuesMessages_MessageId",
                 table: "VuesMessages",
                 column: "MessageId");
@@ -664,6 +695,9 @@ namespace Mojo.Persistence.Migrations
 
             migrationBuilder.DropTable(
                 name: "MoisAmortissements");
+
+            migrationBuilder.DropTable(
+                name: "OrganisationLogos");
 
             migrationBuilder.DropTable(
                 name: "VuesMessages");

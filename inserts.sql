@@ -25,45 +25,104 @@ GO
 -----------------------------------------------------------
 -- 1. [__EFMigrationsHistory]
 -----------------------------------------------------------
-IF NOT EXISTS (SELECT * FROM [__EFMigrationsHistory] WHERE [MigrationId] = '20260209210519_Init')
+IF NOT EXISTS (SELECT * FROM [__EFMigrationsHistory] WHERE [MigrationId] = '20260218165342_Init')
 BEGIN
     INSERT INTO [__EFMigrationsHistory] ([MigrationId], [ProductVersion]) VALUES 
-    ('20260209210519_Init', '9.0.13');
+    ('20260218165342_Init', '9.0.13');
 END
 GO
 
-IF NOT EXISTS (SELECT * FROM [__EFMigrationsHistory] WHERE [MigrationId] = '20260215172527_AddVeloType')
+IF NOT EXISTS (SELECT * FROM [__EFMigrationsHistory] WHERE [MigrationId] = '20260225193000_AddOrganisationLogo')
 BEGIN
     INSERT INTO [__EFMigrationsHistory] ([MigrationId], [ProductVersion]) VALUES 
-    ('20260215172527_AddVeloType', '9.0.13');
+    ('20260225193000_AddOrganisationLogo', '9.0.13');
 END
 GO
 
-IF NOT EXISTS (SELECT * FROM [__EFMigrationsHistory] WHERE [MigrationId] = '20260215215753_AddMoisAmortissements')
-BEGIN
-    INSERT INTO [__EFMigrationsHistory] ([MigrationId], [ProductVersion]) VALUES 
-    ('20260215215753_AddMoisAmortissements', '9.0.13');
-END
-GO
-
------------------------------------------------------------
 -- 2. [Organisations]
 -----------------------------------------------------------
 SET IDENTITY_INSERT [Organisations] ON;
 
-INSERT INTO [Organisations] ([Id], [Name], [Code], [Address], [ContactEmail], [IsActif], [IdContact], [LogoUrl], [EmailAutorise], [CreatedDate], [ModifiedDate], [CreatedBy], [ModifiedBy]) VALUES
-(1, 'Mojo Corporate', 'MOJO01', 'Paris', 'admin@mojo.com', 1, 'U01', 'https://mojovelo.be/wp-content/uploads/2020/03/cropped-mojo-logo-sans-rien-3.jpg', '@mojo.com', GETDATE(), GETDATE(), 'System', 'System'),
-(2, 'Velocité Lyon', 'VELO02', 'Lyon', 'contact@velocite.com', 1, 'U02', 'https://www.webador.fr/blog/wp-content/uploads/2023/09/image-4-1024x576.png', '@velocite.com', GETDATE(), GETDATE(), 'System', 'System'),
-(3, 'EcoBike Bordeaux', 'ECO03', 'Bordeaux', 'info@ecobike.com', 1, 'U03', 'https://img.pikbest.com/png-images/20241029/ride-your-dreams_11024247.png!w700wp', '@ecobike.com', GETDATE(), GETDATE(), 'System', 'System'),
-(4, 'Lille Cycles', 'LIL04', 'Lille', 'lille@cycles.com', 1, 'U04', 'https://www.webador.fr/blog/wp-content/uploads/2023/09/Evian_Logo.png', '@cycles.com', GETDATE(), GETDATE(), 'System', 'System'),
-(5, 'Nantes Mobilité', 'NAN05', 'Nantes', 'nantes@mob.com', 1, 'U05', 'https://mir-s3-cdn-cf.behance.net/project_modules/1400_webp/a8247e180299449.65089787f051f.jpg', '@mob.com', GETDATE(), GETDATE(), 'System', 'System'),
-(6, 'Green Wheels', 'GW06', 'Berlin', 'hallo@green.com', 1, 'U06', 'https://img.freepik.com/vecteurs-libre/lettre-coloree-creation-logo-degrade_474888-2309.jpg', '@green.com', GETDATE(), GETDATE(), 'System', 'System'),
-(7, 'Urban Ride', 'URB07', 'Marseille', 'contact@urbanride.com', 1, 'U07', 'https://img.pikbest.com/png-images/20240912/happy-pongal-festival-wishes-you_10830361.png!f305cw', '@urbanride.com', GETDATE(), GETDATE(), 'System', 'System'),
-(8, 'Swiss Cycle', 'SWI08', 'Genève', 'info@swisscycle.com', 1, 'U08', 'https://img.pikbest.com/png-images/20241022/hacker-gaming-logo_10991508.png!w700wp', '@swisscycle.com', GETDATE(), GETDATE(), 'System', 'System'),
-(9, 'Soft Ride SAS', 'SOFT09', 'Puteaux', 'it@softride.com', 1, 'U09', 'https://img.pikbest.com/png-images/20240617/lion-logo-vector-illustration_10621866.png!f305cw', '@softride.com', GETDATE(), GETDATE(), 'System', 'System'),
-(10, 'Alpha Fleet', 'ALP10', 'Nice', 'fleet@alpha.com', 1, 'U10', 'https://img.pikbest.com/png-images/20240611/cricket-sport-logo-design-isolated-on-transparent-background-png_10607363.png!f305cw', '@alpha.com', GETDATE(), GETDATE(), 'System', 'System');
+INSERT INTO [Organisations] ([Id], [Name], [Code], [Address], [ContactEmail], [IsActif], [IdContact], [EmailAutorise], [CreatedDate], [ModifiedDate], [CreatedBy], [ModifiedBy]) VALUES
+(1, 'Mojo Corporate', 'MOJO01', 'Paris', 'admin@mojo.com', 1, 'U01', '@mojo.com', GETDATE(), GETDATE(), 'System', 'System'),
+(2, 'Velocité Lyon', 'VELO02', 'Lyon', 'contact@velocite.com', 1, 'U02', '@velocite.com', GETDATE(), GETDATE(), 'System', 'System'),
+(3, 'EcoBike Bordeaux', 'ECO03', 'Bordeaux', 'info@ecobike.com', 1, 'U03', '@ecobike.com', GETDATE(), GETDATE(), 'System', 'System'),
+(4, 'Lille Cycles', 'LIL04', 'Lille', 'lille@cycles.com', 1, 'U04', '@cycles.com', GETDATE(), GETDATE(), 'System', 'System'),
+(5, 'Nantes Mobilité', 'NAN05', 'Nantes', 'nantes@mob.com', 1, 'U05', '@mob.com', GETDATE(), GETDATE(), 'System', 'System'),
+(6, 'Green Wheels', 'GW06', 'Berlin', 'hallo@green.com', 1, 'U06', '@green.com', GETDATE(), GETDATE(), 'System', 'System'),
+(7, 'Urban Ride', 'URB07', 'Marseille', 'contact@urbanride.com', 1, 'U07', '@urbanride.com', GETDATE(), GETDATE(), 'System', 'System'),
+(8, 'Swiss Cycle', 'SWI08', 'Genève', 'info@swisscycle.com', 1, 'U08', '@swisscycle.com', GETDATE(), GETDATE(), 'System', 'System'),
+(9, 'Soft Ride SAS', 'SOFT09', 'Puteaux', 'it@softride.com', 1, 'U09', '@softride.com', GETDATE(), GETDATE(), 'System', 'System'),
+(10, 'Alpha Fleet', 'ALP10', 'Nice', 'fleet@alpha.com', 1, 'U10', '@alpha.com', GETDATE(), GETDATE(), 'System', 'System');
 
 SET IDENTITY_INSERT [Organisations] OFF;
+GO
+
+-----------------------------------------------------------
+-- 2.5 [OrganisationLogos] (logos depuis fichiers)
+-----------------------------------------------------------
+-- IMPORTANT:
+-- 1) Place les fichiers logos dans le dossier ci-dessous.
+-- 2) Le service SQL Server doit avoir acc?s en lecture ? ce dossier.
+DECLARE @BasePath NVARCHAR(260) = N'C:/Users/yasse/Desktop/Logos/';
+
+DECLARE @Logos TABLE (
+    OrganisationId INT,
+    FileName NVARCHAR(255),
+    MimeType NVARCHAR(50)
+);
+
+INSERT INTO @Logos (OrganisationId, FileName, MimeType) VALUES
+(1, 'mojo.png', 'image/png'),
+(2, 'velocite.png', 'image/png'),
+(3, 'ecobike.png', 'image/png'),
+(4, 'lille.png', 'image/png'),
+(5, 'nante.png', 'image/png'),
+(6, 'green.png', 'image/png'),
+(7, 'urban.png', 'image/png'),
+(8, 'swiss.png', 'image/png'),
+(9, 'soft.png', 'image/png'),
+(10, 'alpha.png', 'image/png');
+
+DECLARE @OrganisationId INT;
+DECLARE @FileName NVARCHAR(255);
+DECLARE @MimeType NVARCHAR(50);
+DECLARE @Sql NVARCHAR(MAX);
+
+DECLARE logo_cursor CURSOR LOCAL FAST_FORWARD FOR
+SELECT OrganisationId, FileName, MimeType FROM @Logos;
+
+OPEN logo_cursor;
+FETCH NEXT FROM logo_cursor INTO @OrganisationId, @FileName, @MimeType;
+
+WHILE @@FETCH_STATUS = 0
+BEGIN
+    SET @Sql = N'
+    UPDATE [OrganisationLogos]
+    SET IsActif = 0
+    WHERE OrganisationId = ' + CAST(@OrganisationId AS NVARCHAR(10)) + N';
+
+    INSERT INTO [OrganisationLogos]
+    ([OrganisationId], [Fichier], [NomFichier], [TypeFichier], [IsActif], [CreatedDate], [ModifiedDate], [CreatedBy], [ModifiedBy])
+    SELECT ' + CAST(@OrganisationId AS NVARCHAR(10)) + N',
+           BulkColumn,
+           N''' + @FileName + N''',
+           N''' + @MimeType + N''',
+           1,
+           GETDATE(),
+           GETDATE(),
+           ''System'',
+           ''System''
+    FROM OPENROWSET(BULK N''' + @BasePath + @FileName + N''', SINGLE_BLOB) AS x;
+    ';
+
+    EXEC sp_executesql @Sql;
+
+    FETCH NEXT FROM logo_cursor INTO @OrganisationId, @FileName, @MimeType;
+END
+
+CLOSE logo_cursor;
+DEALLOCATE logo_cursor;
 GO
 
 -----------------------------------------------------------
@@ -395,4 +454,7 @@ GO
 
 PRINT 'Script exécuté avec succès ! ';
 GO
+
+
+
 

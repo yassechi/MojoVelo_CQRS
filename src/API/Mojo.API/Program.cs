@@ -12,13 +12,13 @@ using Mojo.API.Dependencies;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// 1. Services des couches
+// Services des couches
 builder.Services.Configure<JwtSettings>(builder.Configuration.GetSection("JwtSettings"));
 builder.Services.ConfigureApplicationService();
 builder.Services.ConfigurePersistenceService(builder.Configuration);
 builder.Services.ConfigureInfrastructureService(builder.Configuration);
 
-// 2. Identity (Configuration UNIQUE pour éviter l'erreur de Scheme)
+// Identity (Configuration UNIQUE pour éviter l'erreur de Scheme)
 builder.Services.AddIdentity<User, IdentityRole>(options =>
 {
     options.Password.RequireDigit = true;
@@ -30,7 +30,7 @@ builder.Services.AddIdentity<User, IdentityRole>(options =>
 .AddEntityFrameworkStores<MDbContext>()
 .AddDefaultTokenProviders();
 
-// 3. JWT Authentication
+// JWT Authentication
 var jwtSettings = builder.Configuration.GetSection("JwtSettings");
 var jwtKey = jwtSettings["Key"];
 if (string.IsNullOrEmpty(jwtKey) || jwtKey.Length < 32)
@@ -106,7 +106,7 @@ var app = builder.Build();
 }
 
 app.UseCors("AllowAll");
-app.UseStaticFiles();
+//app.UseStaticFiles();
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();

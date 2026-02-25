@@ -7,7 +7,6 @@ namespace Mojo.Application.DTOs.EntitiesDto.Organisation
         public string Address { get; set; } = null!;
         public string ContactEmail { get; set; } = null!;
         public string EmailAutorise { get; set; } = string.Empty;
-        public string? LogoUrl { get; set; }
         public bool IsActif { get; set; }
         public string IdContact { get; set; } = null!;  // ? Ajoutez cette ligne
     }

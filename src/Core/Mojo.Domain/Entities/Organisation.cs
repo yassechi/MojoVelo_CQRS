@@ -15,10 +15,9 @@ namespace Mojo.Domain.Entities
         public string IdContact { get; set; }
         public User Contact { get; set; }
 
-        public string? LogoUrl { get; set; }
         public string EmailAutorise { get; set; } = string.Empty;
 
-
         public List<User> Users { get; set; } = [];
+        public List<OrganisationLogo> OrganisationLogos { get; set; } = [];
     }
 }

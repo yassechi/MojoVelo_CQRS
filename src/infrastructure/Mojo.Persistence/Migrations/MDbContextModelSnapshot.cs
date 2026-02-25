@@ -554,9 +554,6 @@ namespace Mojo.Persistence.Migrations
                     b.Property<bool>("IsActif")
                         .HasColumnType("bit");
 
-                    b.Property<string>("LogoUrl")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("ModifiedBy")
                         .HasColumnType("nvarchar(max)");
 
@@ -569,6 +566,48 @@ namespace Mojo.Persistence.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Organisations");
+                });
+
+            modelBuilder.Entity("Mojo.Domain.Entities.OrganisationLogo", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<byte[]>("Fichier")
+                        .HasColumnType("varbinary(max)");
+
+                    b.Property<bool>("IsActif")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("ModifiedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("ModifiedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("NomFichier")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("OrganisationId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("TypeFichier")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("OrganisationId");
+
+                    b.ToTable("OrganisationLogos");
                 });
 
             modelBuilder.Entity("Mojo.Domain.Entities.User", b =>
@@ -927,6 +966,17 @@ namespace Mojo.Persistence.Migrations
                     b.Navigation("Amortissement");
                 });
 
+            modelBuilder.Entity("Mojo.Domain.Entities.OrganisationLogo", b =>
+                {
+                    b.HasOne("Mojo.Domain.Entities.Organisation", "Organisation")
+                        .WithMany("OrganisationLogos")
+                        .HasForeignKey("OrganisationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Organisation");
+                });
+
             modelBuilder.Entity("Mojo.Domain.Entities.User", b =>
                 {
                     b.HasOne("Mojo.Domain.Entities.Organisation", "Organisation")
@@ -979,6 +1029,8 @@ namespace Mojo.Persistence.Migrations
             modelBuilder.Entity("Mojo.Domain.Entities.Organisation", b =>
                 {
                     b.Navigation("Contact");
+
+                    b.Navigation("OrganisationLogos");
 
                     b.Navigation("Users");
                 });

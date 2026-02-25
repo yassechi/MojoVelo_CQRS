@@ -9,6 +9,7 @@ namespace Mojo.Persistence.Repositories
 
         // On prépare des champs privés pour stocker les instances (Lazy Loading)
         private IOrganisationRepository? _organisationRepository;
+        private IOrganisationLogoRepository? _organisationLogoRepository;
         private IVeloRepository? _veloRepository;
         private IContratRepository? _contratRepository;
         private IInterventionRepository? _interventionRepository;
@@ -26,6 +27,9 @@ namespace Mojo.Persistence.Repositories
         // Si le repository est nul, on l'instancie en lui passant le context unique [cite: 2026-01-31]
         public IOrganisationRepository OrganisationRepository =>
             _organisationRepository ??= new OrganisationRepository(_context);
+
+        public IOrganisationLogoRepository OrganisationLogoRepository =>
+            _organisationLogoRepository ??= new OrganisationLogoRepository(_context);
 
         public IVeloRepository VeloRepository =>
             _veloRepository ??= new VeloRepository(_context);
