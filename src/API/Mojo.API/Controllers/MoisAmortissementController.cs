@@ -39,16 +39,6 @@ namespace Mojo.API.Controllers
             }
         }
 
-        [HttpGet("get-by-amortissement/{amortissementId}")]
-        public async Task<IActionResult> GetByAmortissement(int amortissementId)
-        {
-            var items = await _mediator.Send(new GetMoisAmortissementsByAmortissementRequest
-            {
-                AmortissementId = amortissementId
-            });
-            return Ok(items);
-        }
-
         [HttpGet("get-by-contrat/{contratId}")]
         public async Task<IActionResult> GetByContrat(int contratId)
         {

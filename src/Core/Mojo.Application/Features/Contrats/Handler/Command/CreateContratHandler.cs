@@ -81,51 +81,67 @@ namespace Mojo.Application.Features.Contrats.Handler.Command
                     amortissementCreated = true;
                 }
 
-                var existingMonths = await _moisAmortissementRepository.GetByAmortissementIdAsync(amortissement.Id);
-                var existingMonthNumbers = existingMonths.Select(m => m.NumeroMois).ToHashSet();
-
-                if (existingMonths.Count == 0 && !amortissementCreated)
+            if (!amortissementCreated)
+            {
+                var valeurInit = amortissement.ValeurInit;
+                if (valeurInit <= 0)
                 {
-                    var valeurInit = amortissement.ValeurInit;
-                    if (valeurInit <= 0)
+                    var velo = await _veloRepository.GetByIdAsync(request.dto.VeloId);
+                    if (velo != null)
                     {
-                        var velo = await _veloRepository.GetByIdAsync(request.dto.VeloId);
-                        if (velo != null)
-                        {
-                            valeurInit = velo.PrixAchat;
-                            amortissement.ValeurInit = valeurInit;
-                        }
+                        valeurInit = velo.PrixAchat;
+                        amortissement.ValeurInit = valeurInit;
                     }
-
-                    amortissement.DureeMois = request.dto.Duree;
-                    var residuel = valeurInit - (montantMensuel * request.dto.Duree);
-                    amortissement.ValeurResiduelleFinale = residuel < 0 ? 0 : residuel;
-                    await _amortissementRepository.UpdateAsync(amortissement);
                 }
 
-                for (var mois = 1; mois <= request.dto.Duree; mois++)
-                {
-                    if (existingMonthNumbers.Contains(mois))
-                    {
-                        continue;
-                    }
-
-                    var moisAmortissement = new MoisAmortissement
-                    {
-                        AmortissementId = amortissement.Id,
-                        NumeroMois = mois,
-                        Montant = montantMensuel,
-                        IsActif = true,
-                    };
-
-                    await _moisAmortissementRepository.CreateAsync(moisAmortissement);
-                }
+                amortissement.DureeMois = request.dto.Duree;
+                var residuel = valeurInit - (montantMensuel * request.dto.Duree);
+                amortissement.ValeurResiduelleFinale = residuel < 0 ? 0 : residuel;
+                await _amortissementRepository.UpdateAsync(amortissement);
             }
+
+            await SyncMoisAmortissements(amortissement.Id, request.dto.Duree, montantMensuel);
+        }
 
             response.Success = true;
             response.Message = "Le contrat a été créé avec succès.";
-            response.Id = contrat.Id;
-            return response;
+        response.Id = contrat.Id;
+        return response;
+    }
+
+    private async Task SyncMoisAmortissements(int amortissementId, int duree, decimal montantMensuel)
+    {
+        var existingMonths = await _moisAmortissementRepository.GetByAmortissementIdAsync(amortissementId);
+        var existingByNumero = existingMonths.ToDictionary(m => m.NumeroMois, m => m);
+
+        for (var mois = 1; mois <= duree; mois++)
+        {
+            if (existingByNumero.TryGetValue(mois, out var existing))
+            {
+                if (existing.Montant != montantMensuel)
+                {
+                    existing.Montant = montantMensuel;
+                    existing.IsActif = true;
+                    await _moisAmortissementRepository.UpdateAsync(existing);
+                }
+                continue;
+            }
+
+            var moisAmortissement = new MoisAmortissement
+            {
+                AmortissementId = amortissementId,
+                NumeroMois = mois,
+                Montant = montantMensuel,
+                IsActif = true,
+            };
+
+            await _moisAmortissementRepository.CreateAsync(moisAmortissement);
+        }
+
+        foreach (var extra in existingMonths.Where(m => m.NumeroMois > duree))
+        {
+            await _moisAmortissementRepository.DeleteAsync(extra.Id);
         }
     }
+}
 }

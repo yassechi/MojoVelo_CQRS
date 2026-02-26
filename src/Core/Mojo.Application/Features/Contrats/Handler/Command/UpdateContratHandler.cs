@@ -13,19 +13,22 @@ namespace Mojo.Application.Features.Contrats.Handler.Command
         private readonly IVeloRepository _veloRepository;
         private readonly IUserRepository _userRepository;
         private readonly IAmortissementRepository _amortissementRepository;
+        private readonly IMoisAmortissementRepository _moisAmortissementRepository;
 
         public UpdateContratHandler(
             IContratRepository repository,
             IMapper mapper,
             IVeloRepository veloRepository,
             IUserRepository userRepository,
-            IAmortissementRepository amortissementRepository)
+            IAmortissementRepository amortissementRepository,
+            IMoisAmortissementRepository moisAmortissementRepository)
         {
             _repository = repository;
             _mapper = mapper;
             _veloRepository = veloRepository;
             _userRepository = userRepository;
             _amortissementRepository = amortissementRepository;
+            _moisAmortissementRepository = moisAmortissementRepository;
         }
 
         public async Task<BaseResponse> Handle(UpdateContratCommand request, CancellationToken cancellationToken)
@@ -80,6 +83,7 @@ namespace Mojo.Application.Features.Contrats.Handler.Command
             // Si la durée a changé, mettre à jour l'amortissement associé
             if (dureeChanged)
             {
+                var montantMensuel = request.dto.MontantAmortissementMensuel ?? request.dto.LoyerMensuelHT;
                 Console.WriteLine($"[INFO] Recherche de l'amortissement pour VeloId: {oldContrat.VeloId}");
 
                 var amortissements = await _amortissementRepository.GetAllAsync();
@@ -96,9 +100,8 @@ namespace Mojo.Application.Features.Contrats.Handler.Command
                     // Mettre à jour la durée de l'amortissement
                     amortissement.DureeMois = newDuree;
 
-                    // Recalculer la valeur résiduelle finale proportionnellement
-                    decimal tauxAmortissement = (amortissement.ValeurInit - amortissement.ValeurResiduelleFinale) / oldDuree;
-                    amortissement.ValeurResiduelleFinale = amortissement.ValeurInit - (tauxAmortissement * newDuree);
+                    // Recalculer la valeur résiduelle finale selon le montant mensuel
+                    amortissement.ValeurResiduelleFinale = amortissement.ValeurInit - (montantMensuel * newDuree);
 
                     // S'assurer que la valeur résiduelle ne soit pas négative
                     if (amortissement.ValeurResiduelleFinale < 0)
@@ -110,6 +113,8 @@ namespace Mojo.Application.Features.Contrats.Handler.Command
 
                     await _amortissementRepository.UpdateAsync(amortissement);
                     Console.WriteLine("[SUCCESS] Amortissement mis à jour avec succès !");
+
+                    await SyncMoisAmortissements(amortissement.Id, newDuree, montantMensuel);
                 }
                 else
                 {
@@ -129,6 +134,41 @@ namespace Mojo.Application.Features.Contrats.Handler.Command
 
             Console.WriteLine("========== FIN UPDATE CONTRAT ==========");
             return response;
+        }
+
+        private async Task SyncMoisAmortissements(int amortissementId, int duree, decimal montantMensuel)
+        {
+            var existingMonths = await _moisAmortissementRepository.GetByAmortissementIdAsync(amortissementId);
+            var existingByNumero = existingMonths.ToDictionary(m => m.NumeroMois, m => m);
+
+            for (var mois = 1; mois <= duree; mois++)
+            {
+                if (existingByNumero.TryGetValue(mois, out var existing))
+                {
+                    if (existing.Montant != montantMensuel)
+                    {
+                        existing.Montant = montantMensuel;
+                        existing.IsActif = true;
+                        await _moisAmortissementRepository.UpdateAsync(existing);
+                    }
+                    continue;
+                }
+
+                var moisAmortissement = new MoisAmortissement
+                {
+                    AmortissementId = amortissementId,
+                    NumeroMois = mois,
+                    Montant = montantMensuel,
+                    IsActif = true,
+                };
+
+                await _moisAmortissementRepository.CreateAsync(moisAmortissement);
+            }
+
+            foreach (var extra in existingMonths.Where(m => m.NumeroMois > duree))
+            {
+                await _moisAmortissementRepository.DeleteAsync(extra.Id);
+            }
         }
     }
 }

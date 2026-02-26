@@ -54,13 +54,6 @@ namespace Mojo.API.Controllers
             }
         }
 
-        [HttpGet("get-by-user/{userId}")]
-        public async Task<IActionResult> GetByUser(string userId)
-        {
-            var demandes = await _mediator.Send(new GetDemandesByUserRequest { UserId = userId });
-            return Ok(demandes);
-        }
-
         [HttpGet("get-by-organisation/{organisationId}")]
         public async Task<IActionResult> GetByOrganisation(int organisationId)
         {

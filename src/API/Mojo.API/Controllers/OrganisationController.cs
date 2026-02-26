@@ -50,16 +50,6 @@ namespace Mojo.API.Controllers
             }
         }
 
-        [HttpGet("resolve")]
-        public async Task<IActionResult> Resolve([FromQuery] string emailOrDomain)
-        {
-            var organisation = await _mediator.Send(new ResolveOrganisationRequest
-            {
-                EmailOrDomain = emailOrDomain
-            });
-            return Ok(organisation);
-        }
-
         [HttpPost("add")]
         public async Task<IActionResult> Add([FromBody] OrganisationDto organisationDto)
         {
