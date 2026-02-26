@@ -40,14 +40,7 @@ namespace Mojo.Application.DTOs.EntitiesDto.Contrat.Validators
                     var user = await _userRepository.GetUserByStringId(userRhId);
                     return user != null;
                 })
-                .WithMessage("Le responsable RH avec l'Id {PropertyValue} n'existe pas.")
-                .MustAsync(async (userRhId, cancellationToken) =>
-                {
-                    var user = await _userRepository.GetUserByStringId(userRhId);
-                    if (user == null) return false;
-                    return (int)user.Role == 2 || (int)user.Role == 1;
-                })
-                .WithMessage("Le responsable RH doit avoir le rôle 'Négociateur' (Role = 2).");
+                .WithMessage("Le responsable RH avec l'Id {PropertyValue} n'existe pas.");
 
             RuleFor(c => c.LoyerMensuelHT)
                 .GreaterThan(0)

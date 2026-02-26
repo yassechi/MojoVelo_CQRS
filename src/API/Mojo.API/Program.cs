@@ -4,8 +4,6 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Mojo.Application.Model;
 using Mojo.Domain.Entities;
-using Mojo.Infrastructure;
-using Mojo.Persistence;
 using Mojo.Persistence.DatabaseContext;
 using System.Text;
 using Mojo.API.Dependencies;
