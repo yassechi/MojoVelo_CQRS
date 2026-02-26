@@ -59,70 +59,28 @@ SET IDENTITY_INSERT [Organisations] OFF;
 GO
 
 -----------------------------------------------------------
--- 2.5 [OrganisationLogos] (logos depuis fichiers)
------------------------------------------------------------
--- IMPORTANT:
--- 1) Place les fichiers logos dans le dossier ci-dessous.
--- 2) Le service SQL Server doit avoir acc?s en lecture ? ce dossier.
-DECLARE @BasePath NVARCHAR(260) = N'C:/Users/yasse/Desktop/Logos/';
+-- 2.5 [OrganisationLogos] (Azure-compatible placeholders)
+-- Azure SQL ne peut pas lire des fichiers locaux via OPENROWSET.
+-- On insere un petit PNG en placeholder.
+DECLARE @LogoPng VARBINARY(MAX) =
+0x89504E470D0A1A0A0000000D4948445200000001000000010804000000B51C0C020000000B4944415478DA63FCFF1F0003030200EE01F6500000000049454E44AE426082;
 
-DECLARE @Logos TABLE (
-    OrganisationId INT,
-    FileName NVARCHAR(255),
-    MimeType NVARCHAR(50)
-);
+SET IDENTITY_INSERT [OrganisationLogos] ON;
 
-INSERT INTO @Logos (OrganisationId, FileName, MimeType) VALUES
-(1, 'mojo.png', 'image/png'),
-(2, 'velocite.png', 'image/png'),
-(3, 'ecobike.png', 'image/png'),
-(4, 'lille.png', 'image/png'),
-(5, 'nante.png', 'image/png'),
-(6, 'green.png', 'image/png'),
-(7, 'urban.png', 'image/png'),
-(8, 'swiss.png', 'image/png'),
-(9, 'soft.png', 'image/png'),
-(10, 'alpha.png', 'image/png');
+INSERT INTO [OrganisationLogos]
+([Id], [OrganisationId], [Fichier], [NomFichier], [TypeFichier], [IsActif], [CreatedDate], [ModifiedDate], [CreatedBy], [ModifiedBy]) VALUES
+(1, 1, @LogoPng, 'mojo.png', 'image/png', 1, GETDATE(), GETDATE(), 'System', 'System'),
+(2, 2, @LogoPng, 'velocite.png', 'image/png', 1, GETDATE(), GETDATE(), 'System', 'System'),
+(3, 3, @LogoPng, 'ecobike.png', 'image/png', 1, GETDATE(), GETDATE(), 'System', 'System'),
+(4, 4, @LogoPng, 'lille.png', 'image/png', 1, GETDATE(), GETDATE(), 'System', 'System'),
+(5, 5, @LogoPng, 'nante.png', 'image/png', 1, GETDATE(), GETDATE(), 'System', 'System'),
+(6, 6, @LogoPng, 'green.png', 'image/png', 1, GETDATE(), GETDATE(), 'System', 'System'),
+(7, 7, @LogoPng, 'urban.png', 'image/png', 1, GETDATE(), GETDATE(), 'System', 'System'),
+(8, 8, @LogoPng, 'swiss.png', 'image/png', 1, GETDATE(), GETDATE(), 'System', 'System'),
+(9, 9, @LogoPng, 'soft.png', 'image/png', 1, GETDATE(), GETDATE(), 'System', 'System'),
+(10, 10, @LogoPng, 'alpha.png', 'image/png', 1, GETDATE(), GETDATE(), 'System', 'System');
 
-DECLARE @OrganisationId INT;
-DECLARE @FileName NVARCHAR(255);
-DECLARE @MimeType NVARCHAR(50);
-DECLARE @Sql NVARCHAR(MAX);
-
-DECLARE logo_cursor CURSOR LOCAL FAST_FORWARD FOR
-SELECT OrganisationId, FileName, MimeType FROM @Logos;
-
-OPEN logo_cursor;
-FETCH NEXT FROM logo_cursor INTO @OrganisationId, @FileName, @MimeType;
-
-WHILE @@FETCH_STATUS = 0
-BEGIN
-    SET @Sql = N'
-    UPDATE [OrganisationLogos]
-    SET IsActif = 0
-    WHERE OrganisationId = ' + CAST(@OrganisationId AS NVARCHAR(10)) + N';
-
-    INSERT INTO [OrganisationLogos]
-    ([OrganisationId], [Fichier], [NomFichier], [TypeFichier], [IsActif], [CreatedDate], [ModifiedDate], [CreatedBy], [ModifiedBy])
-    SELECT ' + CAST(@OrganisationId AS NVARCHAR(10)) + N',
-           BulkColumn,
-           N''' + @FileName + N''',
-           N''' + @MimeType + N''',
-           1,
-           GETDATE(),
-           GETDATE(),
-           ''System'',
-           ''System''
-    FROM OPENROWSET(BULK N''' + @BasePath + @FileName + N''', SINGLE_BLOB) AS x;
-    ';
-
-    EXEC sp_executesql @Sql;
-
-    FETCH NEXT FROM logo_cursor INTO @OrganisationId, @FileName, @MimeType;
-END
-
-CLOSE logo_cursor;
-DEALLOCATE logo_cursor;
+SET IDENTITY_INSERT [OrganisationLogos] OFF;
 GO
 
 -----------------------------------------------------------
@@ -145,6 +103,8 @@ GO
 -- 4. [AspNetUsers]
 -----------------------------------------------------------
 DECLARE @PwdHash NVARCHAR(200) = 'AQEAAAAQJwAAEAAAAJflvadxoWrhVBE7/QxdrqsgAAAAOWAdkB8b1m5kHncu4EVOUGelE2nLEcKBqsW2A4zKhjI=';
+DECLARE @AdminId NVARCHAR(450) = '2c4a7cdd-5078-4afe-a920-02ba4da7723a';
+DECLARE @AdminPwdHash NVARCHAR(200) = 'AQAAAAIAAyagAAAAEEGF0waFqLyF5NSIhYME7LGoPb3yv2j6d+VsCeCx6fv+mEv7vjP2R71IkIUMCAaA==';
 
 INSERT INTO [AspNetUsers] ([Id], [FirstName], [LastName], [OrganisationId], [Email], [NormalizedEmail], [UserName], [NormalizedUserName], [IsActif], [Role], [TailleCm], [EmailConfirmed], [PhoneNumberConfirmed], [TwoFactorEnabled], [LockoutEnabled], [AccessFailedCount], [PasswordHash], [SecurityStamp], [ConcurrencyStamp]) VALUES
 ('U01','Jean','Admin',1,'jean@mojo.com','JEAN@MOJO.COM','jadmin','JADMIN',1,1,180,1,0,0,1,0,@PwdHash,NEWID(),NEWID()),
@@ -156,17 +116,21 @@ INSERT INTO [AspNetUsers] ([Id], [FirstName], [LastName], [OrganisationId], [Ema
 ('U07','Lea','User',5,'lea@nantes.com','LEA@NANTES.COM','luser','LUSER',1,3,170,1,0,0,1,0,@PwdHash,NEWID(),NEWID()),
 ('U08','Bob','Mojo',1,'bob@mojo.com','BOB@MOJO.COM','bmojo','BMOJO',1,2,182,1,0,0,1,0,@PwdHash,NEWID(),NEWID()),
 ('U09','Kim','User',6,'kim@green.com','KIM@GREEN.COM','kuser','KUSER',1,3,160,1,0,0,1,0,@PwdHash,NEWID(),NEWID()),
-('U10','Ian','User',7,'ian@urban.com','IAN@URBAN.COM','iuser','IUSER',1,3,188,1,0,0,1,0,@PwdHash,NEWID(),NEWID());
+('U10','Ian','User',7,'ian@urban.com','IAN@URBAN.COM','iuser','IUSER',1,3,188,1,0,0,1,0,@PwdHash,NEWID(),NEWID()),
+(@AdminId,'admin','admin',1,'admin@mojo.com','ADMIN@MOJO.COM','admin','ADMIN',1,1,170,1,0,0,1,0,@AdminPwdHash,NEWID(),NEWID());
 GO
 
 -----------------------------------------------------------
 -- 5. [AspNetUserRoles]
+DECLARE @AdminId NVARCHAR(450) = '2c4a7cdd-5078-4afe-a920-02ba4da7723a';
+
 -----------------------------------------------------------
 INSERT INTO [AspNetUserRoles] ([UserId], [RoleId]) VALUES
 ('U01','R9'), ('U02','R2'), ('U03','R5'), ('U04','R3'), ('U05','R3'), 
 ('U06','R4'), ('U07','R3'), ('U08','R2'), ('U09','R3'), ('U10','R3'),
 ('U01','R1'), ('U02','R8'), ('U03','R1'), ('U06','R7'), ('U08','R10'), 
-('U01','R2'), ('U02','R5'), ('U06','R3'), ('U08','R4'), ('U10','R6');
+('U01','R2'), ('U02','R5'), ('U06','R3'), ('U08','R4'), ('U10','R6'),
+(@AdminId,'R1');
 GO
 
 -----------------------------------------------------------
@@ -454,6 +418,7 @@ GO
 
 PRINT 'Script exécuté avec succès ! ';
 GO
+
 
 
 
