@@ -122,8 +122,6 @@ GO
 
 -----------------------------------------------------------
 -- 5. [AspNetUserRoles]
-DECLARE @AdminId NVARCHAR(450) = '2c4a7cdd-5078-4afe-a920-02ba4da7723a';
-
 -----------------------------------------------------------
 INSERT INTO [AspNetUserRoles] ([UserId], [RoleId]) VALUES
 ('U01','R9'), ('U02','R2'), ('U03','R5'), ('U04','R3'), ('U05','R3'), 
@@ -418,7 +416,6 @@ GO
 
 PRINT 'Script exécuté avec succès ! ';
 GO
-
 
 
 

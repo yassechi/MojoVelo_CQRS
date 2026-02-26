@@ -8,7 +8,10 @@ namespace Mojo.Application.MappingProfiles
         {
             //Configure Mapping
             CreateMap<Amortissement, AmortissmentDto>().ReverseMap();
-            
+
+     
+
+
 
 
         }

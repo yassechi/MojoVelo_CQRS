@@ -6,6 +6,5 @@ namespace Mojo.Application.DTOs.Dashboard
         public int ActiveContrats { get; set; }
         public int ExpiringContrats { get; set; }
         public List<ActivityFeedItemDto> ActivityFeed { get; set; } = new();
-        public List<BikeTypeCountDto> BikeTypeCounts { get; set; } = new();
     }
 }

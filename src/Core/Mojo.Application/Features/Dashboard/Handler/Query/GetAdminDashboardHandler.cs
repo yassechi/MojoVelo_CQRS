@@ -32,64 +32,37 @@ namespace Mojo.Application.Features.Dashboard.Handler.Query
             var velos = (await _veloRepository.GetAllAsync()).Where(v => v.IsActif).ToList();
 
             var today = DateOnly.FromDateTime(DateTime.Today);
-            var threshold = today.AddDays(30);
+            var activity = new List<ActivityFeedItemDto>();
 
-            var dto = new AdminDashboardDto
+            foreach (var d in demandes
+                .OrderByDescending(d => d.CreatedDate)
+                .ThenByDescending(d => d.Id)
+                .Take(5))
+            {
+                var user = users.FirstOrDefault(u => u.Id == d.IdUser);
+                var velo = velos.FirstOrDefault(v => v.Id == d.IdVelo);
+                var userName = user != null ? user.FirstName + " " + user.LastName : d.IdUser;
+                var bikeTitle = velo?.Modele ?? "#" + d.IdVelo;
+                var time = d.CreatedDate == default ? "En cours" : d.CreatedDate.ToString("yyyy-MM-dd");
+
+                activity.Add(new ActivityFeedItemDto
+                {
+                    Title = "Demande #" + d.Id,
+                    Detail = userName + " - " + bikeTitle,
+                    Time = time
+                });
+            }
+
+            return new AdminDashboardDto
             {
                 PendingDemandes = demandes.Count(d => d.Status == DemandeStatus.AttenteComagnie),
                 ActiveContrats = contrats.Count(c => c.StatutContrat == StatutContrat.EnCours),
                 ExpiringContrats = contrats.Count(c =>
                     c.StatutContrat == StatutContrat.EnCours &&
                     c.DateFin >= today &&
-                    c.DateFin <= threshold)
+                    c.DateFin <= today.AddDays(30)),
+                ActivityFeed = activity
             };
-
-            var usersById = users.ToDictionary(u => u.Id);
-            var velosById = velos.ToDictionary(v => v.Id);
-
-            var typeCounts = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
-            foreach (var demande in demandes)
-            {
-                if (!velosById.TryGetValue(demande.IdVelo, out var velo))
-                {
-                    continue;
-                }
-                var label = string.IsNullOrWhiteSpace(velo.Type) ? "Autre" : velo.Type.Trim();
-                typeCounts[label] = (typeCounts.TryGetValue(label, out var current) ? current : 0) + 1;
-            }
-
-            dto.BikeTypeCounts = typeCounts
-                .OrderByDescending(kv => kv.Value)
-                .Select(kv => new BikeTypeCountDto
-                {
-                    Label = kv.Key,
-                    Value = kv.Value
-                })
-                .ToList();
-
-            var recentDemandes = demandes
-                .OrderByDescending(d => d.CreatedDate)
-                .ThenByDescending(d => d.Id)
-                .Take(5);
-
-            foreach (var demande in recentDemandes)
-            {
-                var userName = usersById.TryGetValue(demande.IdUser, out var user)
-                    ? $"{user.FirstName} {user.LastName}".Trim()
-                    : demande.IdUser;
-                var bikeTitle = velosById.TryGetValue(demande.IdVelo, out var velo)
-                    ? velo.Modele
-                    : $"#{demande.IdVelo}";
-
-                dto.ActivityFeed.Add(new ActivityFeedItemDto
-                {
-                    Title = $"Demande #{demande.Id}",
-                    Detail = $"{userName} - {bikeTitle}",
-                    Time = demande.CreatedDate == default ? "En cours" : demande.CreatedDate.ToString("yyyy-MM-dd")
-                });
-            }
-
-            return dto;
         }
     }
 }
