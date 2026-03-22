@@ -112,8 +112,9 @@ namespace Mojo.Infrastructure.Services
                 return true;
             }
 
+            // construit le lien de réinitialisation dans le corp de l email 
             var token = await _userManager.GeneratePasswordResetTokenAsync(user);
-            var resetLink = $"http://localhost:4200/reset-password?token={Uri.EscapeDataString(token)}&email={Uri.EscapeDataString(user.Email)}";
+            var resetLink = "http://localhost:4200/reset-password?token=" + token + "&email=" + user.Email;
 
             var emailMessage = new EmailMessage
             {
