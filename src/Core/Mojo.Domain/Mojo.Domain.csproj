@@ -8,6 +8,8 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="9.0.1" />
+	<PackageReference Include="Microsoft.SemanticKernel.Connectors.SqlServer" Version="1.74.0-preview" />
+	  
   </ItemGroup>
 
 </Project>

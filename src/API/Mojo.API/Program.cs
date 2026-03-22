@@ -1,9 +1,10 @@
-using Microsoft.AspNetCore.Authentication.JwtBearer;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Mojo.Application.Model;
 using Mojo.Domain.Entities;
+using Mojo.Persistence;
 using Mojo.Persistence.DatabaseContext;
 using System.Text;
 using Mojo.API.Dependencies;
@@ -16,7 +17,7 @@ builder.Services.ConfigureApplicationService();
 builder.Services.ConfigurePersistenceService(builder.Configuration);
 builder.Services.ConfigureInfrastructureService(builder.Configuration);
 
-// Identity (Configuration UNIQUE pour �viter l'erreur de Scheme)
+// Identity
 builder.Services.AddIdentity<User, IdentityRole>(options =>
 {
     options.Password.RequireDigit = true;
@@ -33,7 +34,7 @@ var jwtSettings = builder.Configuration.GetSection("JwtSettings");
 var jwtKey = jwtSettings["Key"];
 if (string.IsNullOrEmpty(jwtKey) || jwtKey.Length < 32)
 {
-    throw new InvalidOperationException("JWT Key manquante ou trop courte (minimum 32 caract�res) dans appsettings.json");
+    throw new InvalidOperationException("JWT Key manquante ou trop courte (minimum 32 caractères)");
 }
 var key = Encoding.UTF8.GetBytes(jwtKey);
 
@@ -63,7 +64,6 @@ builder.Services.AddAuthentication(options =>
 builder.Services.AddAuthorization();
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
-
 builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new OpenApiInfo { Title = "MojoVelo API", Version = "v1" });
@@ -97,15 +97,28 @@ builder.Services.AddCors(options =>
 
 var app = builder.Build();
 
-//if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
-
+app.UseSwagger();
+app.UseSwaggerUI();
 app.UseCors("AllowAll");
-//app.UseStaticFiles();
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
+
+using (var scope = app.Services.CreateScope())
+{
+    var ragService = scope.ServiceProvider
+        .GetRequiredService<Mojo.Infrastructure.AI.IRagService>();
+    try
+    {
+        await ragService.SyncAdminVectorStoreAsync();
+        await ragService.SyncClientVectorStoreAsync();
+        Console.WriteLine("[RAG] Synchronisation réussie.");
+    }
+    catch (Exception ex)
+    {
+        // ✅ L'app démarre quand même même si Ollama est éteint
+        Console.WriteLine($"[RAG] Attention : synchronisation échouée au démarrage : {ex.Message}");
+    }
+}
+
 app.Run();

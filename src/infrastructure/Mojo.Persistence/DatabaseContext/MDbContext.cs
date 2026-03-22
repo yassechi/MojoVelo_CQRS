@@ -1,6 +1,6 @@
-﻿
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Mojo.Domain.AI;
 using Mojo.Domain.Common;
 
 namespace Mojo.Persistence.DatabaseContext
@@ -13,24 +13,23 @@ namespace Mojo.Persistence.DatabaseContext
         {
             base.OnModelCreating(modelBuilder);
 
-            // 1. Charge les configurations externes (si elles existent)
+            // 1. Configurations externes
             modelBuilder.ApplyConfigurationsFromAssembly(typeof(MDbContext).Assembly);
 
-            // 2. Configuration forcée de l'User pour autoriser plusieurs Users par Organisation
+            // 2. User / Organisation
             modelBuilder.Entity<User>(entity =>
             {
                 entity.HasOne(u => u.Organisation)
-                      .WithMany(o => o.Users) // Nécessite 'public virtual ICollection<User> Users { get; set; }' dans la classe Organisation
+                      .WithMany(o => o.Users)
                       .HasForeignKey(u => u.OrganisationId)
                       .IsRequired()
                       .OnDelete(DeleteBehavior.Restrict);
 
-                // FORCE l'index à ne PAS être unique (C'est ce qui causait l'erreur SQL 2601)
                 entity.HasIndex(u => u.OrganisationId)
                       .IsUnique(false);
             });
 
-            // 3. Configuration des Contrats (Bénéficiaire et RH)
+            // 3. Contrats
             modelBuilder.Entity<Contrat>()
                 .HasOne(c => c.Beneficiaire)
                 .WithMany(u => u.ContratsRecus)
@@ -43,7 +42,7 @@ namespace Mojo.Persistence.DatabaseContext
                 .HasForeignKey(c => c.UserRhId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            // 4. Configuration des Discussions (Support technique / Vol)
+            // 4. Discussions
             modelBuilder.Entity<Discussion>(entity =>
             {
                 entity.HasOne(d => d.Client)
@@ -57,7 +56,7 @@ namespace Mojo.Persistence.DatabaseContext
                       .OnDelete(DeleteBehavior.Restrict);
             });
 
-            // 4.1 Organisation logos (1 organisation -> N logos)
+            // 4.1 Organisation logos
             modelBuilder.Entity<OrganisationLogo>(entity =>
             {
                 entity.HasOne(l => l.Organisation)
@@ -66,14 +65,14 @@ namespace Mojo.Persistence.DatabaseContext
                       .OnDelete(DeleteBehavior.Cascade);
             });
 
-            // 5. Précision des types Decimal pour SQL Server
+            // 5. Types Decimal
             modelBuilder.Entity<Amortissement>().Property(a => a.ValeurInit).HasColumnType("decimal(18,2)");
             modelBuilder.Entity<Contrat>().Property(c => c.LoyerMensuelHT).HasColumnType("decimal(18,2)");
             modelBuilder.Entity<Intervention>().Property(i => i.Cout).HasColumnType("decimal(18,2)");
             modelBuilder.Entity<Velo>().Property(v => v.PrixAchat).HasColumnType("decimal(18,2)");
             modelBuilder.Entity<MoisAmortissement>().Property(m => m.Montant).HasColumnType("decimal(18,2)");
 
-            // 6. Mois d'amortissement (1 amortissement -> N mois)
+            // 6. Mois d'amortissement
             modelBuilder.Entity<MoisAmortissement>(entity =>
             {
                 entity.HasOne(m => m.Amortissement)
@@ -85,7 +84,7 @@ namespace Mojo.Persistence.DatabaseContext
                       .IsUnique();
             });
 
-            // 7. VuesMessage (lecture des messages)
+            // 7. VuesMessage
             modelBuilder.Entity<VuesMessage>(entity =>
             {
                 entity.Property(vm => vm.UserId).IsRequired();
@@ -110,18 +109,15 @@ namespace Mojo.Persistence.DatabaseContext
             foreach (var entry in ChangeTracker.Entries<BaseEntity<int>>())
             {
                 if (entry.State == EntityState.Added)
-                {
                     entry.Entity.CreatedDate = DateTime.Now;
-                }
+
                 if (entry.State == EntityState.Modified)
-                {
                     entry.Entity.ModifiedDate = DateTime.Now;
-                }
             }
             return base.SaveChangesAsync(cancellationToken);
         }
 
-        // --- Tes DbSets ---
+        // --- DbSets ---
         public virtual DbSet<Amortissement> Amortissements { get; set; }
         public virtual DbSet<Contrat> Contrats { get; set; }
         public virtual DbSet<Discussion> Discussions { get; set; }
@@ -134,87 +130,9 @@ namespace Mojo.Persistence.DatabaseContext
         public virtual DbSet<Documents> Documents { get; set; }
         public virtual DbSet<OrganisationLogo> OrganisationLogos { get; set; }
         public virtual DbSet<MoisAmortissement> MoisAmortissements { get; set; }
+
+        // ✅ DocumentChunk supprimé — géré par InMemory VectorStore
+        // ✅ AiLog conservé — logs persistés dans SQL Server
+        public DbSet<AiLog> AiLogs { get; set; }
     }
 }
-
-
-
-
-//using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
-//using Microsoft.EntityFrameworkCore;
-//using Mojo.Domain.Common;
-
-//namespace Mojo.Persistence.DatabaseContext
-//{
-//    public class MDbContext : IdentityDbContext<User>
-//    {
-//        public MDbContext(DbContextOptions<MDbContext> options) : base(options) { }
-
-//        protected override void OnModelCreating(ModelBuilder modelBuilder)
-//        {
-//            base.OnModelCreating(modelBuilder);
-
-//            modelBuilder.ApplyConfigurationsFromAssembly(typeof(MDbContext).Assembly);
-
-//            modelBuilder.Entity<Contrat>()
-//                .HasOne(c => c.Beneficiaire)
-//                .WithMany(u => u.ContratsRecus)
-//                .HasForeignKey(c => c.BeneficiaireId)
-//                .OnDelete(DeleteBehavior.Restrict);
-
-//            modelBuilder.Entity<Contrat>()
-//                .HasOne(c => c.UserRH)
-//                .WithMany(u => u.ContratsGeres)
-//                .HasForeignKey(c => c.UserRhId)
-//                .OnDelete(DeleteBehavior.Restrict);
-
-//            modelBuilder.Entity<Discussion>(entity =>
-//            {
-//                // Configuration pour le Client
-//                entity.HasOne(d => d.Client)
-//                      .WithMany(u => u.Discussions)
-//                      .HasForeignKey(d => d.ClientId)
-//                      .OnDelete(DeleteBehavior.Restrict);
-
-//                // Configuration pour le Mojo (Support/Admin)
-//                entity.HasOne(d => d.Mojo)
-//                      .WithMany() 
-//                      .HasForeignKey(d => d.MojoId)
-//                      .OnDelete(DeleteBehavior.Restrict);
-//            });
-
-//            // Dans OnModelCreating
-//            modelBuilder.Entity<Amortissement>().Property(a => a.ValeurInit).HasColumnType("decimal(18,2)");
-//            modelBuilder.Entity<Contrat>().Property(c => c.LoyerMensuelHT).HasColumnType("decimal(18,2)");
-//            modelBuilder.Entity<Intervention>().Property(i => i.Cout).HasColumnType("decimal(18,2)");
-//            modelBuilder.Entity<Velo>().Property(v => v.PrixAchat).HasColumnType("decimal(18,2)");
-//        }
-
-//        public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
-//        {
-//            foreach (var entry in ChangeTracker.Entries<BaseEntity<int>>())
-//            {
-//                if (entry.State == EntityState.Added)
-//                {
-//                    entry.Entity.CreatedDate = DateTime.Now;
-//                }
-//                if (entry.State == EntityState.Modified)
-//                {
-//                    entry.Entity.ModifiedDate = DateTime.Now;
-//                }
-//            }
-//            return base.SaveChangesAsync(cancellationToken);
-//        }
-
-//        public virtual DbSet<Amortissement> Amortissements { get; set; }
-//        public virtual DbSet<Contrat> Contrats { get; set; }
-//        public virtual DbSet<Discussion> Discussions { get; set; }
-//        public virtual DbSet<Intervention> Interventions { get; set; }
-//        public virtual DbSet<Message> Messages { get; set; }
-//        public virtual DbSet<Organisation> Organisations { get; set; }
-//        public virtual DbSet<Velo> Velos { get; set; }
-//        public virtual DbSet<Demande> Demandes { get; set; }
-//        public virtual DbSet<Documents> Documents { get; set; }
-
-//    }
-//}
