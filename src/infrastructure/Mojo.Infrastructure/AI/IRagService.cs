@@ -12,6 +12,10 @@ namespace Mojo.Infrastructure.AI
         Task<string> ClientRAGAsync(string query, string? userId = null);
         Task UploadAdminPdfAsync(IFormFile file);
         Task UploadClientPdfAsync(IFormFile file);
+        Task<List<RagPdfInfo>> ListAdminPdfsAsync();
+        Task<List<RagPdfInfo>> ListClientPdfsAsync();
+        Task DeleteAdminPdfAsync(string fileName);
+        Task DeleteClientPdfAsync(string fileName);
         Task<string> EvaluateAsync(string question, string collection);
         Task<List<AiLog>> GetLogsAsync(string? collection = null);
     }

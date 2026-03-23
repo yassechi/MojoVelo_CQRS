@@ -44,20 +44,6 @@ namespace Mojo.Persistence.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "DocumentChunks",
-                columns: table => new
-                {
-                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    Text = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    SourceFile = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Collection = table.Column<string>(type: "nvarchar(max)", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_DocumentChunks", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Organisations",
                 columns: table => new
                 {
@@ -721,9 +707,6 @@ namespace Mojo.Persistence.Migrations
 
             migrationBuilder.DropTable(
                 name: "Demandes");
-
-            migrationBuilder.DropTable(
-                name: "DocumentChunks");
 
             migrationBuilder.DropTable(
                 name: "Documents");

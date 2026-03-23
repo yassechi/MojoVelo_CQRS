@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Mojo.API.Attributes;
 using Mojo.Domain.Enums;
 using Mojo.Infrastructure.AI;
+using System.IO;
 using System.Security.Claims;
 
 namespace Mojo.API.Controllers;
@@ -67,6 +68,99 @@ public class AiController : ControllerBase
         return Ok(new { uploades = uploaded, erreurs = errors });
     }
 
+    // ── Client docs gérés par admin ──────────────────────────────────────────
+
+    [HttpPost("client/upload")]
+    [AuthorizeRole(UserRole.Admin)]
+    public async Task<IActionResult> ClientUpload(IFormFile file)
+    {
+        try
+        {
+            await _ragService.UploadClientPdfAsync(file);
+            return Ok(new { message = $"'{file.FileName}' uploadé et indexé !" });
+        }
+        catch (InvalidOperationException ex)
+        {
+            return BadRequest(new { error = ex.Message });
+        }
+    }
+
+    [HttpPost("client/upload/multiple")]
+    [AuthorizeRole(UserRole.Admin)]
+    public async Task<IActionResult> ClientUploadMultiple(List<IFormFile> files)
+    {
+        var uploaded = new List<string>();
+        var errors = new List<string>();
+
+        foreach (var file in files)
+        {
+            try
+            {
+                await _ragService.UploadClientPdfAsync(file);
+                uploaded.Add(file.FileName);
+            }
+            catch (InvalidOperationException ex)
+            {
+                errors.Add($"{file.FileName}: {ex.Message}");
+            }
+        }
+        return Ok(new { uploades = uploaded, erreurs = errors });
+    }
+
+    [HttpGet("client/files")]
+    [AuthorizeRole(UserRole.Admin)]
+    public async Task<IActionResult> GetClientFiles()
+    {
+        var files = await _ragService.ListClientPdfsAsync();
+        return Ok(files);
+    }
+
+    [HttpDelete("client/files/{fileName}")]
+    [AuthorizeRole(UserRole.Admin)]
+    public async Task<IActionResult> DeleteClientFile(string fileName)
+    {
+        try
+        {
+            await _ragService.DeleteClientPdfAsync(fileName);
+            return Ok(new { message = $"'{fileName}' supprimé." });
+        }
+        catch (FileNotFoundException)
+        {
+            return NotFound(new { error = "Fichier introuvable." });
+        }
+        catch (InvalidOperationException ex)
+        {
+            return BadRequest(new { error = ex.Message });
+        }
+    }
+
+    [HttpGet("admin/files")]
+    [AuthorizeRole(UserRole.Admin)]
+    public async Task<IActionResult> GetAdminFiles()
+    {
+        var files = await _ragService.ListAdminPdfsAsync();
+        return Ok(files);
+    }
+
+    [HttpDelete("admin/files/{fileName}")]
+    [AuthorizeRole(UserRole.Admin)]
+    public async Task<IActionResult> DeleteAdminFile(string fileName)
+    {
+        try
+        {
+            await _ragService.DeleteAdminPdfAsync(fileName);
+            return Ok(new { message = $"'{fileName}' supprimé." });
+        }
+        catch (FileNotFoundException)
+        {
+            return NotFound(new { error = "Fichier introuvable." });
+        }
+        catch (InvalidOperationException ex)
+        {
+            return BadRequest(new { error = ex.Message });
+        }
+    }
+
     [HttpPost("admin/evaluate")]
     [AuthorizeRole(UserRole.Admin)]
     public async Task<IActionResult> AdminEvaluate([FromBody] AskRequest request)
@@ -100,10 +194,10 @@ public class AiController : ControllerBase
         return Ok(logs);
     }
 
-    // ── Admin + Manager + User peuvent poser une question ─────────────────────
+    // ── Client (public) peut poser une question ──────────────────────────────
 
     [HttpPost("client/ask")]
-    [AuthorizeRole(UserRole.Admin, UserRole.Manager, UserRole.User)]
+    [AllowAnonymous]
     public async Task<IActionResult> ClientAsk([FromBody] AskRequest request)
     {
         var response = await _ragService.ClientRAGAsync(request.Question, GetUserId());

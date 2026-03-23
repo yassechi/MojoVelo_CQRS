@@ -12,7 +12,6 @@ using Microsoft.Extensions.VectorData;
 using Microsoft.SemanticKernel.ChatCompletion;
 using Microsoft.SemanticKernel.Text;
 using Mojo.Domain.AI;
-using Mojo.Domain.Entities;
 using Mojo.Persistence.DatabaseContext;
 using UglyToad.PdfPig;
 
@@ -197,7 +196,6 @@ public class RagService : IRagService
 
     // ── Logs ─────────────────────────────────────────────────────────────────
 
-    // ✅ Retourne List<AiLog> pour correspondre à l'interface
     public async Task<List<AiLog>> GetLogsAsync(string? collection = null)
     {
         var query = _dbContext.AiLogs.AsQueryable();
@@ -225,6 +223,54 @@ public class RagService : IRagService
         using (var stream = File.Create(filePath))
             await file.CopyToAsync(stream);
 
+        await SyncVectorStoreAsync(pdfsDir, collectionName);
+    }
+
+    // ── Gestion des PDFs ─────────────────────────────────────────────────────
+
+    public Task<List<RagPdfInfo>> ListAdminPdfsAsync() => ListPdfsAsync(_adminPdfsDir);
+    public Task<List<RagPdfInfo>> ListClientPdfsAsync() => ListPdfsAsync(_clientPdfsDir);
+
+    public Task DeleteAdminPdfAsync(string fileName)
+        => DeletePdfAsync(fileName, _adminPdfsDir, RagCollections.ADMIN);
+
+    public Task DeleteClientPdfAsync(string fileName)
+        => DeletePdfAsync(fileName, _clientPdfsDir, RagCollections.CLIENT);
+
+    private static Task<List<RagPdfInfo>> ListPdfsAsync(string pdfsDir)
+    {
+        if (!Directory.Exists(pdfsDir))
+            return Task.FromResult(new List<RagPdfInfo>());
+
+        var files = Directory.GetFiles(pdfsDir, "*.pdf")
+            .Select(path => new FileInfo(path))
+            .OrderByDescending(info => info.LastWriteTimeUtc)
+            .Select(info => new RagPdfInfo
+            {
+                FileName = info.Name,
+                SizeBytes = info.Length,
+                LastModifiedUtc = info.LastWriteTimeUtc
+            })
+            .ToList();
+
+        return Task.FromResult(files);
+    }
+
+    private async Task DeletePdfAsync(string fileName, string pdfsDir, string collectionName)
+    {
+        if (string.IsNullOrWhiteSpace(fileName))
+            throw new InvalidOperationException("Nom de fichier invalide.");
+
+        Directory.CreateDirectory(pdfsDir);
+        var safeName = Path.GetFileName(fileName);
+        var filePath = Path.Combine(pdfsDir, safeName);
+
+        if (!File.Exists(filePath))
+            throw new FileNotFoundException("Fichier introuvable.", safeName);
+
+        File.Delete(filePath);
+
+        // ✅ Resynchronise sans le fichier supprimé
         await SyncVectorStoreAsync(pdfsDir, collectionName);
     }
 

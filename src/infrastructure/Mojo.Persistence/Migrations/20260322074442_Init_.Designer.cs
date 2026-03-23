@@ -12,7 +12,7 @@ using Mojo.Persistence.DatabaseContext;
 namespace Mojo.Persistence.Migrations
 {
     [DbContext(typeof(MDbContext))]
-    [Migration("20260322045139_Init_")]
+    [Migration("20260322074442_Init_")]
     partial class Init_
     {
         /// <inheritdoc />
@@ -158,26 +158,7 @@ namespace Mojo.Persistence.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("Mojo.Domain.AI.DocumentChunk", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("Collection")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("SourceFile")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Text")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("DocumentChunks", (string)null);
-                });
-
-            modelBuilder.Entity("Mojo.Domain.Entities.AiLog", b =>
+            modelBuilder.Entity("Mojo.Domain.AI.AiLog", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
